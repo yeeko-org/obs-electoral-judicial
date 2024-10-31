@@ -1,0 +1,31 @@
+{
+  "name": "Observatorio Electoral Judicial",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "dev-ssl": "NODE_TLS_REJECT_UNAUTHORIZED=0 nuxt dev --https --ssl-cert localhost.pem --ssl-key localhost-key.pem",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "stackblitz": "npm run dev"
+  },
+  "stackblitz": {
+    "startCommand": "npm run stackblitz"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "vue": "^3.4.29",
+    "vue-router": "^4.3.3"
+  },
+  "devDependencies": {
+    "@storyblok/nuxt": "^6.0.4",
+    "eslint": "^8.57.1",
+    "eslint-plugin-vue": "^9.30.0",
+    "eslint-plugin-vuetify": "^2.4.0",
+    "globals": "^15.11.0",
+    "material-design-icons-iconfont": "^6.7.0",
+    "nuxt": "^3.12.2",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vuetify": "^3.7.1"
+  }
+}
