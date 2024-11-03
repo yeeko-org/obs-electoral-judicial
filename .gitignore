@@ -5,6 +5,8 @@ node_modules
 .cache
 .output
 .env
+.env*
+.idea*
 dist
 localhost-key.pem
 localhost.pem

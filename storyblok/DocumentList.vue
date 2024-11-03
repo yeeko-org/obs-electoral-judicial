@@ -1,186 +1,173 @@
-<script>
-
-import { mapState } from "vuex";
-import componentMixin from "~/mixins/componentMixin";
+<script setup>
 import dayjs from 'dayjs'
 import 'dayjs/locale/es'
-import * as d3 from 'd3';
-dayjs.locale('es')
+import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import {useMainStore} from '~/store/index'
 
-export default {
-  name: "DocumentList",
-  mixins: [componentMixin],
-  props: ['blok'],
-  data(){
-    return {
-      curr_idx: undefined,
-      expanded_idxs: [],
-      selected_years: [],
-      selected_docs: [],
-      type_documents: {
-        "Informe": ["#dabdff", "#c192ff", "purple"],
-        "Comunicado": ["#feaabc", "#fd7291", "pink"],
-      },
-    }
-  },
-  computed:{
-    ...mapState({
-      documents: state => state.content.documents || {body:[]},
-    }),
-    final_docs(){
-      let final_docs = this.blok ? this.blok.body : this.documents.body
-      final_docs = final_docs.map(doc=>{
-        doc.color_back = doc.type_doc === 'Informe'
-          ? ["#dabdff", "#c192ff"]
-          : ["#feaabc", "#fd7291"]
-          // ["#dedede", "#c6c6c6"]
-        doc.colors = this.type_documents[doc.type_doc]
-        let date_created = `${doc.created.substr(0, 10)}`
-        date_created = dayjs(date_created)
-        doc.created_date = date_created
-        doc.year = date_created.year()
-        doc.created_format = date_created.format("D [de] MMMM [de] YYYY")
-        return doc
-      })
-      final_docs = final_docs.sort((x, y)=>
-         d3.descending(x.created_date, y.created_date))
-      return final_docs
-    },
-    all_years(){
-      return this.final_docs.reduce((arr, doc)=>
-        !arr.includes(doc.year) ? [...arr, doc.year] : arr
-      ,[])
-    },
-    filtered_docs(){
-      let selected_years = this.selected_years.length
-        ? this.all_years.filter((year, idx)=> this.selected_years.includes(idx))
-        : this.all_years
-      let selected_docs = this.selected_docs.length
-        ? this.all_types.filter((doc, idx)=> this.selected_docs.includes(idx))
-        : this.all_types
-      return this.final_docs.filter(doc=>
-        selected_docs.some(sel_doc=> sel_doc.name == doc.type_doc )
-        && selected_years.some(sel_year=> sel_year == doc.year)
-      )
-    },
-    all_types(){
-      let all_types = this.final_docs.reduce((arr, doc)=>
-        !arr.includes(doc.type_doc) ? [...arr, doc.type_doc] : arr
-      ,[])
-      return all_types.map((type, idx)=>
-        ({name: type, colors: this.type_documents[type]}))
-    },
-  },
-}
+import { useDisplay } from 'vuetify'
+const { xs, smAndUp } = useDisplay()
+import { resizeImg, transformImage } from '~/composables/storyblok_images.js'
+import * as d3 from 'd3'
+import DocumentDetail from "../components/DocumentDetail.vue";
+
+dayjs.locale('es')
+const mainStore = useMainStore()
+// Store setup and state
+const { documents } = storeToRefs(mainStore)
+
+// Props
+const props = defineProps({
+  blok: Object
+})
+
+// Data equivalent with refs
+const selected_months = ref([])
+const selectedDocs = ref([])
+const show_all = ref(false)
+const typeDocuments = ref({
+  "Informe quincenal": ['#dabdff', '#c192ff', 'purple'],
+  "Informe final": ['#feaabc', '#fd7291', 'pink'],
+  "Informe": ['#dabdff', '#c192ff', 'purple'],
+  "Comunicado": ['#feaabc', '#fd7291', 'pink'],
+})
+
+// Computed properties
+const final_docs = computed(() => {
+  // console.log("documents.value", documents.value)
+  // return []
+  const initialDocs = props.blok?.body || documents.value.body
+  if (!initialDocs)
+    return []
+  return initialDocs
+    .map(doc => {
+      doc.colors = typeDocuments.value[doc.type_doc]
+      const date_start = dayjs(doc.start_date.substr(0, 10))
+      const date_end = dayjs(doc.end_date.substr(0, 10))
+      doc.date_start = date_start
+      doc.year = date_start.year()
+      doc.month = date_start.month()
+      doc.month_year = date_start.format('MMMM YYYY')
+      let date_text = date_start.format('[Del] D [al] ')
+      date_text += `${date_end.format('D [de] MMMM [de] YYYY')}`
+      doc.created_format = date_start.format('D [de] MMMM [de] YYYY')
+      doc.date_text = date_text
+      return doc
+    })
+    .sort((x, y) => d3.descending(x.date_start, y.date_start))
+})
+
+const all_months = computed(() =>
+  final_docs.value.reduce((arr, doc) =>(
+    !arr.includes(doc.month_year) ? [...arr, doc.month_year] : arr
+  ), [])
+)
+
+const all_types = computed(() =>
+  final_docs.value.reduce((arr, doc) => (
+    !arr.includes(doc.type_doc)
+      ? [...arr, doc.type_doc]
+      : arr), []
+  ).map((type) => ({
+    name: type,
+    colors: typeDocuments.value[type]
+  }))
+)
+
+const filteredDocs = computed(() => {
+  const selected_month_list = selected_months.value.length
+    ? all_months.value.filter((month, idx) => selected_months.value.includes(idx))
+    : all_months.value
+  const selectedDocList = selectedDocs.value.length
+    ? all_types.value.filter((_, idx) => selectedDocs.value.includes(idx))
+    : all_types.value
+  let filtered_docs = final_docs.value.filter(
+    doc =>
+      selectedDocList.some(selDoc => selDoc.name === doc.type_doc) &&
+      selected_month_list.includes(doc.month_year)
+  )
+  if (!show_all.value && props.blok?.init_display)
+    return filtered_docs.slice(0, props.blok.init_display)
+  return filtered_docs
+
+})
 </script>
 
 <template>
-  <div class="pt-2">
-    <div class="d-flex align-center">
-      <span class="mr-2 text-subtitle-1">Filtrar años:</span>
-      <v-chip-group multiple v-model="selected_years">
-        <v-chip
-          v-for="year in all_years"
-          :key="year"
-          class="mx-1"
-          filter
-          outlined
-          color="accent"
-        >
-          {{year}}
-        </v-chip>
-      </v-chip-group>
-      <span class="mr-2 text-subtitle-1 ml-4">Filtrar documentos:</span>
-      <v-chip-group multiple v-model="selected_docs">
-        <v-chip
-          v-for="type_doc in all_types"
-          :key="type_doc._uid"
-          class="mx-1"
-          filter
-          outlined
-          :color="type_doc.colors[2]"
-        >
-          {{type_doc.name}}
-        </v-chip>
-      </v-chip-group>
-    </div>
-    <v-card
-      v-for="(item, idx) in filtered_docs"
-      :key="item._uid"
-      v-editable="item"
-      class="my-6 pb-0 rounded-lg"
-      :color="item.colors[0]"
+  <SectionHeader
+    v-for="blok in blok?.header"
+    :key="blok._uid"
+    :blok="blok"
+    class="px-3"
+  />
+  <v-card
+    v-editable="blok"
+    style="width: 100%"
+    class="px-3 pb-4"
+    variant="flat"
+    color="transparent"
+  >
+    <div
+      class="d-flex justify-center align-center flex-column flex-md-row"
+      style="width: 100%"
     >
-      <v-row justify="center" align="center">
-        <v-col
-          _cols="12"
-          _sm="5"
-          _md="4"
-          cols="auto"
-          class="pl-3 pa-0 text-center shrink"
-          _align="stretch"
-          align-self="stretch"
-          style="height: 100%;"
-          height="320"
+      <div class="mr-2 text-sm-subtitle-1 text-body-1 text-grey-darken-2">
+        Filtrar meses:
+      </div>
+      <v-chip-group multiple v-model="selected_months">
+        <v-chip
+          v-for="month in all_months"
+          :key="month"
+          class="mx-1"
+          filter
+          variant="outlined"
+          color="accent"
+          :size="smAndUp ? 'default' : 'small'"
         >
-          <v-card
-            :color="item.colors[1]"
-            class="rounded-lg"
-            style="height: 100%"
+          {{ month }}
+        </v-chip>
+      </v-chip-group>
+      <template v-if="all_types.length > 1">
+        <span class="mr-2 text-subtitle-1 ml-4">Filtrar documentos:</span>
+        <v-chip-group multiple v-model="selectedDocs">
+          <v-chip
+            v-for="typeDoc in all_types"
+            :key="typeDoc.name"
+            class="mx-1"
+            filter
+            variant="outlined"
+            :color="typeDoc.colors[2]"
           >
-            <v-img
-              _style="max-height: 200px; max-width: 200px;"
-              dark
-              :aspect-ratio="1"
-              _src="/background7.webp"
-              :src="resizedImg(item.cover, 180)"
-              __style="height: 100%;"
-              _min-height="'100%'"
-              min-width="180"
-              :max-height="'100%'"
-              _max-width="250"
-              id="header"
-            ></v-img>
-          </v-card>
-        </v-col>
-        <v-col
-          _cols="12"
-          _sm="7"
-          _md="8"
-          class="pa-1 pa-sm-2 pa-md-3 grow"
-        >
-          <v-card-subtitle class="text-subtitle-1 no-wrap pb-0 black--text">
-            <span :class="`${item.colors[2]}--text`">
-              {{item.type_doc}}
-            </span>
-            |
-            <span class="grey--text text--darken-1">
-              {{item.created_format}}
-            </span>
-          </v-card-subtitle>
-          <v-card-title class="text-h5 no-wrap pt-2 font-weight-bold">
-            {{item.name}}
-          </v-card-title>
-        </v-col>
-        <v-col
-          _cols="12"
-          _sm="7"
-          _md="8"
-          class="mx-4 mt-8 pa-1 pa-sm-2 pa-md-3 shrink"
-        >
-          <v-btn
-            rounded
-            outlined
-            color="blak"
-            large
-            :href="item.file_doc ? item.file_doc.filename : ''"
-            target="_blank"
-          >
-            <v-icon class="mr-2">fa-file-download</v-icon>
-            Descargar
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card>
-  </div>
+            {{ typeDoc.name }}
+          </v-chip>
+        </v-chip-group>
+      </template>
+    </div>
+    <v-row class="my-3">
+      <v-col
+        v-for="(item, idx) in filteredDocs"
+        :key="item._uid"
+        cols="12"
+        md="6"
+      >
+        <DocumentDetail
+          :item="item"
+        />
+      </v-col>
+    </v-row>
+    <v-card-actions
+      v-if="!show_all && (blok?.init_display || 999) < final_docs.length"
+    >
+      <v-spacer></v-spacer>
+      <v-btn
+        color="accent"
+        variant="outlined"
+        append-icon="expand_more"
+        @click="show_all = true"
+      >
+        Mostrar más
+      </v-btn>
+      <v-spacer></v-spacer>
+    </v-card-actions>
+  </v-card>
 </template>

@@ -2,7 +2,7 @@
 <template>
   <NuxtLayout>
     <v-app>
-      <NuxtPage />
+      <RouterView />
     </v-app>
   </NuxtLayout>
 </template>

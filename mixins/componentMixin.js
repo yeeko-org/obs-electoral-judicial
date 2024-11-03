@@ -1,6 +1,6 @@
 var componentMixin = {
   methods: {
-    resizedImg(img, size1 = 0, size2 = 0) {
+    resizeImg(img, size1 = 0, size2 = 0) {
       if (!size1 && !size2)
         size1 = 400
       if (typeof img !== 'undefined') {

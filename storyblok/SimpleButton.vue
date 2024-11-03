@@ -1,19 +1,37 @@
-<script>
-export default {
-  name: 'SimpleButton',
-  props: ['blok'],
-  methods:{},  
-}
+<script setup>
+import { useDisplay } from 'vuetify'
+
+const { xs } = useDisplay()
+
+const props = defineProps({
+  blok: Object
+})
+
+const size = computed(() =>
+  // :x-large="$breakpoint.is.smAndUp && blok.size == 'x-large'"
+  // :large="($breakpoint.is.xs && blok.size == 'x-large') || blok.size == 'large'"
+  // :small="blok.size == 'x-large'"
+  props.blok.size === 'x-large'
+    ? (xs.value ? 'large' : undefined)
+    : 'small'
+)
+const variant = computed(() =>
+  // :outlined="blok.style == 'outlined'"
+  // :text="blok.style == 'text'"
+  props.blok.style === 'outlined'
+    ? 'outlined'
+    : props.blok.style === 'text'
+    ? 'text'
+    : 'elevated'
+)
+
 </script>
 
 <template>
 
   <v-btn
-    :x-large="$breakpoint.is.smAndUp && blok.size == 'x-large'"
-    :large="($breakpoint.is.xs && blok.size == 'x-large') || blok.size == 'large'"
-    :small="blok.size == 'x-large'"
-    :outlined="blok.style == 'outlined'"
-    :text="blok.style == 'text'"
+    :size="size"
+    :variant="variant"
     :color="blok.color || 'black'"
     class="px-5 mx-2"
     id="button_new"

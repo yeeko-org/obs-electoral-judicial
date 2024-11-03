@@ -14,9 +14,9 @@ export default defineNuxtPlugin((app) => {
             // primary: colors.indigo.darken1,
             // secondary: '#424242',
             // accent: colors.teal.accent4,
-            primary: "#ff002f",
-            secondary: "#d7a997",
-            accent: "#1e1e1e",
+            primary: "#3a3a3a",
+            secondary: "#EE8B44",
+            accent: "#5F9398",
           }
         }
       }

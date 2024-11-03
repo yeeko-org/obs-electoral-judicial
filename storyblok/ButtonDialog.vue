@@ -1,52 +1,58 @@
-<script>
-import InstitutionsList from "./InstitutionsList"
+<script setup>
+import { ref, computed } from 'vue'
+import { useDisplay } from 'vuetify'
 import MaterialList from "./MaterialList"
 import DocumentList from "./DocumentList"
-import MemberJoin from "./MemberJoin"
 
-export default {
-  name: 'ButtonDialog',
-  components: { InstitutionsList, MaterialList, DocumentList, MemberJoin },
-  props: ['blok'],
-  data(){
-    return {
-      dialog: false,
-    }
-  },
-  methods:{
-    openDialog(){
-      this.dialog = true
-    },
-    closeDialog(){
-      this.dialog = false
-    },
-  },
-  computed: {
-    max_width(){
-      return this.blok.display_list == 'MemberJoin'
-        ? '500px'
-        : '850px'
-    },
-  }
+const { xs } = useDisplay()
+
+const props = defineProps({
+  blok: Object
+})
+
+const dialog = ref(false)
+
+function openDialog() {
+  console.log('openDialog')
+  dialog.value = true
 }
+
+function closeDialog() {
+  dialog.value = false
+}
+
+const max_width = computed(() =>
+  props.blok.display_list === 'MemberJoin' ? '500px' : '850px'
+)
+
+const size = computed(() =>
+  props.blok.size === 'x-large'
+    ? (xs.value ? 'large' : undefined)
+    : 'small'
+)
+
+const variant = computed(() =>
+  props.blok.style === 'outlined'
+    ? 'outlined'
+    : props.blok.style === 'text'
+    ? 'text'
+    : 'elevated'
+)
+
 </script>
 
 <template>
-
   <v-btn
-    :x-large="$breakpoint.is.smAndUp && blok.size == 'x-large'"
-    :large="($breakpoint.is.xs && blok.size == 'x-large') || blok.size == 'large'"
-    :small="blok.size == 'x-large'"
-    :outlined="blok.style == 'outlined'"
-    :text="blok.style == 'text'"
-    :color="blok.color || 'black'"
+    :size="size"
+    :variant="variant"
+    :color="blok.color || 'accent'"
     class="px-5 mx-2"
     id="button_new"
     :class="blok.style ? '' : 'white--text'"
     @click="openDialog"
     rounded
   >
-    {{blok.button_title}}
+    {{ blok.button_title }}
     <v-dialog
       v-model="dialog"
       :max-width="max_width"
@@ -56,7 +62,7 @@ export default {
         <v-toolbar class="rounded-xl" elevation="6">
           <v-spacer></v-spacer>
           <v-toolbar-title class="font-weight-bold">
-            {{blok.title_dialog || 'Título'}}
+            {{ blok.title_dialog || 'Título' }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
@@ -64,17 +70,14 @@ export default {
           Recientes
         </v-card-title>
         <v-card-text>
-          <InstitutionsList v-if="blok.display_list === 'AllianceList'"/>
-          <MaterialList v-else-if="blok.display_list === 'Materials'"/>
-          <DocumentList v-else-if="blok.display_list === 'OfficialDocs'"/>
-          <MemberJoin
-            v-else-if="blok.display_list === 'MemberJoin'"
-            @close-dialog="closeDialog"
-          />
-          <span v-else>Ninguno: {{blok.display_list}}</span>
+          <MaterialList v-if="blok.display_list === 'Materials'" />
+          <DocumentList v-else-if="blok.display_list === 'OfficialDocs'" />
+          <span v-else>Ninguno: {{ blok.display_list }}</span>
         </v-card-text>
       </v-card>
     </v-dialog>
   </v-btn>
-
 </template>
+
+<style scoped>
+</style>

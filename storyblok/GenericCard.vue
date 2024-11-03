@@ -1,194 +1,135 @@
-<script>
-import componentMixin from "~/mixins/componentMixin"
+<script setup>
+// import { computed, ref, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
-const { xs, mdAndUp, smAndDown } = useDisplay()
+import CommonTitle from "../components/CommonTitle.vue";
+const { xs, smAndUp, smAndDown } = useDisplay()
 
-export default {
-  name: 'GenericCard',
-  props: ['blok'],
-  data(){
-    return {
-      is_mounted: false,
-      is_left: false,
-    }
-  },
-  mixins: [componentMixin],
-  computed:{
-    xs: ()=> xs,
-    smAndDown: ()=> smAndDown,
-    smAndUp: ()=> mdAndUp,
-    style_main_div(){
-      return `margin-${this.blok.image_position}: ${this.blok.image_margin || 410}px`
-    },
-    position_top(){
-      return this.blok.image_position === 'top'
-    },
-    position_image(){
-      return this.is_image_top ?
-        this.blok.image_position === 'top'
-          ? 'center'
-          : 'top'
-        : this.blok.image_position
-    },
-    is_image_top(){
-      return smAndDown || this.blok.image_position === 'top'
-    },
-    max_heigth(){
-      return this.is_image_top
-        ? 180
-        : 400
-    },
-    image_iframe(){
-      return this.blok.video_side && this.blok.video_side.includes('youtube')
-    },
-    order_iframe(){
-      console.log("video_position", this.blok.video_position)
-      const video_position = this.blok.video_position || 'left'
-      return video_position === 'left' ? 1 : 3
-    },
-  },
-  mounted(){
-    this.is_mounted = true
-  },
+// defineProps({ blok: Object });
+const props = defineProps({
+  blok: Object,
+  columns_together: Boolean,
+})
+
+const style_main_div = computed(() => `margin-${props.blok.image_position}: ${props.blok.image_margin || 410}px`)
+const position_top = computed(() => props.blok.image_position === 'top')
+const position_image = computed(() => is_image_top.value ? (props.blok.image_position === 'top' ? 'center' : 'top') : props.blok.image_position)
+const is_image_top = computed(() => smAndDown.value || props.blok.image_position === 'top')
+const max_height = computed(() => is_image_top.value ? 180 : 400)
+const image_iframe = computed(() => {
+  return props.blok.video_side?.includes('youtube')
+})
+const order_iframe = computed(() => {
+  const video_position = props.blok.video_position || 'left'
+  return video_position === 'left' ? 1 : 3
+})
+const color_title = computed(() =>
+    props.blok.color_title ? props.blok.color_title.color : 'primary')
+
+const space_class = computed(() => {
+  let final_class = props.columns_together ? 'px-0' : 'px-2 px-sm-3'
+  final_class += ` text-${props.blok.align_text || 'left'}`
+  // if (props.blok.free_class)
+  //   final_class += ` ${props.blok.free_class}`
+  return final_class
+})
+
+const card_class = computed(() => {
+  let base_class = props.blok.free_class || ''
+  if (smAndUp.value)
+    return `${base_class} fill-height text-${props.blok.align_text}`
+  else
+    return `${base_class} text-center`
+})
+
+const description2 = computed(() => {
+  return renderRichText(props.blok.description2)
+})
+const color_description = computed(() =>
+    props.blok.color_description || 'black')
+
+const variant_card = computed(() => {
+  return props.blok.background_color2
+    ? props.blok.background_color2 === 'primary'
+      ? 'elevated'
+      : 'tonal'
+    : 'elevated'
+})
+
+function orientToAlign(orient) {
+  return orient === 'left' ? 'start' : orient === 'right' ? 'end' : 'center'
 }
+
+const final_align = computed(() => {
+  return orientToAlign(props.blok.align_text)
+})
+
+const final_sm_align = computed(() => {
+  return orientToAlign(props.blok.align_md)
+})
+
+const blok_header = computed(() => {
+  return {
+    subheader: props.blok.title,
+    color_title: props.blok.color_title,
+    color_pleca: props.blok.color_pleca,
+    align_text: props.blok.align_text,
+    align_md: props.blok.align_md,
+    is_indirect: true,
+  }
+})
 
 </script>
 
 <template>
+
   <v-col
     v-editable="blok"
     :cols="blok.cols"
     :md="blok.md"
-    :class="xs ? 'pa-2' : 'pa-3'"
+    class="py-0 py-sm-3"
+    :class="space_class"
+    :order="blok.order || 1"
+    :order-md="blok.order_md || 1"
   >
     <v-card
-      :color="blok.background_color && blok.background_color.color || 'transparent'"
-      elevation="4"
-      class="landing-max-width-section text-center rounded-xl"
+      :variant="variant_card"
+      :color="blok.background_color2 || 'transparent'"
+      :class="`${blok.free_class} text-${blok.align_text} text-sm-${blok.align_md}`"
+      class="rounded-0 d-flex flex-column justify-center fill-height"
+      elevation="0"
     >
-      <v-row v-if="image_iframe" no-gutters>
-        <v-col cols="12" md="8" class="pa-0" :order="order_iframe" _order="3">
-          <iframe
-            :src="blok.video_side"
-            title="YouTube video player"
-            width="100%"
-            :height="xs ? 200 : 400"
-            referrerpolicy="strict-origin-when-cross-origin"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
-        </v-col>
-        <v-col
-          cols="12"
-          md="4"
-          order="2"
-          class="d-flex flex-column justify-center"
-        >
-          <v-card-title class="no-wrap">
-            {{blok.title}}
-          </v-card-title>
-          <v-card-text v-if="blok.description">
-            <div class="d-flex flex-column">
-              <div class="align-self-start mb-auto black--text text-left">
-<!--                <p-->
-<!--                  :class="{-->
-<!--                    'body-1': xs,-->
-<!--                    'mt-2': xs,-->
-<!--                    'mt-4': smAndUp,-->
-<!--                    'body-2': smAndUp}"-->
-<!--                >-->
-                <p>
-                  {{blok.description}}
-                </p>
-              </div>
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <StoryblokComponent
-              v-for="blok in blok.button"
-              :key="blok._uid"
-              :blok="blok"
-            ></StoryblokComponent>
-          </v-card-actions>
-        </v-col>
-      </v-row>
-      <template v-else>
-        <v-img
-          :style="`height: ${max_heigth}px`"
-          dark
-          :src="resizedImg(blok.image_side)"
-          _min-height="400"
-          id="header"
-          :contain="!is_image_top"
-          _position="is_image_top ? 'center' : blok.image_position"
-          :position="position_image"
-          :class="{
-            'py-4': xs,
-            'py-8': smAndUp}"
-        >
+      <div>
+        <CommonTitle
+          v-if="blok.title"
+          :blok="blok_header"
+        />
+        <v-card-text v-if="blok.description2">
           <div
-            v-if="!is_image_top"
-            :style="style_main_div"
-            class="black--text d-flex flex-column justify-center py-6 px-2"
-          >
-            <v-card-title class="no-wrap">
-              {{blok.title}}
-            </v-card-title>
-            <v-card-text v-if="blok.description">
-              <div class="d-flex flex-column">
-                <div class="align-self-start mb-auto black--text text-left">
-                  <p
-                    :class="{
-                    'body-1': xs,
-                    'mt-2': xs,
-                    'mt-4': smAndUp,
-                    'body-2': smAndUp}"
-                  >
-                    {{blok.description}}
-                  </p>
-                </div>
-              </div>
-            </v-card-text>
-            <v-card-actions>
-              <StoryblokComponent
-                v-for="blok in blok.button"
-                :key="blok._uid"
-                :blok="blok"
-              ></StoryblokComponent>
-            </v-card-actions>
-          </div>
-        </v-img>
-        <div v-if="is_image_top" class="py-6 px-2">
-        <v-card-title class="no-wrap">
-          {{blok.title}}
-        </v-card-title>
-        <v-card-text v-if="blok.description">
-          <div class="d-flex flex-column">
-            <div class="align-self-start mb-auto black--text text-left">
-              <p
-                :class="{
-                'body-1': xs,
-                'mt-2': xs,
-                'mt-4': smAndUp,
-                'body-2': smAndUp}"
-              >
-                {{blok.description}}
-              </p>
-            </div>
-          </div>
+            class="text-text-1 text-sm-subtitle-1 mt-2 mt-sm-4"
+            v-html="description2"
+          ></div>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-if="blok.buttons.length">
+          <v-spacer></v-spacer>
           <StoryblokComponent
-            v-for="blok in blok.button"
+            v-for="blok in blok.buttons"
             :key="blok._uid"
             :blok="blok"
           ></StoryblokComponent>
+          <v-spacer></v-spacer>
         </v-card-actions>
       </div>
-      </template>
     </v-card>
   </v-col>
+
 </template>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
+.side-title{
+  width: 50px;
+  height: 8px;
+}
+.title-no-wrap{
+  white-space: normal !important;
+}
 </style>
