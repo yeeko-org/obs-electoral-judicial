@@ -1,5 +1,6 @@
 {
   "name": "Observatorio Electoral Judicial",
+  "description": "Observatorio Electoral Judicial",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -21,10 +22,10 @@
     "pinia": "^2.2.5",
     "pm2": "^5.4.2",
     "vue": "^3.4.29",
+    "@storyblok/nuxt": "^6.0.13",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
-    "@storyblok/nuxt": "^6.0.13",
     "eslint": "^8.57.1",
     "eslint-plugin-vue": "^9.30.0",
     "eslint-plugin-vuetify": "^2.4.0",
