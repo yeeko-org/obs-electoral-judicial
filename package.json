@@ -2,7 +2,7 @@
   "name": "Observatorio Electoral Judicial",
   "private": true,
   "scripts": {
-    "build": "nuxt build --mode local",
+    "build": "nuxt build",
     "dev": "nuxt dev",
     "dev-ssl": "NODE_TLS_REJECT_UNAUTHORIZED=0 nuxt dev --https --ssl-cert localhost.pem --ssl-key localhost-key.pem",
     "generate": "nuxt generate",

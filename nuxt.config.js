@@ -2,9 +2,6 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import dotenv from 'dotenv'
 
 dotenv.config()
-console.log("HOLA NUXT!")
-console.log("env NUXT_SECRET_API_KEY", process.env.NUXT_SECRET_API_KEY)
-console.log("env NUXT_SECRET_STORYBLOK_TOKEN", process.env.NUXT_SECRET_STORYBLOK_TOKEN)
 // console.log("env", process.env)
 export default defineNuxtConfig({
   build: {
