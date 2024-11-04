@@ -65,7 +65,7 @@ const filteredMats = computed(() => {
           :key="typeMat.name"
           class="mx-1"
           filter
-          outlined
+          variant="outlined"
           :color="typeMat.colors[2]"
         >
           {{ typeMat.name }}
@@ -100,16 +100,16 @@ const filteredMats = computed(() => {
         </v-col>
 
         <v-col class="pa-1 pa-sm-2 pa-md-3 grow">
-          <v-card-subtitle class="text-subtitle-1 no-wrap pb-0 black--text pt-2">
+          <v-card-subtitle class="text-subtitle-1 text-no-wrap pb-0 text-black pt-2">
             <span :class="`${item.colors[2]}--text`">
               Material {{ item.type_material }}
             </span> |
-            <span class="grey--text text--darken-1">{{ item.year }}</span>
+            <span class="text-grey-darken-1">{{ item.year }}</span>
           </v-card-subtitle>
-          <v-card-title class="text-h5 no-wrap py-2 font-weight-bold">
+          <v-card-title class="text-h5 text-no-wrap py-2 font-weight-bold merri-weather">
             {{ item.name }}
           </v-card-title>
-          <v-card-text v-if="item.description" class="black--text text-body-1 pb-2">
+          <v-card-text v-if="item.description" class="text-black text-body-1 pb-2 lato">
             {{ item.description }}
           </v-card-text>
         </v-col>
@@ -118,9 +118,9 @@ const filteredMats = computed(() => {
           <v-btn
             v-if="item.file_material?.filename"
             rounded
-            outlined
+            variant="outlined"
             color="black"
-            large
+            size="large"
             :href="item.file_material.filename"
             target="_blank"
             class="my-2"
@@ -132,9 +132,9 @@ const filteredMats = computed(() => {
           <v-btn
             v-if="item.link?.url"
             rounded
-            outlined
+            variant="outlined"
             color="black"
-            large
+            size="large"
             block
             :href="item.link.url"
             target="_blank"

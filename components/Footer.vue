@@ -42,9 +42,11 @@ function wantOpenLink(url) {
     id="app"
     v-editable="blok"
     color="primary"
+    class="py-6"
     style="width: 100%;"
   >
     <v-row
+        class="app-width2"
       v-if="main_blok"
     >
       <v-col
@@ -52,23 +54,31 @@ function wantOpenLink(url) {
         md="4"
         offset="2"
         offset-md="0"
-        class="text-left"
+        class="text-left pa-8"
       >
         <v-img
           src="~/assets/nuevo_logo_full.png"
           :height="'100%'"
           :width="'100%'"
+          max-height="280"
         />
       </v-col>
-      <v-col cols="12" md="8" class="text-left">
+      <v-col
+        cols="12"
+        md="8"
+        class="text-left pa-8 text-justify d-flex flex-column justify-center lato"
+      >
         <div
           v-html="description"
-          class="text-body-2 text-sm-body-1 py-2"
+          class="text-body-2 text-sm-body-1 py-2 lato"
         ></div>
-        <v-divider color="white" class="my-1"></v-divider>
-        <template v-if="main_blok.contact_email">
+        <v-divider
+          v-if="main_blok.contact_email || main_blok.social_networks.length > 0"
+          color="white" class="my-1"
+        ></v-divider>
+        <div v-if="main_blok.contact_email" class="lato">
           <b>Contacto:</b> {{ main_blok.contact_email }}
-        </template>
+        </div>
         <div class="mt-4">
           <v-btn
             v-for="net in main_blok.social_networks"

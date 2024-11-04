@@ -38,16 +38,15 @@ const props = defineProps({
 }
 
 .section-header {
-  font-family: Lato;
+  //font-family: Lato;
 
   .v-divider {
-    font-family: Lato;
     border-width: 1px;
     max-width: 50px;
   }
 
   .poppins {
-    font-family: Poppins !important;
+    //font-family: Poppins !important;
   }
-  }
+}
 </style>

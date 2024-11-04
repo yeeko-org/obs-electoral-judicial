@@ -11,6 +11,7 @@ const props = defineProps({
     color="secondary"
     v-editable="item"
     variant="tonal"
+    class="rounded-0"
   >
     <div class="d-flex flex-no-wrap flex-column flex-sm-row">
       <v-sheet
@@ -19,9 +20,9 @@ const props = defineProps({
       >
         <v-img
           :aspect-ratio="1"
-          :src="resizeImg(item.cover, 180)"
-          width="170"
-          max-height="180"
+          :src="resizeImg(item.cover, 170)"
+          width="160"
+          max-height="170"
         ></v-img>
       </v-sheet>
       <div>
@@ -30,11 +31,11 @@ const props = defineProps({
             v-if="item.type_doc.includes('final')"
             :class="`${item.colors[2]}--text`"
           >{{ item.type_doc }} |</span>
-          <span class="text-grey-darken-2">
+          <span class="text-grey-darken-2 lato">
             {{ item.date_text }}
           </span>
         </v-card-subtitle>
-        <v-card-title class="text-h5 title-no-wrap pt-2 font-weight-bold">
+        <v-card-title class="text-h5 title-no-wrap pt-2 font-weight-bold lato">
           {{ item.name }}
         </v-card-title>
 

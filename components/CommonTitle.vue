@@ -27,12 +27,11 @@ const final_sm_align = computed(() => {
     class="text-h5 text-sm-h4 font-weight-bold d-flex flex-column align-center"
     :class="`text-${blok.color_title || 'primary'} align-${final_align} align-sm-${final_sm_align}`"
   >
-    <span class="lato title-no-wrap" v-html="blok.subheader">
+    <span class="merri-weather title-no-wrap" v-html="blok.subheader">
     </span>
     <v-sheet
       :color="blok.color_pleca || 'primary'"
       class="side-title mt-2"
-      elevation="4"
     ></v-sheet>
   </v-card-title>
 </template>

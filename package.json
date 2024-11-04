@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@fontsource/lato": "^5.1.0",
+    "@fontsource/merriweather": "^5.1.0",
     "@pinia/nuxt": "^0.5.1",
     "axios": "^1.7.2",
     "d3": "^7.9.0",
@@ -31,6 +33,7 @@
     "eslint-plugin-vue": "^9.30.0",
     "eslint-plugin-vuetify": "^2.4.0",
     "globals": "^15.11.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "material-design-icons-iconfont": "^6.7.0",
     "nuxt": "^3.12.2",
     "sass-embedded": "^1.80.5",

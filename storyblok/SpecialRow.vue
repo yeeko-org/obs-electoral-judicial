@@ -12,7 +12,7 @@ const final_color = computed(() => {
 <template>
 
   <v-col cols="12" v-editable="blok" class="px-0 mb-3">
-    <v-sheet :color="final_color">
+    <v-card :color="final_color" class="pb-4 rounded-0" variant="flat">
       <SectionHeader
         v-for="blok in blok?.headers"
         :key="blok._uid"
@@ -23,7 +23,7 @@ const final_color = computed(() => {
         :key="comp._uid"
         :blok="comp"
       />
-    </v-sheet>
+    </v-card>
   </v-col>
 </template>
 

@@ -16,12 +16,13 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }))
       })
     },
+    '@nuxtjs/google-fonts',
     [
       '@storyblok/nuxt',
       {
         accessToken: process.env.NUXT_SECRET_STORYBLOK_TOKEN,
-        // bridge: true,
-        // devtools: true,
+        bridge: true,
+        devtools: true,
         // enableSudoMode: true,
         apiOptions: {
           region: '' // Set 'US" if your space is created in US region (EU default)
@@ -37,6 +38,12 @@ export default defineNuxtConfig({
       cert: 'localhost.pem'
     },
     port: 3005
+  },
+  googleFonts: {
+    families: {
+      Lato: [400, 700],
+      Merriweather: [400, 700]
+    }
   },
   head: {
     titleTemplate: 'Observatorio Electoral Judicial',
@@ -63,6 +70,5 @@ export default defineNuxtConfig({
       }
     }
   },
-
   compatibilityDate: '2024-10-30'
 })

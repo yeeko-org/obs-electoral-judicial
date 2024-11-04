@@ -18,6 +18,7 @@ const props = defineProps({
 <template>
   <v-app-bar
     color="primary"
+    height="90"
   >
     <div
       class="app-width2 d-flex align-center px-3"
@@ -25,14 +26,14 @@ const props = defineProps({
       <router-link to="/" class="d-flex align-center">
         <v-img
           src="~/assets/nuevo_logo.png"
-          :height="xs ? 50 : 60"
-          :width="xs ? 50 : 60"
+          :height="xs ? 64 : 76"
+          :width="xs ? 64 : 76"
         />
         <v-img
           class="ml-3"
           src="~/assets/letras.png"
-          :height="xs ? 40 : 50"
-          :width="xs ? 140 : 168"
+          :height="xs ? 60 : 70"
+          :width="xs ? 190 : 220"
         />
       </router-link>
       </div>

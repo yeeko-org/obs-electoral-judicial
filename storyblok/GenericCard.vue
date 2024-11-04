@@ -95,7 +95,7 @@ const blok_header = computed(() => {
       :variant="variant_card"
       :color="blok.background_color2 || 'transparent'"
       :class="`${blok.free_class} text-${blok.align_text} text-sm-${blok.align_md}`"
-      class="rounded-0 d-flex flex-column justify-center fill-height"
+      class="rounded-0 d-flex flex-column justify-center fill-height py-0 py-sm-4"
       elevation="0"
     >
       <div>
@@ -103,9 +103,9 @@ const blok_header = computed(() => {
           v-if="blok.title"
           :blok="blok_header"
         />
-        <v-card-text v-if="blok.description2">
+        <v-card-text v-if="blok.description2" class="py-2 py-sm-4">
           <div
-            class="text-text-1 text-sm-subtitle-1 mt-2 mt-sm-4"
+            class="text-text-1 text-sm-subtitle-1 _mt-2 _mt-sm-4 lato"
             v-html="description2"
           ></div>
         </v-card-text>

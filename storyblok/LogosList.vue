@@ -17,25 +17,33 @@ const props = defineProps({
     justify="space-around"
     align="center"
     align-content="center"
-    no-gutters
+    class="mx-3"
     v-editable="blok"
   >
     <v-col
       v-for="institution in blok.institutions"
       :key="institution._uid"
+      v-editable="institution"
       cols="10"
       sm="6"
       md="4"
-      class="pa-4 align-center justify-space-between"
+      class="pa-4 align-center justify-space-between text-center"
     >
       <a :href="institution.web_page?.url || ''" target="_blank">
         <v-img
           :src="resizeImg(institution.logo, 350)"
           :alt="`Institución ${institution}`"
-          max-height="120"
-          max-width="350"
+          :max-height="blok.max_height || 120"
+          :max-width="blok.max_width || 350"
         ></v-img>
       </a>
+      <v-tooltip
+        activator="parent"
+        location="bottom"
+      >
+        {{ institution.name }}
+      </v-tooltip>
+
     </v-col>
   </v-row>
 
