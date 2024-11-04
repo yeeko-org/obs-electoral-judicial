@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, ref, nextTick } from 'vue'
 import {useMainStore} from '~/store/index'
-const version_sb = process.env.NUXT_PUBLIC_STORYBLOK_VERSION
+// const version_sb = process.env.NUXT_PUBLIC_STORYBLOK_VERSION
 const story = await useAsyncStoryblok(
     'home',
-    { version: version_sb },
+    { version: 'draft' },
 { customParent: 'https://app.storyblok.com' }
 )
 const mainStore = useMainStore()
@@ -28,7 +28,7 @@ onMounted(() => {
     storyblokApi.get(
       `cdn/stories/documents`,
       {
-        version: version_sb
+        version: 'draft'
       }
     ).then(({data}) => {
       // console.log("data", data);
@@ -38,7 +38,7 @@ onMounted(() => {
     storyblokApi.get(
       `cdn/stories`,
       {
-        version: version_sb,
+        version: 'draft',
         starts_with: "global"
       }
     ).then(({data}) => {
