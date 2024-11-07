@@ -45,23 +45,25 @@ export default defineNuxtConfig({
       Merriweather: [400, 700]
     }
   },
-  head: {
-    titleTemplate: 'Observatorio Electoral Judicial',
-    title: 'OEJ (Observatorio Electoral Judicial)',
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      {
-        hid: 'description',
-        name: 'description',
-        content: 'Documentamos, analizamos y difundimos las decisiones, ' +
-          'los problemas y toda la información relevante del proceso electoral ' +
-          'del Poder Judicial 2024-2025'
-      }
-    ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+  app: {
+    head: {
+      titleTemplate: 'Observatorio Electoral Judicial',
+      title: 'OEJ (Observatorio Electoral Judicial)',
+      meta: [
+        {charset: 'utf-8'},
+        {name: 'viewport', content: 'width=device-width, initial-scale=1'},
+        {
+          hid: 'description',
+          name: 'description',
+          content: 'Documentamos, analizamos y difundimos las decisiones, ' +
+            'los problemas y toda la información relevante del proceso electoral ' +
+            'del Poder Judicial 2024-2025'
+        }
+      ],
+      link: [
+        {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
+      ]
+    }
   },
   vite: {
     vue: {

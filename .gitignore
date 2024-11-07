@@ -10,3 +10,4 @@ node_modules
 dist
 localhost-key.pem
 localhost.pem
+package-lock.json
