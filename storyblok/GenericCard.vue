@@ -1,29 +1,12 @@
 <script setup>
 // import { computed, ref, onMounted } from 'vue'
-import { useDisplay } from 'vuetify'
 import CommonTitle from "../components/CommonTitle.vue";
-const { xs, smAndUp, smAndDown } = useDisplay()
 
 // defineProps({ blok: Object });
 const props = defineProps({
   blok: Object,
   columns_together: Boolean,
 })
-
-const style_main_div = computed(() => `margin-${props.blok.image_position}: ${props.blok.image_margin || 410}px`)
-const position_top = computed(() => props.blok.image_position === 'top')
-const position_image = computed(() => is_image_top.value ? (props.blok.image_position === 'top' ? 'center' : 'top') : props.blok.image_position)
-const is_image_top = computed(() => smAndDown.value || props.blok.image_position === 'top')
-const max_height = computed(() => is_image_top.value ? 180 : 400)
-const image_iframe = computed(() => {
-  return props.blok.video_side?.includes('youtube')
-})
-const order_iframe = computed(() => {
-  const video_position = props.blok.video_position || 'left'
-  return video_position === 'left' ? 1 : 3
-})
-const color_title = computed(() =>
-    props.blok.color_title ? props.blok.color_title.color : 'primary')
 
 const space_class = computed(() => {
   let final_class = props.columns_together ? 'px-0' : 'px-2 px-sm-3'
@@ -33,16 +16,21 @@ const space_class = computed(() => {
   return final_class
 })
 
-const card_class = computed(() => {
-  let base_class = props.blok.free_class || ''
-  if (smAndUp.value)
-    return `${base_class} fill-height text-${props.blok.align_text}`
-  else
-    return `${base_class} text-center`
-})
-
 const description2 = computed(() => {
-  return renderRichText(props.blok.description2)
+  let rich_text = renderRichText(props.blok.description2)
+  if (props.blok.is_list) {
+    // const splitted_by_line = rich_text.split('</li>')
+    // let final_content = ''
+    // splitted_by_line.forEach((line, index) => {
+    // })
+    // console.log('splitted_by_line', splitted_by_line)
+    let new_content = rich_text.replace(
+        /<sup>/g, '<b class="text-h6 font-weight-bold merri-weather">')
+    new_content = new_content.replace(/<\/sup>/g, '</b>')
+    return new_content
+  }
+
+  return rich_text
 })
 const color_description = computed(() =>
     props.blok.color_description || 'black')
