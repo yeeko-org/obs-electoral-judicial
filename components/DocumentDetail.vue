@@ -35,6 +35,12 @@ const props = defineProps({
             {{ item.date_text }}
           </span>
         </v-card-subtitle>
+        <v-card-subtitle
+          v-if="item.subtitle"
+          class="text-subtitle-1 title-no-wrap pt-2 font-weight-bold lato text-primary"
+        >
+          {{ item.subtitle }}
+        </v-card-subtitle>
         <v-card-title class="text-h5 title-no-wrap pt-2 font-weight-bold lato">
           {{ item.name }}
         </v-card-title>
