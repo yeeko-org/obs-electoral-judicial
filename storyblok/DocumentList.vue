@@ -26,10 +26,10 @@ const selected_months = ref([])
 const selectedDocs = ref([])
 const show_all = ref(false)
 const typeDocuments = ref({
-  "Informe quincenal": ['#dabdff', '#c192ff', 'purple'],
+  "Informe quincenal": ['#dabdff', '#c192ff', 'secondary'],
   "Informe final": ['#feaabc', '#fd7291', 'pink'],
   "Informe": ['#dabdff', '#c192ff', 'purple'],
-  "Comunicado": ['#feaabc', '#fd7291', 'pink'],
+  "Comunicado": ['#516fce', '#001249', 'info'],
 })
 
 // Computed properties
@@ -43,14 +43,21 @@ const final_docs = computed(() => {
     .map(doc => {
       doc.colors = typeDocuments.value[doc.type_doc]
       const date_start = dayjs(doc.start_date.substr(0, 10))
-      const date_end = dayjs(doc.end_date.substr(0, 10))
       doc.date_start = date_start
       doc.year = date_start.year()
       doc.month = date_start.month()
       doc.month_year = date_start.format('MMMM YYYY')
-      let date_text = date_start.format('[Del] D [al] ')
-      date_text += `${date_end.format('D [de] MMMM [de] YYYY')}`
-      doc.created_format = date_start.format('D [de] MMMM [de] YYYY')
+      let date_text = ''
+      if (doc.type_doc.includes('quincenal')) {
+        date_text = date_start.format('[Del] D [al] ')
+        const date_end = dayjs(doc.end_date.substr(0, 10))
+        date_text += `${date_end.format('D [de] MMMM [de] YYYY')}`
+        doc.created_format = date_start.format('D [de] MMMM [de] YYYY')
+      }
+      else {
+        date_text = date_start.format('D/MMM/YYYY')
+        doc.created_format = date_start.format('D [de] MMMM [de] YYYY')
+      }
       doc.date_text = date_text
       return doc
     })
@@ -122,7 +129,6 @@ const filteredDocs = computed(() => {
           filter
           variant="outlined"
           color="accent"
-          :size="smAndUp ? 'default' : 'small'"
         >
           {{ month }}
         </v-chip>

@@ -8,7 +8,8 @@ const props = defineProps({
 <template>
 <!--  <v-card :color="item.colors[0]" v-editable="item">-->
   <v-card
-    color="secondary"
+    :color="item.colors[2]"
+    color="transparent"
     v-editable="item"
     variant="tonal"
     class="rounded-0"
@@ -27,9 +28,17 @@ const props = defineProps({
       </v-sheet>
       <div>
         <v-card-subtitle class="text-subtitle-1 title-no-wrap pb-0 pt-3 text-black">
+          <v-chip
+            v-if="!item.type_doc.includes('quincenal')"
+            :color="item.colors[2]"
+            size="small"
+            class="mr-2"
+          >
+            {{ item.type_doc }}
+          </v-chip>
           <span
-            v-if="item.type_doc.includes('final')"
-            :class="`${item.colors[2]}--text`"
+            v-if="!item.type_doc.includes('quincenal') && false"
+            :class="`text-${item.colors[2]}`"
           >{{ item.type_doc }} |</span>
           <span class="text-grey-darken-2 lato">
             {{ item.date_text }}

@@ -86,7 +86,13 @@ const blok_header = computed(() => {
       class="rounded-0 d-flex flex-column justify-center fill-height py-0 py-sm-4"
       elevation="0"
     >
+
       <div>
+        <div
+          v-if="false"
+          class="float-left my-6 plequita"
+        >
+        </div>
         <CommonTitle
           v-if="blok.title"
           :blok="blok_header"
@@ -119,5 +125,12 @@ const blok_header = computed(() => {
 }
 .title-no-wrap{
   white-space: normal !important;
+}
+.plequita{
+  background-color: orange;
+  width: 8px;
+  height: 80%;
+  border-radius: 0 10px 10px 0;
+
 }
 </style>

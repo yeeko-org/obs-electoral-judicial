@@ -1,8 +1,9 @@
 <script setup>
-
+const { $preview } = useNuxtApp()
+const version = $preview ? 'draft' : 'published'
 const story = await useAsyncStoryblok(
     'global',
-    { version: 'draft' },
+    { version: version },
 { customParent: 'https://app.storyblok.com' }
 )
 definePageMeta({

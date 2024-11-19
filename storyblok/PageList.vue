@@ -6,9 +6,11 @@ defineProps({ blok: Object })
 </script>
 
 <template>
-  <DocumentList
-    :blok="blok"
-  />
+  <v-row class="ma-0">
+    <DocumentList
+      :blok="blok"
+    />
+  </v-row>
 <!--  <v-row class="ma-0">-->
 <!--    soy yo mismo {{blok.body}}-->
 <!--    <StoryblokComponent-->

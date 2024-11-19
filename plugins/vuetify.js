@@ -17,6 +17,8 @@ export default defineNuxtPlugin((app) => {
             primary: "#3a3a3a",
             secondary: "#EE8B44",
             accent: "#5F9398",
+            info: "#001249",
+            warning: "#e0be79",
           }
         }
       }
