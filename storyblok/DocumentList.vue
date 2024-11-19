@@ -9,7 +9,7 @@ import { useDisplay } from 'vuetify'
 const { xs, smAndUp } = useDisplay()
 import { resizeImg, transformImage } from '~/composables/storyblok_images.js'
 import * as d3 from 'd3'
-import DocumentDetail from "../components/DocumentDetail.vue";
+import Document from "~/storyblok/Document.vue"
 
 dayjs.locale('es')
 const mainStore = useMainStore()
@@ -156,7 +156,7 @@ const filteredDocs = computed(() => {
         cols="12"
         md="6"
       >
-        <DocumentDetail
+        <Document
           :item="item"
         />
       </v-col>
