@@ -19,6 +19,13 @@ const space_class = computed(() => {
 const description2 = computed(() => {
   let rich_text = renderRichText(props.blok.description2)
   if (props.blok.is_list) {
+    console.log('rich_text', rich_text)
+    if (!rich_text.includes('<ul>')){
+      rich_text = `<ul>${rich_text}</ul>`
+      rich_text = rich_text.replace(/<(h[1-6])>/g, "<li><$1>");
+      rich_text = rich_text.replace(/<\/(h[1-6])>/g, "</$1></li>");
+    }
+
     // const splitted_by_line = rich_text.split('</li>')
     // let final_content = ''
     // splitted_by_line.forEach((line, index) => {

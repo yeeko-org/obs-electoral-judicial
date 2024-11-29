@@ -77,9 +77,9 @@ const subtitleStyle = computed(() => ({ color: props.blok.subtitle_color ? props
         class="mb-sm-n6 mb-md-n12 mb-0"
       >
         <v-img
-          v-editable="props.blok"
-          :sssrc="props.blok.cover.filename"
-          :src="resizeImg(props.blok.cover, 1300)"
+          v-editable="blok"
+          :sssrc="blok.cover.filename"
+          :src="resizeImg(blok.cover, 1300)"
           id="image-map"
         >
         </v-img>

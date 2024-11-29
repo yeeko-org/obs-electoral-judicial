@@ -12,7 +12,6 @@ const story = await useAsyncStoryblok(
 const mainStore = useMainStore()
 const { setDocuments, setGlobalConfig } = mainStore
 const storyblokApi = useStoryblokApi();
-const documents = ref([]);
 
 useSeoMeta({
   title: 'Observatorio Electoral Judicial',
@@ -26,30 +25,30 @@ useSeoMeta({
   ogImage: 'https://oej.yeeko.org/_nuxt/nuevo_logo.ChaL5KSF.png',
 })
 
-onMounted(() => {
-  nextTick(() => {
-    storyblokApi.get(
-      `cdn/stories/documents`,
-      {
-        version: version,
-      }
-    ).then(({data}) => {
-      // console.log("data", data);
-      setDocuments(data.story.content);
-      // documents.value = data.story.content;
-    });
-    storyblokApi.get(
-      `cdn/stories`,
-      {
-        version: version,
-        starts_with: "global"
-      }
-    ).then(({data}) => {
-      if (data.stories.length)
-        setGlobalConfig(data.stories[0].content);
-    });
-  });
-});
+// onMounted(() => {
+//   nextTick(() => {
+//     storyblokApi.get(
+//       `cdn/stories/documents`,
+//       {
+//         version: version,
+//       }
+//     ).then(({data}) => {
+//       // console.log("data", data);
+//       setDocuments(data.story.content);
+//       // documents.value = data.story.content;
+//     });
+//     storyblokApi.get(
+//       `cdn/stories`,
+//       {
+//         version: version,
+//         starts_with: "global"
+//       }
+//     ).then(({data}) => {
+//       if (data.stories.length)
+//         setGlobalConfig(data.stories[0].content);
+//     });
+//   });
+// });
 
 
 </script>

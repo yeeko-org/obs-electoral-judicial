@@ -1,5 +1,5 @@
 <script setup>
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import {useDisplay} from "vuetify";
 const { mdAndUp } = useDisplay()
 import { marked } from 'marked'
@@ -9,6 +9,14 @@ marked.setOptions({
 
 const props = defineProps({
   blok: Object,
+  report_blok: Object,
+})
+
+const typeDocuments = ref({
+  "Informe quincenal": ['#dabdff', '#c192ff', 'secondary'],
+  "Informe final": ['#feaabc', '#fd7291', 'pink'],
+  "Informe": ['#dabdff', '#c192ff', 'purple'],
+  "Comunicado": ['#516fce', '#001249', 'info'],
 })
 
 const explanation = computed(() => {
@@ -30,6 +38,15 @@ const padding_top = computed(() => {
   return `pt-${final_val}`
 })
 
+const title_color = computed(() => {
+  if (props.report_blok){
+    const type_doc = typeDocuments.value[props.report_blok.type_doc]
+    return type_doc[2]
+  }
+
+  return 'secondary'
+})
+
 </script>
 
 <template>
@@ -37,8 +54,6 @@ const padding_top = computed(() => {
     v-editable="blok"
     elevation="6"
     class="pb-2 pb-md-4 mt-5 pt-12"
-    _class="{'mt-6': blok.title}"
-    ?class="`mt-${(Number(blok.margin_top) || 0) + 2} ${padding_top}`"
   >
     <v-row class="mx-3 my-0" align="start" v-if="true">
       <v-col
@@ -48,7 +63,7 @@ const padding_top = computed(() => {
       >
         <div>
           <v-sheet
-            color="primary"
+            :color="title_color"
             class="mt-n12 px-5 py-1 text-white font-weight-bold text-h5"
           >
             <div class="merri-weather">
@@ -61,6 +76,12 @@ const padding_top = computed(() => {
         cols="12"
         v-if="blok.text"
       >
+        <div
+          v-if="true"
+          class="float-left my-6 plequita"
+        >
+        </div>
+
         <div
           v-html="explanation"
           class="text-text-1 text-sm-subtitle-1 _mt-2 _mt-sm-4 lato special-img"

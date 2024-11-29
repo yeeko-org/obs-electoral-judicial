@@ -14,11 +14,12 @@ import Document from "~/storyblok/Document.vue"
 dayjs.locale('es')
 const mainStore = useMainStore()
 // Store setup and state
-const { documents } = storeToRefs(mainStore)
+const { all_documents } = storeToRefs(mainStore)
 
 // Props
 const props = defineProps({
-  blok: Object
+  blok: Object,
+  init_documents: Array,
 })
 
 // Data equivalent with refs
@@ -36,7 +37,8 @@ const typeDocuments = ref({
 const final_docs = computed(() => {
   // console.log("documents.value", documents.value)
   // return []
-  const initialDocs = props.blok?.body || documents.value.body
+  const initialDocs = props.init_documents ||
+    props.blok?.body || all_documents.value
   if (!initialDocs)
     return []
   return initialDocs

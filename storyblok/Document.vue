@@ -101,14 +101,21 @@ function openDoc(item) {
         </v-card-title>
         <v-card-actions>
           <v-spacer v-if="false"></v-spacer>
-          <v-btn
-            rounded="lg"
-            variant="tonal"
-            color="accent"
-            prepend-icon="visibility"
-          >
-            Visualizar
-          </v-btn>
+<!--          <NuxtLink-->
+<!--            v-if="item.full_slug"-->
+<!--            :to="item.full_slug"-->
+<!--            class="text-decoration-none"-->
+<!--          >-->
+            <v-btn
+              rounded="lg"
+              variant="tonal"
+              color="accent"
+              prepend-icon="visibility"
+              :to="`/${item.full_slug}`"
+            >
+              Visualizar
+            </v-btn>
+<!--          </NuxtLink>-->
           <v-spacer></v-spacer>
           <v-btn
             _rounded="lg"
@@ -122,6 +129,7 @@ function openDoc(item) {
           </v-btn>
           <v-spacer v-if="false"></v-spacer>
         </v-card-actions>
+
       </div>
     </div>
   </v-card>

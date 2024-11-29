@@ -10,6 +10,7 @@ export const useMainStore = defineStore('main', {
     institutions: [],
     materials: [],
     documents: [],
+    all_documents: [],
     global_config: null,
   }),
   actions: {
@@ -22,6 +23,20 @@ export const useMainStore = defineStore('main', {
     setDocuments(documents) {
       console.log('setting documents', documents)
       this.documents = documents
+    },
+    setAllDocuments(stories) {
+      console.log('setting all documents', stories)
+      this.all_documents = stories.reduce((acc, story) => {
+        // console.log('story', story)
+        if (story.content.document.length > 0){
+          let doc = story.content.document[0]
+          doc.slug = story.slug
+          doc.full_slug = story.full_slug
+          acc.push(doc)
+        }
+        return acc
+      }, [])
+      // console.log('all_documents', this.all_documents)
     },
     setGlobalConfig(config) {
       console.log('setting footer config', config)
