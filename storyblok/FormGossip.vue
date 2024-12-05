@@ -131,9 +131,8 @@ async function submitForm(){
   }
   saving.value = true
   form_data.value.valid_filled = true
-  console.log('submitForm', form_data.value)
-  form_data.appointment = form_data.value.appointment_obj.value
-  form_data.source_type = form_data.value.source_type_obj.value
+  form_data.value.appointment = form_data.value.appointment_obj.text
+  form_data.value.source_type = form_data.value.source_type_obj.name
   sendResponse(form_data.value).then(res=>{
     form_data.value.id = res.id
     if (form_data.value.files.length > 0)
