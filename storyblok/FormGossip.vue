@@ -112,6 +112,7 @@ const gossip_form = ref(false)
 const has_error = ref(false)
 const ready_files = ref(0)
 const all_saved = ref(false)
+const saving = ref(false)
 
 const rules = {
   required: value => !!value || 'Campo requerido',
@@ -128,6 +129,7 @@ async function submitForm(){
     // window.scrollTo(0, 0)
     return
   }
+  saving.value = true
   form_data.value.valid_filled = true
   console.log('submitForm', form_data.value)
   form_data.appointment = form_data.value.appointment_obj.value
@@ -136,8 +138,10 @@ async function submitForm(){
     form_data.value.id = res.id
     if (form_data.value.files.length > 0)
       sendFiles()
-    all_saved.value = true
-    console.log("res", res)
+    else{
+      all_saved.value = true
+      saving.value = false
+    }
   })
 }
 
@@ -149,8 +153,10 @@ function sendFiles(){
     saveFile([elem_id, formData]).then(res=>{
       console.log("res", res);
       ready_files.value += 1
-      if (ready_files.value === form_data.value.files.length)
+      if (ready_files.value === form_data.value.files.length){
         all_saved.value = true
+        saving.value = false
+      }
     })
   })
 }
@@ -296,7 +302,7 @@ function finish() {
             :rules="[rules.required]"
           ></v-select>
         </v-col>
-        <v-col cols="12" md="6" v-if="form_data.appointment?.need_state">
+        <v-col cols="12" md="6" v-if="form_data.appointment_obj?.need_state">
           <v-autocomplete
             v-model="form_data.state"
             :items="states"
@@ -319,7 +325,7 @@ function finish() {
             :rules="[rules.required]"
           ></v-select>
         </v-col>
-        <v-col cols="12" md="8" v-if="form_data.source_type?.need_link">
+        <v-col cols="12" md="8" v-if="form_data.source_type_obj?.need_link">
           <v-text-field
             v-model="form_data.source_link"
             label="Link web de la fuente"
@@ -384,6 +390,7 @@ function finish() {
         variant="elevated"
         size="large"
         type="submit"
+        :loading="saving"
       >
         Enviar formulario
       </v-btn>
