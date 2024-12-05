@@ -50,7 +50,6 @@ const variant = computed(() =>
     id="button_new"
     :class="blok.style ? '' : 'white--text'"
     @click="openDialog"
-    rounded
   >
     {{ blok.button_title }}
     <v-dialog
@@ -66,13 +65,18 @@ const variant = computed(() =>
           </v-toolbar-title>
           <v-spacer></v-spacer>
         </v-toolbar>
-        <v-card-title primary-title v-if="false">
-          Recientes
-        </v-card-title>
         <v-card-text>
           <MaterialList v-if="blok.display_list === 'Materials'" />
           <DocumentList v-else-if="blok.display_list === 'OfficialDocs'" />
-          <span v-else>Ninguno: {{ blok.display_list }}</span>
+          <FormGossip
+            v-else-if="blok.display_list === 'FormGossip'"
+            is_dialog
+            @close-dialog="closeDialog"
+          />
+          <span v-else>
+            Ninguno: {{ blok.display_list }}
+            {{size}} {{blok.size}}
+          </span>
         </v-card-text>
       </v-card>
     </v-dialog>

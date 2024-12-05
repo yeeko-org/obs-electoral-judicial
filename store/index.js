@@ -14,6 +14,27 @@ export const useMainStore = defineStore('main', {
     global_config: null,
   }),
   actions: {
+    async sendResponse(data) {
+      try {
+        let response = await ApiService.post(`/oej/response/`, data);
+        return response.data
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async saveFile([response_id, file_data]) {
+      try {
+        console.log('response_id', response_id)
+        let response = await ApiService.post(
+          `/oej/response/${response_id}/add_file/`, file_data,
+          {headers: {
+            'Content-Type': 'multipart/form-data'
+          }});
+        return response.data
+      } catch (error) {
+        console.error(error);
+      }
+    },
     setInstitutions(institutions) {
       this.institutions = institutions.body.sort((a, b) => d3.ascending(a.name, b.name))
     },
