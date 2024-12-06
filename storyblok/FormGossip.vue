@@ -248,14 +248,15 @@ function finish() {
   >
     <v-card-title
       v-if="!is_dialog"
-      class="text-h5 text-center text-primary font-weight-bold pt-3 mb-3"
+      class="text-h5 text-center text-primary font-weight-bold pt-3 mb-3 title-no-wrap"
       id="gossip"
     >
-      Información sobre la persona postulante
+      Reporta a personas juzgadoras candidatas con conflictos de interés
     </v-card-title>
     <v-alert type="info" variant="tonal" class="mx-3">
-      Comparte la información de los postulantes que consideres es relevante
-      para los votantes (ciudadanos) para esta elección
+      Comparte toda la información y/o evidencia que tengas sobre
+      situaciones que puedan poner en riesgo la independencia, imparcialidad o
+      profesionalismo de las personas que aspiran a un cargo judicial.
     </v-alert>
     <v-alert
       type="error"
@@ -267,8 +268,15 @@ function finish() {
     </v-alert>
     <v-card-text>
       <v-row>
-        <v-col cols="12" class="pb-1 text-subtitle-1 text-secondary">
-          Comencemos con el nombre completo de la persona postulante o candidata
+        <v-col cols="12" class="pb-1 text-subtitle-1">
+          <span  class="text-secondary">
+
+            Comencemos con el nombre completo de la persona postulante o candidata
+          </span>
+          <br>
+          <span class="text-grey-darken-1 text-body-2">
+            (Llena un formulario por cada persona de la que tengas información)
+          </span>
         </v-col>
         <v-col cols="12" md="5">
           <v-text-field
@@ -355,7 +363,8 @@ function finish() {
           ></v-file-input>
         </v-col>
         <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">
-          Si puedes, déjanos tus datos de contacto para poder buscarte
+          <b>Si te interesa entrar en contacto</b>
+          déjanos tus datos de contacto para buscarte
           posteriormente para más información (opcional)
         </v-col>
         <v-col cols="12" md="6">
@@ -398,5 +407,7 @@ function finish() {
 </template>
 
 <style scoped lang="scss">
-
+.title-no-wrap{
+  white-space: normal !important;
+}
 </style>
