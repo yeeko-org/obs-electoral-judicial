@@ -50,6 +50,7 @@ const artificial_blok = {
   subheader: 'Otros informes',
   color_title: 'secondary',
   color_pleca: 'primary',
+  init_display: 4,
 }
 
 // add name to the component

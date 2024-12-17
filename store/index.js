@@ -47,7 +47,7 @@ export const useMainStore = defineStore('main', {
     },
     setAllDocuments(stories) {
       console.log('setting all documents', stories)
-      this.all_documents = stories.reduce((acc, story) => {
+      let documents = stories.reduce((acc, story) => {
         // console.log('story', story)
         if (story.content.document.length > 0){
           let doc = story.content.document[0]
@@ -57,6 +57,8 @@ export const useMainStore = defineStore('main', {
         }
         return acc
       }, [])
+      documents = documents.sort((a, b) => d3.descending(a.date_start, b.date_start))
+      this.all_documents = documents
       // console.log('all_documents', this.all_documents)
     },
     setGlobalConfig(config) {

@@ -26,11 +26,17 @@ const props = defineProps({
 const selected_months = ref([])
 const selectedDocs = ref([])
 const show_all = ref(false)
-const typeDocuments = ref({
+const typeDocuments = {
   "Informe quincenal": ['#dabdff', '#c192ff', 'secondary'],
   "Informe final": ['#feaabc', '#fd7291', 'pink'],
   "Informe": ['#dabdff', '#c192ff', 'purple'],
   "Comunicado": ['#516fce', '#001249', 'info'],
+}
+
+const final_display = computed(()=>{
+  return props.blok
+    ? Number(props.blok.init_display || 4)
+    : 300
 })
 
 // Computed properties
@@ -43,7 +49,7 @@ const final_docs = computed(() => {
     return []
   return initialDocs
     .map(doc => {
-      doc.colors = typeDocuments.value[doc.type_doc]
+      doc.colors = typeDocuments[doc.type_doc]
       const date_start = dayjs(doc.start_date.substr(0, 10))
       doc.date_start = date_start
       doc.year = date_start.year()
@@ -63,7 +69,7 @@ const final_docs = computed(() => {
       doc.date_text = date_text
       return doc
     })
-    .sort((x, y) => d3.descending(x.date_start, y.date_start))
+    // .sort((x, y) => d3.descending(x.date_start, y.date_start))
 })
 
 const all_months = computed(() =>
@@ -79,7 +85,7 @@ const all_types = computed(() =>
       : arr), []
   ).map((type) => ({
     name: type,
-    colors: typeDocuments.value[type]
+    colors: typeDocuments[type]
   }))
 )
 
@@ -95,8 +101,8 @@ const filteredDocs = computed(() => {
       selectedDocList.some(selDoc => selDoc.name === doc.type_doc) &&
       selected_month_list.includes(doc.month_year)
   )
-  if (!show_all.value && props.blok?.init_display)
-    return filtered_docs.slice(0, props.blok.init_display)
+  if (!show_all.value)
+    return filtered_docs.slice(0, final_display.value)
   return filtered_docs
 
 })
@@ -135,21 +141,20 @@ const filteredDocs = computed(() => {
           {{ month }}
         </v-chip>
       </v-chip-group>
-      <template v-if="all_types.length > 1">
-        <span class="mr-2 text-subtitle-1 ml-4">Filtrar documentos:</span>
-        <v-chip-group multiple v-model="selectedDocs">
-          <v-chip
-            v-for="typeDoc in all_types"
-            :key="typeDoc.name"
-            class="mx-1"
-            filter
-            variant="outlined"
-            :color="typeDoc.colors[2]"
-          >
-            {{ typeDoc.name }}
-          </v-chip>
-        </v-chip-group>
-      </template>
+
+      <span class="mr-2 text-subtitle-1 ml-4">Filtrar documentos:</span>
+      <v-chip-group multiple v-model="selectedDocs">
+        <v-chip
+          v-for="typeDoc in all_types"
+          :key="typeDoc.name"
+          class="mx-1"
+          filter
+          variant="outlined"
+          :color="typeDoc.colors[2]"
+        >
+          {{ typeDoc.name }}
+        </v-chip>
+      </v-chip-group>
     </div>
     <v-row class="my-3">
       <v-col
@@ -163,19 +168,24 @@ const filteredDocs = computed(() => {
         />
       </v-col>
     </v-row>
-    <v-card-actions
-      v-if="!show_all && (blok?.init_display || 999) < final_docs.length"
-    >
-      <v-spacer></v-spacer>
-      <v-btn
-        color="accent"
-        variant="outlined"
-        append-icon="expand_more"
-        @click="show_all = true"
+<!--    <template-->
+<!--      v-if="!show_all && (blok?.init_display || 999) < final_docs.length"-->
+<!--    >-->
+
+      <v-card-actions
+        v-if="!show_all && (final_display < final_docs.length)"
       >
-        Mostrar más
-      </v-btn>
-      <v-spacer></v-spacer>
-    </v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="accent"
+          variant="outlined"
+          append-icon="expand_more"
+          @click="show_all = true"
+        >
+          Mostrar más
+        </v-btn>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+<!--    </template>-->
   </v-card>
 </template>
