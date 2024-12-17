@@ -2,6 +2,9 @@
 import CommonTitle from "../components/CommonTitle.vue";
 import {storeToRefs} from "pinia";
 import {useMainStore} from '~/store/index'
+import dayjs from 'dayjs'
+import 'dayjs/locale/es'
+dayjs.locale('es')
 const mainStore = useMainStore()
 // Store setup and state
 const { all_documents } = storeToRefs(mainStore)
@@ -35,8 +38,9 @@ const other_reports = computed(() => {
 const header_blok = computed(() => {
   if (!report_blok.value) return null
   return {
-    header: report_blok.value.subtitle,
+    header: dayjs(report_blok.value.start_date).format('DD [de] MMMM [de] YYYY'),
     subheader: report_blok.value.name,
+    explanation: report_blok.value.subtitle,
     // color_title: 'primary',
     // color_pleca: 'accent',
   }

@@ -31,7 +31,7 @@ const final_sm_align = computed(() => {
     </span>
     <v-sheet
       :color="blok.color_pleca || 'primary'"
-      class="side-title mt-2"
+      class="side-title mt-3"
     ></v-sheet>
   </v-card-title>
 </template>

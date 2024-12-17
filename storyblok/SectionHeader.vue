@@ -38,7 +38,7 @@ function openDoc(item) {
     />
 
     <template v-if="blok.explanation">
-      <v-divider class="mt-5 mb-4 mx-auto"/>
+      <v-divider class="mt-0 mb-4 mx-auto"/>
       <p
         class="text-h6 font-weight-light mx-auto"
         style="max-width: 700px;"

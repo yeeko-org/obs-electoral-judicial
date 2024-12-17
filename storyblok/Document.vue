@@ -93,29 +93,32 @@ function openDoc(item) {
         >
           {{ item.subtitle }}
         </v-card-subtitle>
-        <v-card-title
-          @click="openDoc(item)"
-          class="text-h5 title-no-wrap pt-0 font-weight-bold lato pointer"
-        >
-          {{ item.name }}
-        </v-card-title>
+          <NuxtLink
+            :to="`/${item.full_slug}`"
+            class="text-decoration-none"
+            :class="`text-${item.colors[2]}`"
+          >
+            <v-card-title
+              class="text-h5 title-no-wrap pt-0 font-weight-bold lato pointer"
+            >
+              {{ item.name }}
+            </v-card-title>
+          </NuxtLink>
         <v-card-actions>
           <v-spacer v-if="false"></v-spacer>
-<!--          <NuxtLink-->
-<!--            v-if="item.full_slug"-->
-<!--            :to="item.full_slug"-->
-<!--            class="text-decoration-none"-->
-<!--          >-->
+          <NuxtLink
+            :to="`/${item.full_slug}`"
+            class="text-decoration-none"
+          >
             <v-btn
               rounded="lg"
               variant="tonal"
               color="accent"
               prepend-icon="visibility"
-              :to="`/${item.full_slug}`"
             >
               Visualizar
             </v-btn>
-<!--          </NuxtLink>-->
+          </NuxtLink>
           <v-spacer></v-spacer>
           <v-btn
             _rounded="lg"
