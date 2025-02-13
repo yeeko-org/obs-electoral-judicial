@@ -7,6 +7,18 @@ const props = defineProps({
   blok: Object
 })
 
+const avatar_size = ref('100')
+
+// const avatarSize = computed(() => {
+//   console.log('xs.value', xs.value)
+//   return xs.value ? '100' : '140'
+// })
+onMounted(() => {
+  console.log('xs.value', xs.value)
+  avatar_size.value = xs.value ? '100' : '140'
+})
+
+
 </script>
 
 <template>
@@ -21,8 +33,7 @@ const props = defineProps({
       v-editable="counter"
     >
       <v-avatar
-        size="100"
-        size-sm="140"
+        :size="avatar_size"
         class="mx-auto"
         color="primary"
         style="background-color: #fc0a41;"
