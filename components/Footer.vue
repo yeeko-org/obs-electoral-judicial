@@ -79,31 +79,39 @@ function wantOpenLink(url) {
         <div v-if="main_blok.contact_email" class="lato">
           <b>Contacto:</b> {{ main_blok.contact_email }}
         </div>
-        <div class="mt-4">
-          <v-btn
+        <div class="mt-4 d-flex">
+          <div
             v-for="net in main_blok.social_networks"
             :key="net._uid"
-            align="end"
-            class="mr-4 text-primary"
-            icon
-            variant="tonal"
-            @click="wantOpenLink(net.url)"
-            color="white"
+            class="d-flex flex-column mx-3 align-center"
+            style="min-width: 80px;"
           >
-            <v-avatar
-              v-if="net.logo"
-              size="default"
+            <v-btn
+              align="end"
+              class="text-primary"
+              icon
+              variant="tonal"
+              @click="wantOpenLink(net.url)"
+              color="white"
             >
-              <img
-                :src="resizeImg(net.logo, 80)"
-                :alt="net.icon"
-                :height="24"
+              <v-avatar
+                v-if="net.logo"
+                size="default"
               >
-            </v-avatar>
-            <v-icon v-else size="large" color="white">
-              user
-            </v-icon>
-          </v-btn>
+                <img
+                  :src="resizeImg(net.logo, 80)"
+                  :alt="net.icon"
+                  :height="24"
+                >
+              </v-avatar>
+              <v-icon v-else size="large" color="white">
+                user
+              </v-icon>
+            </v-btn>
+            <span class="text-body-2 mt-3">
+              {{ net.name }}
+            </span>
+          </div>
         </div>
       </v-col>
     </v-row>

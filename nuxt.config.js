@@ -41,14 +41,16 @@ export default defineNuxtConfig({
   },
   googleFonts: {
     families: {
-      Lato: [400, 700],
-      Merriweather: [400, 700]
+      Lato: [400, 500, 700, 900],
+      Merriweather: [400, 500, 700]
     }
   },
   app: {
     head: {
-      titleTemplate: 'Observatorio Electoral Judicial',
+      titleTemplate: 'Observatorio Electoral Judicial (OEJ)',
       title: 'OEJ (Observatorio Electoral Judicial)',
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
       meta: [
         {charset: 'utf-8'},
         {name: 'viewport', content: 'width=device-width, initial-scale=1'},

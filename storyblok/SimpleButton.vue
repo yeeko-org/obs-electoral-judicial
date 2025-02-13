@@ -38,7 +38,7 @@ const variant = computed(() =>
     :class="blok.style ? '' : 'white--text'"
     _click="openDialog"
     :to="blok.to.cached_url || blok.to.url"
-    rounded
+    rounded="xl"
   >
     {{blok.button_title}}
   </v-btn>

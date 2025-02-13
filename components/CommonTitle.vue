@@ -24,12 +24,16 @@ const final_sm_align = computed(() => {
 <template>
   <v-card-title
     v-if="blok.subheader"
-    class="text-h5 text-sm-h4 font-weight-bold d-flex flex-column align-center"
+    class="text-h5 text-sm-h4 font-weight-black d-flex flex-column align-center"
     :class="`text-${blok.color_title || 'primary'} align-${final_align} align-sm-${final_sm_align}`"
   >
-    <span class="merri-weather title-no-wrap" v-html="blok.subheader">
+    <span
+      class="merri-weather title-no-wrap font-weight-black"
+      v-html="blok.subheader"
+    >
     </span>
     <v-sheet
+      v-if="blok.color_pleca !== 'transparent'"
       :color="blok.color_pleca || 'primary'"
       class="side-title mt-3"
     ></v-sheet>

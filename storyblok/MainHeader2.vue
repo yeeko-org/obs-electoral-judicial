@@ -14,9 +14,12 @@ const imgClass = computed(() => ({
   'py-4': smAndUp.value,
 }))
 
-const titleClass = computed(() => `text-${xs.value ? 'h6' : 'h5'} mt-${xs.value ? '4' : '12'}`)
-const titleStyle = computed(() => ({ color: props.blok.title_color ? props.blok.title_color.color : '#512da8' }))
-const subtitleStyle = computed(() => ({ color: props.blok.subtitle_color ? props.blok.subtitle_color.color : '#f40000' }))
+const titleClass = computed(() =>
+  `text-${xs.value ? 'h6' : 'h5'} mt-${xs.value ? '4' : '12'}`)
+const titleStyle = computed(() => (
+  { color: props.blok.title_color ? props.blok.title_color.color : '#512da8' }))
+const subtitleStyle = computed(() => (
+  { color: props.blok.subtitle_color ? props.blok.subtitle_color.color : '#f40000' }))
 </script>
 
 <template>
@@ -91,7 +94,8 @@ const subtitleStyle = computed(() => ({ color: props.blok.subtitle_color ? props
 <style scoped lang="scss">
 #header2 {
   background: rgb(0,127,169);
-  background: linear-gradient(180deg, rgba(0,127,169,1) 0%, rgba(0,89,140,1) 30%, rgba(0,47,108,1) 100%);
+  background: linear-gradient(180deg, rgba(0,127,169,1) 0%,
+      rgba(0,89,140,1) 30%, rgba(0,47,108,1) 100%);
 }
 .white-back {
   background: rgba(256, 256, 256, 0.15);

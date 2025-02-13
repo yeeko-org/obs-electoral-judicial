@@ -124,12 +124,19 @@ const filteredDocs = computed(() => {
   >
     <div
       class="d-flex justify-center align-center flex-column flex-md-row"
-      style="width: 100%"
     >
-      <div class="mr-2 text-sm-subtitle-1 text-body-1 text-grey-darken-2">
+
+      <div
+        class="mr-2 text-sm-subtitle-1 text-body-1 text-grey-darken-2"
+        v-if="smAndUp"
+      >
         Filtrar meses:
       </div>
-      <v-chip-group multiple v-model="selected_months">
+      <v-chip-group
+        v-if="smAndUp"
+        multiple
+        v-model="selected_months"
+      >
         <v-chip
           v-for="month in all_months"
           :key="month"

@@ -6,8 +6,10 @@ node_modules
 .output
 .env
 .env*
+.idea
 .idea*
 dist
 localhost-key.pem
 localhost.pem
 package-lock.json
+
