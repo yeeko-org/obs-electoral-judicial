@@ -9,12 +9,7 @@ const props = defineProps({
 
 const avatar_size = ref('100')
 
-// const avatarSize = computed(() => {
-//   console.log('xs.value', xs.value)
-//   return xs.value ? '100' : '140'
-// })
 onMounted(() => {
-  console.log('xs.value', xs.value)
   avatar_size.value = xs.value ? '100' : '140'
 })
 
