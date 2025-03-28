@@ -47,7 +47,8 @@ const props = defineProps({
         </v-card-subtitle>
         <a :href="note.url?.url || ''" target="_blank">
           <v-card-title
-            class="text-info title-no-wrap text-subtitle-1"
+            class="text-info title-no-wrap text-subtitle-1 font-weight-bold lato"
+            style="white-space: normal !important;"
           >
             {{note.title}}
           </v-card-title>
