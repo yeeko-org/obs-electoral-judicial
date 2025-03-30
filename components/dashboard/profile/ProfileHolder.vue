@@ -13,8 +13,12 @@ const props = defineProps({
 
 <template>
   <v-row>
-    <v-divider></v-divider>
-    <v-col cols="12">
+    <v-divider
+      thickness="3"
+      opacity="0.7"
+      color="accent"
+    ></v-divider>
+    <v-col cols="7">
       <div class="text-secondary text-h6 font-weight-bold mb-4">
         Texto obtenido de la IA
       </div>
@@ -25,9 +29,79 @@ const props = defineProps({
         max-rows="10"
         rows="4"
         auto-grow
+        hide-details
       >
       </v-textarea>
     </v-col>
+    <v-col cols="5">
+      <div class="text-secondary text-h6 font-weight-bold mb-4">
+        Biografía del CJF
+      </div>
+      <v-textarea
+        v-if="full_main.biography_full"
+        v-model="full_main.biography_full.curriculum"
+        label="Info de Gémini"
+        variant="outlined"
+        max-rows="8"
+        rows="4"
+        auto-grow
+        hide-details
+      >
+      </v-textarea>
+      <v-alert
+        v-else
+        class="text-subtitle-1"
+        color="warning"
+        variant="tonal"
+        icon="info"
+      >
+        No se encontró su biografía en el sitio del CJF
+      </v-alert>
+    </v-col>
+    <v-col
+      cols="12"
+      v-if="full_main.sources && full_main.sources.length"
+      class="d-flex flex-wrap"
+    >
+      <div class="text-info text-subtitle-1 font-weight-bold mr-2">
+        Fuentes consultadas:
+      </div>
+      <v-chip
+        v-for="(source, idx) in full_main.sources"
+        :key="source"
+        class="mr-2 mb-2"
+        color="indigo-lighten-2"
+        variant="tonal"
+        size="small"
+        :href="source"
+        target="_blank"
+      >
+        <template v-slot:prepend>
+          <v-avatar
+            size="x-small"
+            color="indigo-lighten-3"
+            class="mr-1"
+          >
+            {{idx + 1}}
+          </v-avatar>
+        </template>
+        <template v-slot:append>
+          <v-icon
+            class="ml-1"
+            color="indigo"
+          >
+            open_in_new
+          </v-icon>
+        </template>
+<!--        Remove https:// and http://-->
+        {{ source.replace(/^(https?:\/\/)?(www\.)?/, '').substring(0, 30) }}...
+      </v-chip>
+    </v-col>
+    <v-divider
+      thickness="3"
+      opacity="0.7"
+      color="accent"
+    ></v-divider>
     <LicensesList
       v-if="full_main.licenses"
       :candidate-id="full_main.id"
@@ -81,9 +155,14 @@ const props = defineProps({
       >
       </v-textarea>
     </v-col>
+    <v-divider
+      thickness="3"
+      opacity="0.7"
+      color="accent"
+    ></v-divider>
     <v-col cols="12">
-      <div class="text-primary text-h5 font-weight-bold mb-4">
-        Experiencia Profesional
+      <div class="text-primary text-h5 font-weight-bold mb-4 mt-2">
+        Experiencia Profesional y otros detalles
       </div>
     </v-col>
     <v-col cols="12">

@@ -28,11 +28,41 @@ const props = defineProps({
     :collection_data="collection_data"
   >
     <template v-slot:title>
-      {{ main.id % 2 === 0 ? 'AU' : 'AP' }}
+
       <span class="text-subtitle-1 font-weight-bold ml-2">
 
         {{ main.full_name_normalized }}
       </span>
+    </template>
+    <template v-slot:icon>
+      <v-avatar
+        :color="main.id % 2 === 0 ? 'light-blue' : 'purple-lighten-1'"
+        size="32"
+      >
+        {{ main.id % 2 === 0 ? 'AU' : 'AP' }}
+      </v-avatar>
+    </template>
+    <template v-slot:details>
+      <template
+        v-if="main.biography"
+      >
+        <v-icon
+          color="green"
+          class="ml-3"
+          size="x-large"
+        >
+          contacts
+        </v-icon>
+        <span
+          class="text-green text-subtitle-1 font-weight-bold ml-1"
+        >
+          Bio
+        </span>
+      </template>
+      <span
+        v-else
+      ></span>
+
     </template>
   </HeaderCommon>
 </template>

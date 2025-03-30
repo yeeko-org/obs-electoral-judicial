@@ -161,7 +161,7 @@ onMounted(fetchLicenses);
 <template>
   <v-col cols="12">
 
-    <div class="text-primary text-h5 font-weight-bold mb-4">
+    <div class="text-primary text-h5 font-weight-bold mb-4 mt-2">
       Formación Académica
     </div>
 
