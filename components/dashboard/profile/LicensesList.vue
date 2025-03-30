@@ -1,173 +1,161 @@
 
-<script>
+<script setup>
 import { ref, reactive, onMounted } from 'vue';
+import { useMainStore } from '~/store/index'
+const mainStore = useMainStore()
+const { deleteSimple } = mainStore
 import axios from 'axios';
 
-export default {
-  name: 'LicensesList',
 
-  props: {
-    candidateId: {
-      type: [Number, String],
-      required: true
-    },
-    apiBaseUrl: {
-      type: String,
-      default: '/api/professional-licenses/'
-    }
+const props = defineProps({
+  candidateId: {
+    type: [Number, String],
+    required: true
   },
+  apiBaseUrl: {
+    type: String,
+    default: '/api/professional-licenses/'
+  },
+  full_main: {
+    type: Object,
+    required: true,
+  },
+});
 
-  setup(props) {
-    // State
-    const licenses = ref([]);
-    const originalLicenses = ref([]);
-    const editMode = ref([]);
-    const loading = ref(false);
-    const showAddForm = ref(false);
+const licenses = ref([]);
+const originalLicenses = ref([]);
+const editMode = ref([]);
+const loading = ref(false);
+const showAddForm = ref(false);
+const deleted_licenses = ref([]);
 
-    const newLicense = reactive({
-      level: '',
-      career: '',
-      year: null,
-      institution: '',
-      is_exact: false,
+const newLicense = reactive({
+  level: '',
+  career: '',
+  year: null,
+  institution: '',
+  is_exact: false,
+});
+
+const snackbar = reactive({
+  show: false,
+  text: '',
+  color: 'success'
+});
+
+const confirmDialog = reactive({
+  show: false,
+  licenseToDelete: null
+});
+
+// Methods
+
+const fetchLicenses = () => {
+  licenses.value = props.full_main.licenses
+  originalLicenses.value = JSON.parse(JSON.stringify(licenses.value));
+  editMode.value = new Array(licenses.value.length).fill(false)
+};
+
+const startEdit = (index) => {
+  editMode.value = new Array(licenses.value.length).fill(false);
+  editMode.value[index] = true;
+  originalLicenses.value[index] = JSON.parse(
+      JSON.stringify(licenses.value[index]));
+};
+
+const cancelEdit = (index) => {
+  licenses.value[index] = JSON.parse(JSON.stringify(originalLicenses.value[index]));
+  editMode.value[index] = false;
+};
+
+const saveLicense = async (license, index) => {
+  loading.value = true;
+  try {
+    await axios.put(`${props.apiBaseUrl}${license.id}/`, {
+      ...license,
+      candidate: props.candidateId
     });
-
-    const snackbar = reactive({
-      show: false,
-      text: '',
-      color: 'success'
-    });
-
-    const confirmDialog = reactive({
-      show: false,
-      licenseToDelete: null
-    });
-
-    // Methods
-    const fetchLicenses = async () => {
-      loading.value = true;
-      try {
-        const response = await axios.get(`${props.apiBaseUrl}?candidate=${props.candidateId}`);
-        licenses.value = response.data;
-        originalLicenses.value = JSON.parse(JSON.stringify(response.data));
-        editMode.value = new Array(licenses.value.length).fill(false);
-      } catch (error) {
-        showNotification('Error al cargar las licencias: ' + error.message, 'error');
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const startEdit = (index) => {
-      editMode.value = new Array(licenses.value.length).fill(false);
-      editMode.value[index] = true;
-      originalLicenses.value[index] = JSON.parse(JSON.stringify(licenses.value[index]));
-    };
-
-    const cancelEdit = (index) => {
-      licenses.value[index] = JSON.parse(JSON.stringify(originalLicenses.value[index]));
-      editMode.value[index] = false;
-    };
-
-    const saveLicense = async (license, index) => {
-      loading.value = true;
-      try {
-        await axios.put(`${props.apiBaseUrl}${license.id}/`, {
-          ...license,
-          candidate: props.candidateId
-        });
-        editMode.value[index] = false;
-        showNotification('Licencia actualizada con éxito', 'success');
-      } catch (error) {
-        showNotification('Error al actualizar: ' + error.message, 'error');
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const confirmDelete = (license) => {
-      confirmDialog.licenseToDelete = license;
-      confirmDialog.show = true;
-    };
-
-    const deleteLicense = async () => {
-      if (!confirmDialog.licenseToDelete) return;
-
-      loading.value = true;
-      try {
-        await axios.delete(`${props.apiBaseUrl}${confirmDialog.licenseToDelete.id}/`);
-        showNotification('Licencia eliminada con éxito', 'success');
-        await fetchLicenses();
-      } catch (error) {
-        showNotification('Error al eliminar: ' + error.message, 'error');
-      } finally {
-        loading.value = false;
-        confirmDialog.show = false;
-        confirmDialog.licenseToDelete = null;
-      }
-    };
-
-    const createLicense = async () => {
-      loading.value = true;
-      try {
-        await axios.post(props.apiBaseUrl, {
-          ...newLicense,
-          candidate: props.candidateId
-        });
-        showNotification('Licencia creada con éxito', 'success');
-        showAddForm.value = false;
-        resetNewLicense();
-        await fetchLicenses();
-      } catch (error) {
-        showNotification('Error al crear: ' + error.message, 'error');
-      } finally {
-        loading.value = false;
-      }
-    };
-
-    const cancelAdd = () => {
-      showAddForm.value = false;
-      resetNewLicense();
-    };
-
-    const resetNewLicense = () => {
-      Object.assign(newLicense, {
-        level: '',
-        career: '',
-        year: null,
-        institution: '',
-        is_exact: false
-      });
-    };
-
-    const showNotification = (text, color = 'success') => {
-      snackbar.text = text;
-      snackbar.color = color;
-      snackbar.show = true;
-    };
-
-    // Lifecycle
-    onMounted(fetchLicenses);
-
-    return {
-      licenses,
-      editMode,
-      loading,
-      showAddForm,
-      newLicense,
-      snackbar,
-      confirmDialog,
-      startEdit,
-      cancelEdit,
-      saveLicense,
-      confirmDelete,
-      deleteLicense,
-      createLicense,
-      cancelAdd
-    };
+    editMode.value[index] = false;
+    showNotification('Licencia actualizada con éxito', 'success');
+  } catch (error) {
+    showNotification('Error al actualizar: ' + error.message, 'error');
+  } finally {
+    loading.value = false;
   }
-}
+};
+
+const confirmDelete = (license) => {
+  confirmDialog.licenseToDelete = license;
+  confirmDialog.show = true;
+};
+
+const deleteLicense = async () => {
+  if (!confirmDialog.licenseToDelete) return;
+
+  loading.value = true;
+  try {
+    const pl_id = confirmDialog.licenseToDelete.id
+    deleteSimple(['professional_license', pl_id]).then((res) => {
+      if (res.errors) {
+        showNotification('Error al eliminar: ' + res.errors, 'error');
+      }
+      showNotification('Licencia eliminada con éxito', 'success');
+    })
+    // await fetchLicenses();
+  } catch (error) {
+    showNotification('Error al eliminar: ' + error.message, 'error');
+  } finally {
+    loading.value = false;
+    licenses.value = licenses.value.filter(
+      (license) => license.id !== confirmDialog.licenseToDelete.id
+    );
+    confirmDialog.show = false;
+    confirmDialog.licenseToDelete = null;
+  }
+};
+
+const createLicense = async () => {
+  loading.value = true;
+  try {
+    await axios.post(props.apiBaseUrl, {
+      ...newLicense,
+      candidate: props.candidateId
+    });
+    showNotification('Licencia creada con éxito', 'success');
+    showAddForm.value = false;
+    resetNewLicense();
+    // await fetchLicenses();
+  } catch (error) {
+    showNotification('Error al crear: ' + error.message, 'error');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const cancelAdd = () => {
+  showAddForm.value = false;
+  resetNewLicense();
+};
+
+const resetNewLicense = () => {
+  Object.assign(newLicense, {
+    level: '',
+    career: '',
+    year: null,
+    institution: '',
+    is_exact: false
+  });
+};
+
+const showNotification = (text, color = 'success') => {
+  snackbar.text = text;
+  snackbar.color = color;
+  snackbar.show = true;
+};
+
+// Lifecycle
+onMounted(fetchLicenses);
+
 </script>
 
 <template>
@@ -179,17 +167,24 @@ export default {
 
     <!-- Licenses Table -->
     <v-sheet class="mb-6" rounded>
-      <v-row v-for="(license, index) in licenses" :key="index" class="mx-2 py-2" :class="{'border-bottom': index < licenses.length - 1}">
+      <v-row
+        v-for="(license, index) in licenses"
+        :key="index" class="mx-2 py-2"
+        :class="{'border-bottom': index < licenses.length - 1}"
+      >
         <!-- Index Number -->
-        <v-col cols="1" class="d-flex align-center">
-          <div class="num-circle">{{ index + 1 }}</div>
+        <v-col cols="1" >
+          <div class="mt-3">
+
+            {{ license.id_licence }}
+          </div>
         </v-col>
 
         <!-- License Fields -->
         <v-col cols="2">
           <v-text-field
             v-model="license.level"
-            :disabled="!editMode[index]"
+            :readonly="!editMode[index]"
             label="Nivel"
             variant="outlined"
             density="compact"
@@ -200,7 +195,7 @@ export default {
         <v-col cols="3">
           <v-text-field
             v-model="license.career"
-            :disabled="!editMode[index]"
+            :readonly="!editMode[index]"
             label="Profesión"
             variant="outlined"
             density="compact"
@@ -208,22 +203,26 @@ export default {
           ></v-text-field>
         </v-col>
 
-        <v-col cols="2">
-          <v-text-field
-            v-model="license.year"
-            :disabled="!editMode[index]"
-            label="Año de exp."
-            type="number"
-            variant="outlined"
-            density="compact"
-            hide-details
-          ></v-text-field>
+        <v-col cols="1">
+          <div class="mt-3">
+            {{license.year}}
+
+          </div>
+<!--          <v-text-field-->
+<!--            v-model="license.year"-->
+<!--            :readonly="!editMode[index]"-->
+<!--            label="Año de exp."-->
+<!--            type="number"-->
+<!--            variant="outlined"-->
+<!--            density="compact"-->
+<!--            hide-details-->
+<!--          ></v-text-field>-->
         </v-col>
 
         <v-col cols="3">
           <v-text-field
             v-model="license.institution"
-            :disabled="!editMode[index]"
+            :readonly="!editMode[index]"
             label="Institución"
             variant="outlined"
             density="compact"
@@ -235,24 +234,30 @@ export default {
         <v-col cols="1" class="d-flex align-center justify-center">
           <v-checkbox
             v-model="license.is_exact"
-            :disabled="!editMode[index]"
+            :readonly="!editMode[index]"
             color="success"
             hide-details
           ></v-checkbox>
         </v-col>
 
         <!-- Actions -->
-        <v-col cols="12" md="auto" class="d-flex align-center justify-end">
+        <v-col cols="12" md="1" class="d-flex align-center justify-end">
           <template v-if="!editMode[index]">
-            <v-btn icon size="small" color="blue" class="mr-1" @click="startEdit(index)">
-              <v-icon>edit</v-icon>
-            </v-btn>
+<!--            <v-btn icon size="small" color="blue" class="mr-1" @click="startEdit(index)">-->
+<!--              <v-icon>edit</v-icon>-->
+<!--            </v-btn>-->
             <v-btn icon size="small" color="red" @click="confirmDelete(license)">
               <v-icon>delete</v-icon>
             </v-btn>
           </template>
           <template v-else>
-            <v-btn icon size="small" color="green" class="mr-1" @click="saveLicense(license, index)">
+            <v-btn
+              icon
+              size="small"
+              color="green"
+              class="mr-1"
+              @click="saveLicense(license, index)"
+            >
               <v-icon>save</v-icon>
             </v-btn>
             <v-btn icon size="small" color="red" @click="cancelEdit(index)">
@@ -266,13 +271,13 @@ export default {
     <!-- Add New License Button -->
     <div class="text-center mb-4">
       <v-btn
-        color="error"
+        color="accent"
         variant="outlined"
         prepend-icon="add"
         @click="showAddForm = true"
         v-if="!showAddForm"
       >
-        AGREGAR
+        Agregar Cédula
       </v-btn>
     </div>
 

@@ -4,7 +4,7 @@ import ProfileHolder from "../../components/dashboard/profile/ProfileHolder.vue"
 import CollectionDisplay from "../../components/dashboard/CollectionDisplay.vue";
 
 definePageMeta({
-  // middleware: 'dashboard',
+  middleware: 'dashboard',
   layout: 'dashboard',
 })
 </script>

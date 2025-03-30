@@ -27,15 +27,15 @@ export default defineNuxtRouteMiddleware((to, from, next) => {
   //   console.log('redirecting to login')
   //   return navigateTo('/login')
   // }
-  if (!authCookie) {
-    // console.log('redirecting to login')
-    purgeAuth()
-    return navigateTo('/login')
-  }
-  if (!is_logged) {
-    // console.log('checking auth')
-    checkAuthSimple()
-  }
+  // if (!authCookie) {
+  //   // console.log('redirecting to login')
+  //   purgeAuth()
+  //   return navigateTo('/login')
+  // }
+  // if (!is_logged) {
+  //   // console.log('checking auth')
+  //   checkAuthSimple()
+  // }
 
   // if (to.params.group)
   //   setCollection(to.params.group)

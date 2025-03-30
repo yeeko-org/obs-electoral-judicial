@@ -1,7 +1,8 @@
 <script setup>
-import StatusDetail from "~/components/dashboard/status/StatusDetail.vue";
+// import StatusDetail from "~/components/dashboard/status/StatusDetail.vue";
 
 import SelectGroup from "~/components/dashboard/common/select/SelectGroup.vue";
+import PositionFilter from "../../custom_filters/PositionFilter.vue";
 // import TripleBooleanFilter from "~/components/dashboard/custom_filters/TripleBooleanFilter.vue";
 // import RangeDates from "~/components/dashboard/custom_filters/RangeDates.vue";
 // import UserSelect from "~/components/dashboard/custom_filters/UserSelect.vue";
@@ -34,20 +35,20 @@ const applyFilters = () => {
     :key="filter_box.name"
   >
 <!--      _v-if="filter_box.collection && filter_box.collection_group === 'status'"-->
-    <StatusDetail
-      v-if="filter_box.collection"
-      :final_filters="final_filters"
-      :collection="filter_box.key_name"
-      collection_group="status"
-      clearable
-      hide-details
-      style="max-width: 300px; min-width: 200px;"
-      @change-status="applyFilters"
-      is_filter
-      class="pr-3 pl-0 py-1"
-    />
+<!--    <StatusDetail-->
+<!--      v-if="filter_box.collection"-->
+<!--      :final_filters="final_filters"-->
+<!--      :collection="filter_box.key_name"-->
+<!--      collection_group="status"-->
+<!--      clearable-->
+<!--      hide-details-->
+<!--      style="max-width: 300px; min-width: 200px;"-->
+<!--      @change-status="applyFilters"-->
+<!--      is_filter-->
+<!--      class="pr-3 pl-0 py-1"-->
+<!--    />-->
     <div
-      v-else-if="filter_box.key_name"
+      v-if="filter_box.key_name"
       class="pr-3 pl-0 py-1 d-flex"
     >
 
@@ -62,7 +63,13 @@ const applyFilters = () => {
     <template
       v-else-if="filter_box.component"
     >
-
+      <PositionFilter
+        v-if="filter_box.component === 'PositionFilter'"
+        :final_filters="final_filters"
+        :field="filter_box.field"
+        :label="filter_box.title"
+        class="pr-3 pl-0 py-1"
+      />
 <!--      <TripleBooleanFilter-->
 <!--        v-if="filter_box.component === 'TripleBooleanFilter'"-->
 <!--        :final_filters="final_filters"-->
@@ -97,7 +104,7 @@ const applyFilters = () => {
 <!--        :full_main="final_filters"-->
 <!--        is_filter-->
 <!--      />-->
-      <h5 >{{filter_box.title || filter_box.name}}</h5>
+      <h5 v-else>{{filter_box.title || filter_box.name}}</h5>
     </template>
     <h5 v-else>{{filter_box.title || filter_box.name}}</h5>
   </template>

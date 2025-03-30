@@ -68,12 +68,72 @@ const collection_data = computed(() => {
     "snake_name": "candidate",
     "model_name": "Candidate",
     "pk": 1,
-    "fields": [],
+    "fields": [
+      {
+        "name": "status_register",
+        "null": true,
+        "width": 100,
+        "is_string": false,
+        "real_name": "status_register_id",
+        "field_type": "unknown",
+        "is_massive": false,
+        "is_editable": true,
+        "primary_key": false,
+        "related_name": "note",
+        "verbose_name": "status register",
+        "related_model": "StatusControl",
+        "relation_type": "relation",
+        "related_app_label": "oej",
+        "related_snake_name": "status_control"
+      },
+      {
+        "name": "status_validation",
+        "null": true,
+        "width": 100,
+        "is_string": false,
+        "real_name": "status_validation_id",
+        "field_type": "unknown",
+        "is_massive": false,
+        "is_editable": true,
+        "primary_key": false,
+        "related_name": "note",
+        "verbose_name": "status validation",
+        "related_model": "StatusControl",
+        "relation_type": "relation",
+        "related_app_label": "oej",
+        "related_snake_name": "status_control"
+      },
+      {
+        "name": "comments",
+        "null": true,
+        "width": 200,
+        "is_string": true,
+        "real_name": "comments",
+        "field_type": "text",
+        "is_massive": false,
+        "is_editable": true,
+        "primary_key": false,
+        "verbose_name": "comments",
+        "relation_type": "simple"
+      }
+    ],
+    "status_groups": [
+      "status_register",
+      "status_validation",
+    ],
     "is_category": false,
     "level": "primary",
     "has" : {
       "order": false,
+      "comments": false,
     },
+    "collection_filters": [
+        {
+            "title": "Puesto", "field": "position",
+            "component": "PositionFilter", "hidden": false,
+            "order": 12, "is_custom": true
+        },
+    ],
     "child_relation_fields": [],
     "available_actions": [],
     "available_sorts": [
@@ -191,7 +251,9 @@ function resetFilters() {
 }
 
 function initFilters() {
-  // console.log("changeFilters", collection_data.value)
+  console.log("changeFilters", collection_data.value)
+  current_filters.value = collection_data.value.collection_filters
+  visible_filters.value = current_filters.value
 }
 
 function setInitResults(init_results){
@@ -265,7 +327,6 @@ function selectItem(item) {
         </v-chip-group>
       </v-col>
       <FiltersList
-        v-if="!simplified_filters"
         :final_filters="final_filters"
         :visible_filters="visible_filters"
       />

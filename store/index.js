@@ -12,14 +12,74 @@ const schema = {
   "snake_name": "candidate",
   "model_name": "Candidate",
   "pk": 1,
-  "fields": [],
+  "status_groups": [
+    "status_register",
+    "status_validation",
+  ],
+  "fields": [
+    {
+      "name": "status_register",
+      "null": true,
+      "width": 100,
+      "is_string": false,
+      "real_name": "status_register_id",
+      "field_type": "unknown",
+      "is_massive": false,
+      "is_editable": true,
+      "primary_key": false,
+      "related_name": "note",
+      "verbose_name": "status register",
+      "related_model": "StatusControl",
+      "relation_type": "relation",
+      "related_app_label": "oej",
+      "related_snake_name": "status_control"
+    },
+    {
+      "name": "status_validation",
+      "null": true,
+      "width": 100,
+      "is_string": false,
+      "real_name": "status_validation_id",
+      "field_type": "unknown",
+      "is_massive": false,
+      "is_editable": true,
+      "primary_key": false,
+      "related_name": "note",
+      "verbose_name": "status validation",
+      "related_model": "StatusControl",
+      "relation_type": "relation",
+      "related_app_label": "oej",
+      "related_snake_name": "status_control"
+    },
+    {
+      "name": "comments",
+      "null": true,
+      "width": 200,
+      "is_string": true,
+      "real_name": "comments",
+      "field_type": "text",
+      "is_massive": false,
+      "is_editable": true,
+      "primary_key": false,
+      "verbose_name": "comments",
+      "relation_type": "simple"
+    }
+  ],
   "is_category": false,
   "level": "primary",
   "available_actions": [],
   "child_relation_fields": [],
   "has" : {
     "order": false,
+    "comments": false,
   },
+  "collection_filters": [
+      {
+          "title": "Puesto", "field": "position",
+          "component": "PositionFilter", "hidden": false,
+          "order": 12, "is_custom": true
+      },
+  ],
   "available_sorts": [
     {
       "title": "Más recientes",
@@ -34,13 +94,26 @@ const schema = {
 
 const calculate_status = (status_control) => {
   return status_control.reduce((obj, st) => {
-    // st = colorMixin.methods.getComplementColor(st)
-    // if (obj[st.group])
-    //   obj[st.group].push(st)
-    // else
-    //   obj[st.group] = [st]
+    if (obj[st.group])
+      obj[st.group].push(st)
+    else
+      obj[st.group] = [st]
     return obj
   }, {})
+}
+
+
+function getLastId(data) {
+  if (data.elems_ids){
+    return { method: 'patch', last_id: `${data.elems_ids[0]}/massive_patch/` }
+  }
+    // return { method: 'post', last_id: 'massive_edit/' }
+  const id = data.id || data.key_name
+  // const id = data.id
+  const is_old = data.id && !data.is_new
+  const method = is_old ? 'put' : 'post'
+  const last_id = is_old ? `${id}/` : ''
+  return { method, last_id }
 }
 
 export const useMainStore = defineStore('main', {
@@ -52,6 +125,7 @@ export const useMainStore = defineStore('main', {
     all_documents: [],
     global_config: null,
     cats_ready: false,
+    cats: [],
     status: {},
     schemas: {
       "collections_dict": {
@@ -62,7 +136,7 @@ export const useMainStore = defineStore('main', {
   }),
   actions: {
     setHeader() {
-      const cookie_auth = useCookie('auth_ocsa')
+      const cookie_auth = useCookie('auth_oej')
       if (cookie_auth.value) {
         ApiService.defaults.headers.common['Authorization'] = `Token ${cookie_auth.value}`
       }
@@ -72,7 +146,7 @@ export const useMainStore = defineStore('main', {
       return new Promise((resolve) => {
         ApiService.get('/catalogs/all/')
           .then(({data}) => {
-            // console.log("fetchCatalogs data", data)
+            console.log("fetchCatalogs data", data)
             this.cats = data
             // this.schemas = calculateSchemas(data)
             // console.log("schemas", this.schemas)
@@ -88,6 +162,10 @@ export const useMainStore = defineStore('main', {
             console.error(error)
           })
       })
+    },
+    cancelFetch() {
+      if (request)
+        request.cancel("Operation canceled by the user.")
     },
     async fetchElements([group, params]) {
       return new Promise(resolve => {
@@ -116,6 +194,27 @@ export const useMainStore = defineStore('main', {
       } catch (error) {
         console.error(error)
         ;
+      }
+    },
+    async saveSimple([collection, data]) {
+      this.setHeader()
+      const { method, last_id } = getLastId(data)
+      try {
+        let response = await ApiService[method](`/${collection}/${last_id}`, data);
+        return response.data
+      } catch (error) {
+        console.error(error);
+        return {errors: error.response.data}
+      }
+    },
+    async deleteSimple([group, id]) {
+      this.setHeader()
+      try {
+        await ApiService.delete(`/${group}/${id}/`);
+        return {success: true}
+      } catch (error) {
+        console.error(error);
+        return {errors: error.response.data}
       }
     },
     async sendResponse(data) {
@@ -173,6 +272,18 @@ export const useMainStore = defineStore('main', {
   getters: {
     getCounter() {
       return this.counter
+    },
+    status_dict(state) {
+      if (!state.cats.status_control)
+        return {}
+      let status_dict = {}
+      Object.keys(state.status).forEach(group_key=>{
+        status_dict[group_key] = {}
+        state.status[group_key].forEach(st=>{
+          status_dict[group_key][st.name] = st
+        })
+      })
+      return status_dict
     },
   }
 })

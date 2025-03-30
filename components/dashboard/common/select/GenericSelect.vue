@@ -222,13 +222,13 @@ function openDialog(is_add=true){
         >
           <div class="d-flex align-start">
             {{ item.title }}
-            <StatusChip
-              collection="validation"
-              :main="item.raw"
-              x_small
-              disabled
-              hide_details
-            />
+<!--            <StatusChip-->
+<!--              collection="validation"-->
+<!--              :main="item.raw"-->
+<!--              x_small-->
+<!--              disabled-->
+<!--              hide_details-->
+<!--            />-->
           </div>
         </template>
       </v-list-item>
@@ -241,14 +241,14 @@ function openDialog(is_add=true){
         class="mr-2"
       ></v-icon>
       {{ item.title }}
-      <StatusChip
-        v-if="item.raw.status_validation !== undefined"
-        collection="validation"
-        :main="item.raw"
-        x_small
-        disabled
-        hide_details
-      />
+<!--      <StatusChip-->
+<!--        v-if="item.raw.status_validation !== undefined"-->
+<!--        collection="validation"-->
+<!--        :main="item.raw"-->
+<!--        x_small-->
+<!--        disabled-->
+<!--        hide_details-->
+<!--      />-->
     </template>
 
 <!--    <template #item="{ item, props: {onClick, title, value} }">-->

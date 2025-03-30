@@ -16,7 +16,7 @@ import {useAuthStore} from '~/store/auth.js'
 import {useMainStore} from '~/store/index.js'
 const mainStore = useMainStore()
 const authStore = useAuthStore()
-const { user_details_ocsa } = authStore
+const { user_details_oej } = authStore
 
 function changeWantEdit(value) {
   want_edit_comment.value = value
@@ -27,7 +27,7 @@ function addComment() {
   props.main.comments = props.main.comments
     ? `${props.main.comments}\n\n` : ''
   const today = dayjs().format('DD/MM/YYYY')
-  const user = user_details_ocsa.first_name
+  const user = user_details_oej.first_name
   props.main.comments += `${today} - ${user}: `
 
 }
