@@ -161,21 +161,20 @@ onMounted(fetchLicenses);
 <template>
   <v-col cols="12">
 
-    <div class="text-primary text-h5 font-weight-bold mb-4 mt-2">
+    <div class="text-primary text-h5 font-weight-bold mb-6 mt-2">
       Formación Académica
     </div>
 
     <!-- Licenses Table -->
-    <v-sheet class="mb-6" rounded>
+    <v-sheet rounded>
       <v-row
         v-for="(license, index) in licenses"
-        :key="index" class="mx-2 py-2"
+        :key="index"
         :class="{'border-bottom': index < licenses.length - 1}"
       >
         <!-- Index Number -->
         <v-col cols="1" >
           <div class="mt-3">
-
             {{ license.id_licence }}
           </div>
         </v-col>
@@ -208,15 +207,6 @@ onMounted(fetchLicenses);
             {{license.year}}
 
           </div>
-<!--          <v-text-field-->
-<!--            v-model="license.year"-->
-<!--            :readonly="!editMode[index]"-->
-<!--            label="Año de exp."-->
-<!--            type="number"-->
-<!--            variant="outlined"-->
-<!--            density="compact"-->
-<!--            hide-details-->
-<!--          ></v-text-field>-->
         </v-col>
 
         <v-col cols="3">
@@ -232,12 +222,13 @@ onMounted(fetchLicenses);
 
         <!-- Exact Verification -->
         <v-col cols="1" class="d-flex align-center justify-center">
-          <v-checkbox
-            v-model="license.is_exact"
-            :readonly="!editMode[index]"
-            color="success"
-            hide-details
-          ></v-checkbox>
+          {{license.is_exact ? 'Exacto' : 'Inexacto'}}
+<!--          <v-checkbox-->
+<!--            v-model="license.is_exact"-->
+<!--            :readonly="!editMode[index]"-->
+<!--            color="success"-->
+<!--            hide-details-->
+<!--          ></v-checkbox>-->
         </v-col>
 
         <!-- Actions -->
@@ -269,7 +260,7 @@ onMounted(fetchLicenses);
     </v-sheet>
 
     <!-- Add New License Button -->
-    <div class="text-center mb-4">
+    <div class="text-center mb-4" v-if="false">
       <v-btn
         color="accent"
         variant="outlined"
@@ -277,7 +268,7 @@ onMounted(fetchLicenses);
         @click="showAddForm = true"
         v-if="!showAddForm"
       >
-        Agregar Cédula
+        Agregar cédula
       </v-btn>
     </div>
 

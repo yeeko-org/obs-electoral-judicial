@@ -84,7 +84,7 @@ const schema = {
   "child_relation_fields": [],
   "has" : {
     "order": false,
-    "comments": false,
+    "comments": true,
   },
   "collection_filters": [
       {
@@ -218,6 +218,15 @@ export const useMainStore = defineStore('main', {
       } catch (error) {
         console.error(error);
         return {errors: error.response.data}
+      }
+    },
+    async patchSimple([collection, id, data]) {
+      this.setHeader()
+      try {
+        let response = await ApiService.patch(`/${collection}/${id}/`, data);
+        return response.data
+      } catch (error) {
+        console.error(error);
       }
     },
     async deleteSimple([group, id]) {
