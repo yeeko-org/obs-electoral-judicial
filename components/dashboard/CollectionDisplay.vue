@@ -14,6 +14,7 @@ const mainStore = useMainStore()
 //   current_collection_data,
 // } = storeToRefs(mainStore)
 const { fetchElements, cancelFetch } = mainStore
+const { schemas } = storeToRefs(mainStore)
 
 const props = defineProps({
   parent_collection: Object,
@@ -61,92 +62,7 @@ onMounted(() => {
 
 const collection_data = computed(() => {
   // return props.parent_collection || current_collection_data.value
-  return {
-    "name": "Candidato",
-    "plural_name": "Candidatos",
-    "app_label": "oej",
-    "snake_name": "candidate",
-    "model_name": "Candidate",
-    "pk": 1,
-    "fields": [
-      {
-        "name": "status_register",
-        "null": true,
-        "width": 100,
-        "is_string": false,
-        "real_name": "status_register_id",
-        "field_type": "unknown",
-        "is_massive": false,
-        "is_editable": true,
-        "primary_key": false,
-        "related_name": "note",
-        "verbose_name": "status register",
-        "related_model": "StatusControl",
-        "relation_type": "relation",
-        "related_app_label": "oej",
-        "related_snake_name": "status_control"
-      },
-      {
-        "name": "status_validation",
-        "null": true,
-        "width": 100,
-        "is_string": false,
-        "real_name": "status_validation_id",
-        "field_type": "unknown",
-        "is_massive": false,
-        "is_editable": true,
-        "primary_key": false,
-        "related_name": "note",
-        "verbose_name": "status validation",
-        "related_model": "StatusControl",
-        "relation_type": "relation",
-        "related_app_label": "oej",
-        "related_snake_name": "status_control"
-      },
-      {
-        "name": "comments",
-        "null": true,
-        "width": 200,
-        "is_string": true,
-        "real_name": "comments",
-        "field_type": "text",
-        "is_massive": false,
-        "is_editable": true,
-        "primary_key": false,
-        "verbose_name": "comments",
-        "relation_type": "simple"
-      }
-    ],
-    "status_groups": [
-      "status_register",
-      "status_validation",
-    ],
-    "is_category": false,
-    "level": "primary",
-    "has" : {
-      "order": false,
-      "comments": false,
-    },
-    "collection_filters": [
-        {
-            "title": "Puesto", "field": "position",
-            "component": "PositionFilter", "hidden": false,
-            "order": 12, "is_custom": true
-        },
-    ],
-    "child_relation_fields": [],
-    "available_actions": [],
-    "available_sorts": [
-      {
-        "title": "Más recientes",
-        "value": "-id"
-      },
-      {
-        "title": "Más antiguos",
-        "value": "id"
-      }
-    ],
-  }
+  return schemas.value.collections_dict.candidate
 })
 const simplified_filters = computed(() =>{
   if (props.is_mini)

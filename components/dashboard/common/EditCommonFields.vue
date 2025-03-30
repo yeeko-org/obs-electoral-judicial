@@ -49,10 +49,12 @@ function openLink(type) {
         :rules="[rules.required]"
       />
       <v-sheet
-        class="d-flex align-center text-h5 font-weight-bold"
-        style="max-width: 300px;"
+        class="d-flex align-center text-h6 font-weight-bold"
+        _style="max-width: 300px;"
         variant="tonal"
-      >NOMBRE</v-sheet>
+      >
+        {{ full_main.full_name_normalized }}
+      </v-sheet>
       <v-spacer></v-spacer>
       <template v-if="final_collection_data.status_groups">
         <StatusDetail

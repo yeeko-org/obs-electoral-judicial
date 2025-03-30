@@ -18,6 +18,19 @@ const schema = {
   ],
   "fields": [
     {
+      "name": "id",
+      "null": false,
+      "width": 80,
+      "is_string": false,
+      "real_name": "id",
+      "field_type": "integer",
+      "is_massive": false,
+      "is_editable": true,
+      "primary_key": true,
+      "verbose_name": "ID",
+      "relation_type": "simple"
+    },
+    {
       "name": "status_register",
       "null": true,
       "width": 100,

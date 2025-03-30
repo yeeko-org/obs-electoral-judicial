@@ -4,10 +4,10 @@ import {useAuthStore} from "~/store/auth.js";
 
 export default defineNuxtRouteMiddleware((to, from, next) => {
   // console.log('TO', to)
-  // if (to.path === '/') {
-  //   console.log('redirecting to dashboard')
-  //   return navigateTo('/dashboard')
-  // }
+  if (to.path === '/dashboard') {
+    console.log('redirecting to dashboard')
+    return navigateTo('/dashboard/candidate')
+  }
 
   const mainStore = useMainStore()
   const authStore = useAuthStore()
@@ -27,15 +27,15 @@ export default defineNuxtRouteMiddleware((to, from, next) => {
   //   console.log('redirecting to login')
   //   return navigateTo('/login')
   // }
-  // if (!authCookie) {
-  //   // console.log('redirecting to login')
-  //   purgeAuth()
-  //   return navigateTo('/login')
-  // }
-  // if (!is_logged) {
-  //   // console.log('checking auth')
-  //   checkAuthSimple()
-  // }
+  if (!authCookie) {
+    // console.log('redirecting to login')
+    purgeAuth()
+    return navigateTo('/login')
+  }
+  if (!is_logged) {
+    // console.log('checking auth')
+    checkAuthSimple()
+  }
 
   // if (to.params.group)
   //   setCollection(to.params.group)

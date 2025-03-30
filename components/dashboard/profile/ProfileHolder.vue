@@ -52,21 +52,6 @@ const props = defineProps({
       </v-card>
 
     </v-col>
-
-    <v-col cols="12">
-      <div class="text-secondary text-h6 font-weight-bold mb-4">
-        Complemento de experiencia académica
-      </div>
-      <v-textarea
-        v-model="full_main.academic_text"
-        label="Texto complementario de la experiencia académica"
-        variant="outlined"
-        max-rows="20"
-        rows="4"
-        auto-grow
-      >
-      </v-textarea>
-    </v-col>
     <v-col cols="12" class="d-flex">
       <div class="text-secondary text-h6 font-weight-bold mt-4">
         Año de inicio
@@ -81,6 +66,20 @@ const props = defineProps({
         max="2100"
         max-width="200px"
       ></v-text-field>
+    </v-col>
+    <v-col cols="12">
+      <div class="text-secondary text-h6 font-weight-bold mb-4">
+        Complemento de experiencia académica
+      </div>
+      <v-textarea
+        v-model="full_main.academic_text"
+        label="Texto complementario de la experiencia académica"
+        variant="outlined"
+        max-rows="20"
+        rows="4"
+        auto-grow
+      >
+      </v-textarea>
     </v-col>
     <v-col cols="12">
       <div class="text-primary text-h5 font-weight-bold mb-4">

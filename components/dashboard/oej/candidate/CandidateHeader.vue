@@ -28,7 +28,11 @@ const props = defineProps({
     :collection_data="collection_data"
   >
     <template v-slot:title>
-      {{ main.full_name_normalized }}
+      {{ main.id % 2 === 0 ? 'AU' : 'AP' }}
+      <span class="text-subtitle-1 font-weight-bold ml-2">
+
+        {{ main.full_name_normalized }}
+      </span>
     </template>
   </HeaderCommon>
 </template>
