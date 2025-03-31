@@ -19,6 +19,7 @@ export default defineNuxtPlugin((app) => {
             accent: "#5F9398",
             info: "#001249",
             warning: "#e0be79",
+            hospital: "#52A198",
           }
         }
       }

@@ -1,6 +1,11 @@
 <script setup>
+import {useMainStore} from "~/store/index.js";
+const mainStore = useMainStore()
+const { seats } = storeToRefs(mainStore)
+const { getSummary } = mainStore
 
 import LicensesList from "./LicensesList.vue";
+import CardHolder from "../../cards/CardHolder.vue";
 
 const props = defineProps({
   full_main: {
@@ -8,6 +13,67 @@ const props = defineProps({
     required: true,
   },
 })
+
+const dialog_text = ref(false)
+const field_selected = ref('')
+const full_text = ref('')
+const card_selected = ref(undefined)
+const want_edit_text = ref(false)
+const loading_summary = ref(false)
+
+const seat_full = computed(() => {
+  return seats.value[props.full_main.seat] || {}
+})
+
+const cards = [
+  {
+    title: 'Texto obtenido de la IA',
+    icon: 'contacts',
+    field: 'gemini_text',
+    text_error: 'Aún no se ha generado su información desde la IA',
+    cols: 5,
+    btn_text: 'Desplegar',
+  },
+  {
+    title: 'Biografía del CJF',
+    icon: 'contacts',
+    field: 'biography_full',
+    text_error: 'No se encontró su biografía en el sitio del CJF',
+    cols: 4,
+    btn_text: 'Desplegar',
+  },
+  {
+    title: 'Ficha (previsualización)',
+    icon: 'contacts',
+    field: 'id',
+    text_error: 'No se encontró su biografía en el sitio del CJF',
+    cols: 3,
+    btn_text: 'Ver',
+    is_preview: true,
+  },
+]
+
+const openDialog = (card) => {
+  field_selected.value = card.field
+  card_selected.value = card
+  if (card.field === 'biography_full') {
+    full_text.value = props.full_main.biography_full.curriculum
+  } else if (card.field === 'gemini_text') {
+    full_text.value = props.full_main.gemini_text
+  }
+  else if (card.field === 'id') {
+    full_text.value = null
+  }
+  dialog_text.value = true
+}
+
+const generateSummary = () => {
+  loading_summary.value = true
+  getSummary([props.full_main.id, props.full_main]).then(response => {
+    props.full_main.professional_summary = response
+    loading_summary.value = false
+  })
+}
 
 </script>
 
@@ -18,45 +84,43 @@ const props = defineProps({
       opacity="0.7"
       color="accent"
     ></v-divider>
-    <v-col cols="7">
-      <div class="text-secondary text-h6 font-weight-bold mb-4">
-        Texto obtenido de la IA
-      </div>
-      <v-textarea
-        v-model="full_main.gemini_text"
-        label="Info de Gémini"
-        variant="outlined"
-        max-rows="10"
-        rows="4"
-        auto-grow
-        hide-details
-      >
-      </v-textarea>
-    </v-col>
-    <v-col cols="5">
-      <div class="text-secondary text-h6 font-weight-bold mb-4">
-        Biografía del CJF
-      </div>
-      <v-textarea
-        v-if="full_main.biography_full"
-        v-model="full_main.biography_full.curriculum"
-        label="Info de Gémini"
-        variant="outlined"
-        max-rows="8"
-        rows="4"
-        auto-grow
-        hide-details
-      >
-      </v-textarea>
-      <v-alert
-        v-else
-        class="text-subtitle-1"
-        color="warning"
+    <v-col
+      v-for="card in cards"
+      :key="card.field"
+      :cols="card.cols"
+      class="mb-4"
+    >
+      <v-card
+        color="blue"
+        class="mb-4 py-3"
         variant="tonal"
-        icon="info"
       >
-        No se encontró su biografía en el sitio del CJF
-      </v-alert>
+        <v-card-title
+          class="py-1 d-flex align-center"
+        >
+          <v-icon
+            size="40"
+            color="blue"
+          >{{ card.icon }}</v-icon>
+          <div>
+            <div class="ml-4 font-weight-bold text-subtitle-1">
+              {{ card.title }}
+            </div>
+            <v-btn
+              v-if="full_main[card.field]"
+              color="accent"
+              class="ml-4"
+              outlined
+              @click="openDialog(card)"
+            >
+              {{ card.btn_text }}
+            </v-btn>
+            <div class="ml-4 text-orange text-caption" v-else>
+              {{ card.text_error }}
+            </div>
+          </div>
+        </v-card-title>
+      </v-card>
     </v-col>
     <v-col
       cols="12"
@@ -202,8 +266,9 @@ const props = defineProps({
           class="ml-4"
           color="accent"
           :variant="full_main.professional_summary ? 'text' : 'elevated'"
-          @click="$emit('generate-summary')"
-          v-tooltip="`Generar resumen`"
+          @click="generateSummary"
+          v-tooltip="`Generar resumen vía IA`"
+          :loading="loading_summary"
         >
           Generar resumen
         </v-btn>
@@ -250,7 +315,54 @@ const props = defineProps({
         ></span>
       </v-card>
     </v-col>
+    <v-dialog
+      v-model="dialog_text"
+      :max-width="card_selected?.is_preview ? '100%' : '900px'"
+    >
+      <v-card
+        v-if="field_selected"
+        class="py-6"
+        :color="card_selected?.is_preview ? seat_full.position_full.color : null"
+      >
+        <v-card-title>
+          {{card_selected.title}}
+        </v-card-title>
+        <v-card-text
+          v-if="full_text"
+          class="text-black text-body-1"
+          style="white-space: pre-line;"
+          v-html="full_text"
+        >
+        </v-card-text>
+        <v-row
+          v-else
+          class="mx-0"
+        >
+          <v-col cols="12" md="6">
 
+            <CardHolder
+              :candidate="full_main"
+            />
+          </v-col>
+
+        </v-row>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="want_edit_text"
+            @click="dialog_text = false; want_edit_text=false"
+            color="success"
+          >Guardar</v-btn>
+          <v-btn
+            v-else
+            @click="dialog_text = false"
+            color="accent"
+            outlined
+          >Cerrar</v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-row>
 </template>
 

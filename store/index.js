@@ -129,6 +129,21 @@ function getLastId(data) {
   return { method, last_id }
 }
 
+function calculateSeats(data) {
+
+  const positions = data.position.reduce((acc, pos) => {
+    pos.body_full = data.body.find((b) => b.id === pos.body)
+    acc[pos.id] = pos
+    return acc
+  }, {})
+  return data.seat.reduce((acc, seat) => {
+    seat.position_full = positions[seat.position]
+    seat.body_full = seat.position_full.body_full
+    acc[seat.id] = seat
+    return acc
+  }, {})
+}
+
 export const useMainStore = defineStore('main', {
   state: () => ({
     counter: 0,
@@ -140,6 +155,7 @@ export const useMainStore = defineStore('main', {
     cats_ready: false,
     cats: [],
     status: {},
+    seats: {},
     schemas: {
       "collections_dict": {
         "candidate": schema,
@@ -161,6 +177,7 @@ export const useMainStore = defineStore('main', {
           .then(({data}) => {
             console.log("fetchCatalogs data", data)
             this.cats = data
+            this.seats = calculateSeats(data)
             // this.schemas = calculateSchemas(data)
             // console.log("schemas", this.schemas)
             // this.all_nodes = calculateNewCats(data, this.schemas)
@@ -239,6 +256,17 @@ export const useMainStore = defineStore('main', {
         return {errors: error.response.data}
       }
     },
+    async getSummary([candidate_id, data]) {
+      try {
+        let response = await ApiService.post(
+          `/candidate/${candidate_id}/generate_summary/`, data);
+        return response.data
+      } catch (error) {
+        console.error(error)
+        ;
+      }
+    },
+
     async sendResponse(data) {
       try {
         let response = await ApiService.post(`/oej/response/`, data);
