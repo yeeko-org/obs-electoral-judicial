@@ -6,7 +6,7 @@ import PanelsResult from "~/components/dashboard/common/PanelsResult.vue";
 // import { status_filters } from "~/composables/filters.js";
 
 import {storeToRefs} from "pinia";
-// import _debounce from "lodash/debounce.js";
+import _debounce from "lodash/debounce.js";
 
 const mainStore = useMainStore()
 
@@ -18,7 +18,6 @@ const { schemas } = storeToRefs(mainStore)
 
 const props = defineProps({
   parent_collection: Object,
-
   level_name: String,
   filter_group: Object,
   is_mini: Boolean,
@@ -92,16 +91,16 @@ watch(
 
 watch(
   q_value, (val) => {
-    // debounceApplyFilters()
-      applyFilters()
+    debounceApplyFilters()
+    //   applyFilters()
   }
 )
 // const is_category = computed(() =>
 //   collection_data.value.level.includes('category'))
 
-// const debounceApplyFilters = _debounce(() => {
-//   applyFilters()
-// }, 800)
+const debounceApplyFilters = _debounce(() => {
+  applyFilters()
+}, 800)
 
 function applyFilters(page=null) {
   if (loading_fetch.value)

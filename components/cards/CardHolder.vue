@@ -1,7 +1,7 @@
 <script setup>
 import {useMainStore} from "~/store/index.js";
 const mainStore = useMainStore()
-const { seats } = storeToRefs(mainStore)
+const { seats, cats } = storeToRefs(mainStore)
 
 const props = defineProps({
   candidate: {
@@ -9,6 +9,35 @@ const props = defineProps({
     required: true,
   },
 })
+
+const show_details = ref(false)
+const extra_fields = {
+  "more_info_text": "HALLAZGOS",
+  "professional_text": "Detalles de la experiencia profesional",
+  "academic_text": "Complemento de experiencia académica",
+}
+
+const extra_fields_full = [
+  {
+    "key": "professional_summary",
+    "title": "TRAYECTORIA PROFESIONAL",
+    "subtitle": "Resumen",
+    "init_display": true,
+  },
+  {
+    "key": "more_info_text",
+    "title": "HALLAZGOS",
+    "subtitle": "Conflictos de interés y otros detalles",
+  },
+  {
+    "key": "professional_text",
+    "title": "TRAYECTORIA PROFESIONAL COMPLETA",
+  },
+  {
+    "key": "academic_text",
+    "title": "Complemento de experiencia académica",
+  }
+]
 
 const seat_full = computed(() => {
   return seats.value[props.candidate.seat] || {}
@@ -31,20 +60,43 @@ const position = computed(() => {
 
 const professional_summary = computed(() => {
   let summary = props.candidate.professional_summary
-  if (!summary) return ''
-  summary = summary.replace(/\\n/g, '\n')
-  // convert paragraphs to <p> tags
+  return convertParagraphs(summary)
+})
 
-  const paragraphs = summary.split('\n').map(paragraph =>
-      `<p class="_mb-1">${paragraph}</p>`).join('')
-  return paragraphs
-
+const extra_sections = computed(() => {
+  // return Object.entries(extra_fields).map(([key, value]) => {
+  //   return {
+  //     key,
+  //     title: value,
+  //     text: convertParagraphs(props.candidate[key]),
+  //   }
+  // })
+  return extra_fields_full.map(section => {
+    return {
+      ...section,
+      text: convertParagraphs(props.candidate[section.key]),
+    }
+  })
 })
 
 const powers_title = computed(() => {
   return props.candidate.powers.length > 1
     ? 'Poderes Postulantes' : 'Poder Postulante'
 })
+
+const powers_full = computed(() => {
+  if(props.candidate.powers_full)
+    return props.candidate.powers_full
+  return cats.value.power.filter(power =>
+      props.candidate.powers.includes(power.key_name))
+})
+
+const convertParagraphs = (text) => {
+  if (!text) return ''
+  text = text.replace(/\\n/g, '\n')
+  return text.split('\n').map(paragraph =>
+      `<p class="_mb-1">${paragraph}</p>`).join('')
+}
 
 
 </script>
@@ -70,7 +122,7 @@ const powers_title = computed(() => {
         {{candidate.id}}
       </v-sheet>
       <div class="text-h6 ml-6 text-primary font-weight-bold mt-1">
-        {{candidate.full_name_normalized}}
+        {{candidate.full_name}}
       </div>
     </v-sheet>
     <v-row no-gutters class="mt-4">
@@ -93,7 +145,8 @@ const powers_title = computed(() => {
     <v-row class="mt-2 px-4">
       <v-col cols="3" class="d-flex flex-column align-center">
         <v-img
-          src="~/assets/profile.png"
+          old_src="~/assets/profile.png"
+          :src="candidate.photo_small || '/assets/profile.png'"
           :width="'100%'"
           class="rounded-circle mt-n6"
           max-height="240"
@@ -121,7 +174,7 @@ const powers_title = computed(() => {
       </v-col>
       <v-col cols="9" class="mt-2">
         <v-card
-          v-if="candidate.powers_full.length > 2"
+          v-if="powers_full.length > 2"
           variant="outlined"
           color="warning"
         >
@@ -135,7 +188,7 @@ const powers_title = computed(() => {
               </v-sheet>
             </v-col>
             <v-col
-              v-for="power in candidate.powers_full"
+              v-for="power in powers_full"
               :key="power.key_name"
               cols="4"
               class="d-flex align-center pt-2 pb-5"
@@ -173,9 +226,10 @@ const powers_title = computed(() => {
 
             </v-col>
             <v-col
-              v-for="power in candidate.powers_full"
+              v-for="power in powers_full"
               :key="power.key_name"
               cols="4"
+              :offset="powers_full.length === 1 ? 2 : 0"
               class="d-flex align-center"
             >
 
@@ -233,34 +287,80 @@ const powers_title = computed(() => {
         </v-row>
       </v-col>
     </v-row>
-    <v-card-text>
-      <div
-        class="text-secondary text-subtitle-1 font-weight-bold mb-1 mt-2"
-      >
-        TRAYECTORIA PROFESIONAL
-        <span class="text-subtitle-2" style="color: #9e9e9e;">
-          (RESUMEN)
-        </span>
-      </div>
-      <div
-        class="text-white paragraph"
-        v-html="professional_summary"
+    <v-card-text v-if="candidate.professional_summary">
+<!--      <div-->
+<!--        class="text-secondary text-subtitle-1 font-weight-bold mb-1 mt-2"-->
+<!--      >-->
+<!--        TRAYECTORIA PROFESIONAL-->
+<!--        <span class="text-subtitle-2" style="color: #9e9e9e;">-->
+<!--          (RESUMEN)-->
+<!--        </span>-->
+<!--      </div>-->
+<!--      <div-->
+<!--        class="text-white paragraph"-->
+<!--        v-html="professional_summary"-->
+<!--      >-->
+
+<!--      </div>-->
+      <template
+        v-for="section in extra_sections"
+        :key="section.key"
       >
 
-      </div>
+        <div
+          v-if="section.init_display || show_details"
+        >
+          <div
+            class="text-secondary text-subtitle-1 font-weight-bold mb-1 mt-3"
+          >
+            {{section.title}}
+            <span
+              v-if="section.subtitle"
+              class="text-subtitle-2"
+              style="color: #9e9e9e;"
+            >
+              ({{section.subtitle}})
+            </span>
+          </div>
+          <div
+            class="text-white paragraph"
+            v-html="section.text"
+          >
+          </div>
+        </div>
+
+
+
+      </template>
     </v-card-text>
-    <v-card-actions class="mx-3">
+    <v-card-actions class="mx-3" v-if="candidate.professional_summary">
+<!--      <v-btn-->
+<!--        icon-->
+<!--      >-->
+
+<!--      </v-btn>-->
       <v-spacer></v-spacer>
       <v-btn
         color="accent"
         variant="outlined"
-        @click="$emit('select-candidate', candidate)"
-        append-icon="expand_more"
+        :append-icon="show_details ? 'expand_less' : 'expand_more'"
+        @click="show_details = !show_details"
       >
-        Mostrar más
+        {{ show_details ? 'Ocultar detalles' : 'Ver ficha completa' }}
       </v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
+    <v-card-text v-else>
+      <v-alert
+        color="secondary"
+        type="info"
+        class="text-center"
+        variant="outlined"
+      >
+        Estamos construyendo su perfil completo, pronto estará disponible
+      </v-alert>
+    </v-card-text>
+
 
 
   </v-sheet>
@@ -301,7 +401,7 @@ const powers_title = computed(() => {
 }
 
 .rounded-circle{
-  border-radius: 50%;
+  border-radius: 200px;
   //overflow: hidden;
 }
 

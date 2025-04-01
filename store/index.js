@@ -171,7 +171,7 @@ export const useMainStore = defineStore('main', {
       }
     },
     fetchCatalogs() {
-      console.log("fetchCatalogs init")
+      this.setHeader()
       return new Promise((resolve) => {
         ApiService.get('/catalogs/all/')
           .then(({data}) => {
@@ -181,10 +181,12 @@ export const useMainStore = defineStore('main', {
             // this.schemas = calculateSchemas(data)
             // console.log("schemas", this.schemas)
             // this.all_nodes = calculateNewCats(data, this.schemas)
-            this.status = calculate_status(data.status_control)
+            if (data.status_control){
+              this.status = calculate_status(data.status_control)
+              this.cats_ready = true
+            }
             // this.setCollectionData()
             // this.setFilterGroupData()
-            this.cats_ready = true
             console.log("fetchCatalogs end")
             resolve(data)
           })
@@ -335,6 +337,15 @@ export const useMainStore = defineStore('main', {
       })
       return status_dict
     },
+    positions_dict(state) {
+      if (!state.cats.position)
+        return {}
+      return state.cats.position.reduce((acc, pos) => {
+        pos.body_full = state.cats.body.find((b) => b.id === pos.body)
+        acc[pos.id] = pos
+        return acc
+      }, {})
+    }
   }
 })
 

@@ -322,7 +322,7 @@ const generateSummary = () => {
       <v-card
         v-if="field_selected"
         class="py-6"
-        :color="card_selected?.is_preview ? seat_full.position_full.color : null"
+        :color="card_selected?.is_preview ? seat_full.position_full.color_light : null"
       >
         <v-card-title>
           {{card_selected.title}}

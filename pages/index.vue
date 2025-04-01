@@ -10,7 +10,7 @@ const story = await useAsyncStoryblok(
 { customParent: 'https://app.storyblok.com' }
 )
 const mainStore = useMainStore()
-const { setDocuments, setGlobalConfig } = mainStore
+const { setDocuments, setGlobalConfig, fetchCatalogs, cats_ready } = mainStore
 const storyblokApi = useStoryblokApi();
 
 useSeoMeta({
@@ -26,6 +26,9 @@ useSeoMeta({
   ogImage: 'https://oej.yeeko.org/_nuxt/nuevo_logo.ChaL5KSF.png',
 })
 
+onMounted(() => {
+  fetchCatalogs()
+})
 
 </script>
 

@@ -1,5 +1,6 @@
 <script setup>
 const { $preview } = useNuxtApp()
+
 const version = $preview ? 'draft' : 'published'
 const story = await useAsyncStoryblok(
     'global',
@@ -9,6 +10,7 @@ const story = await useAsyncStoryblok(
 definePageMeta({
   layout: 'global',
 })
+
 
 </script>
 

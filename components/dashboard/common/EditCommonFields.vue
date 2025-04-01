@@ -53,7 +53,7 @@ function openLink(type) {
         _style="max-width: 300px;"
         variant="tonal"
       >
-        {{ full_main.full_name_normalized }}
+        {{ full_main.full_name }}
       </v-sheet>
       <v-spacer></v-spacer>
       <template v-if="final_collection_data.status_groups">

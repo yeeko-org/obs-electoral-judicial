@@ -31,7 +31,7 @@ const props = defineProps({
 
       <span class="text-subtitle-1 font-weight-bold ml-2">
 
-        {{ main.full_name_normalized }}
+        {{ main.full_name }}
       </span>
     </template>
     <template v-slot:icon>
