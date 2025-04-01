@@ -156,7 +156,7 @@ const candidates_by_sex = computed(()=>{
 
                 {{sex.candidates.length}} {{ sex.plural }}
               </span>
-              ({{sex.total_seats}} Elegibles)
+              ({{sex.total_seats}} Cargos a elegir)
             </span>
           </v-card-title>
           <CardHolder
