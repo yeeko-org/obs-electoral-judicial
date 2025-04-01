@@ -66,14 +66,15 @@ const candidates_by_sex = computed(()=>{
   <v-card
     :color="position.color_light"
     tile
-    class="pa-3"
+    class="py-3 px-1 px-md-3"
   >
     <v-row
-      class="mx-0"
+      class="mx-n2 mx-md-0"
     >
       <v-col
-        cols="6"
-        class="d-flex align-center justify-center"
+        cols="12"
+        md="6"
+        class="d-flex align-center justify-center py-1 py-md-3"
       >
         <v-text-field
           v-model="q_value"
@@ -93,13 +94,15 @@ const candidates_by_sex = computed(()=>{
         ></v-text-field>
       </v-col>
       <v-col
-        cols="6"
+        cols="12"
+        md="6"
+        class="py-1 py-md-3"
         _class="d-flex align-center"
       >
 
         <div class="d-flex align-center ml-3">
           <span
-            class="mr-2 text-h6 text-primary"
+            class="mr-2 text-subtitle-1 text-md-h6 text-primary"
           >Filtrar por sexo:</span>
           <v-chip-group v-model="selected_sex">
             <v-chip

@@ -128,6 +128,7 @@ const openPosition = (position) => {
     <v-dialog
       v-model="dialog_cards"
       :max-width="'100%'"
+      :fullscreen="xs"
     >
       <v-card-title class="pa-0">
         <v-tabs
@@ -136,6 +137,15 @@ const openPosition = (position) => {
           fixed-tabs
           class=""
         >
+          <v-btn
+            v-if="xs"
+            icon
+            color="accent"
+            variant="elevated"
+            @click="dialog_cards = false"
+          >
+            <v-icon>close</v-icon>
+          </v-btn>
           <v-tab
             v-for="position in ready_positions"
             :value="position.id"

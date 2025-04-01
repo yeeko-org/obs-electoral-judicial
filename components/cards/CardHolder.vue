@@ -1,8 +1,13 @@
 <script setup>
 import {useMainStore} from "~/store/index.js";
+import {useDisplay} from "vuetify";
+import default_profile from '~/assets/profile.png';
+import AcademicTitles from "./AcademicTitles.vue";
+
 const mainStore = useMainStore()
 const { seats, cats } = storeToRefs(mainStore)
 
+const { xs } = useDisplay()
 const props = defineProps({
   candidate: {
     type: Object,
@@ -11,13 +16,6 @@ const props = defineProps({
 })
 
 const show_details = ref(false)
-const extra_fields = {
-  "more_info_text": "HALLAZGOS",
-  "professional_text": "Detalles de la experiencia profesional",
-  "academic_text": "Complemento de experiencia académica",
-}
-
-import default_profile from '~/assets/profile.png';
 
 const extra_fields_full = [
   {
@@ -31,6 +29,7 @@ const extra_fields_full = [
     "title": "TRAYECTORIA PROFESIONAL",
     "subtitle": "Resumen",
     "init_display": true,
+    "init_in_md": true,
   },
   {
     "key": "professional_text",
@@ -61,20 +60,12 @@ const position = computed(() => {
   return `${genderPrefix} ${subBodyText}- ${pos.body_full.short_name}`
 })
 
-const professional_summary = computed(() => {
-  let summary = props.candidate.professional_summary
-  return convertParagraphs(summary)
-})
-
 const extra_sections = computed(() => {
-  // return Object.entries(extra_fields).map(([key, value]) => {
-  //   return {
-  //     key,
-  //     title: value,
-  //     text: convertParagraphs(props.candidate[key]),
-  //   }
-  // })
-  return extra_fields_full.map(section => {
+  let real_sections = extra_fields_full.filter(section => {
+    return props.candidate[section.key]
+  })
+
+  return real_sections.map(section => {
     return {
       ...section,
       text: convertParagraphs(props.candidate[section.key]),
@@ -94,12 +85,25 @@ const powers_full = computed(() => {
       props.candidate.powers.includes(power.key_name))
 })
 
+const powers_count = computed(() => {
+  return props.candidate.powers.length
+})
+
+const title_above = computed(() => {
+  if (powers_count.value > 2)
+    return true
+  if (xs.value && powers_count.value > 1)
+    return true
+  return false
+})
+
 const convertParagraphs = (text) => {
   if (!text) return ''
   text = text.replace(/\\n/g, '\n')
   return text.split('\n').map(paragraph =>
       `<p class="_mb-1">${paragraph}</p>`).join('')
 }
+
 
 
 </script>
@@ -113,29 +117,51 @@ const convertParagraphs = (text) => {
 
     <v-sheet
       color="secondary"
-      height="40"
+      :height="xs ? 36 : 40"
       class="d-flex align-center"
     >
       <v-sheet
         :color="position_full.color"
-        height="46"
-        class="num_lista text-h4 d-flex align-center justify-center
+        :height="xs ? 40 : 46"
+        class="num-lista right-circle text-h5 text-md-h4 d-flex align-center justify-center
           font-weight-bold text-black"
       >
         {{candidate.num_list || candidate.id}}
       </v-sheet>
-      <div class="text-h6 ml-6 text-primary font-weight-bold mt-1">
+      <div class="text-subtitle-1 text-md-h6 ml-2 ml-md-4 text-primary font-weight-bold mt-1">
         {{candidate.full_name}}
       </div>
     </v-sheet>
     <v-row no-gutters class="mt-4">
+      <v-col
+        v-if="position_full && position_full.by_circunscription"
+        cols="auto"
+
+      >
+        <v-sheet
+
+          _color="position_full.color"
+          color="transparent"
+          height="30"
+          class="d-flex align-center right-circle px-5 text-subtitle-1"
+
+        >
+          <span class="mr-2" :style="`color: ${position_full.color}`">
+            Circunscripción
+            <b>
+              {{ seat_full.circunscription }}
+            </b>
+          </span>
+
+        </v-sheet>
+      </v-col>
       <v-spacer></v-spacer>
       <v-col cols="auto">
 
         <v-sheet
           :color="position_full.color"
-          height="30"
-          class="d-flex align-center inverse_circle px-5 text-subtitle-1 text-black"
+          :height="xs ? 26 : 30"
+          class="d-flex align-center inverse-circle px-5 text-subtitle-2 text-md-subtitle-1 text-black"
           text-white
         >
           <b class="mr-2">
@@ -146,29 +172,27 @@ const convertParagraphs = (text) => {
       </v-col>
     </v-row>
     <v-row class="mt-2 px-4">
-      <v-col cols="3" class="d-flex flex-column align-center">
+      <v-col cols="3" class="d-flex flex-column align-center px-1 px-md-3">
         <v-img
-          old_src="~/assets/profile.png"
           :src="candidate.photo_small || default_profile"
           :width="'100%'"
           class="rounded-circle mt-n6"
           max-height="240"
         />
-        <div class="d-flex align-center mt-0">
+        <div class="d-flex align-center mt-2 mt-md-0">
           <v-avatar
             color="white"
-            size="36"
+            :size="xs ? 30 : 36"
           >
 
             <v-icon
               color="primary"
-              size="36"
+              :size="xs ? 30 : 36"
             >
               {{candidate.sex === 'Hombre' ? 'male' : 'female'}}
             </v-icon>
           </v-avatar>
           <span class="ml-2 text-subtitle-1">
-
             {{candidate.sex}}
           </span>
         </div>
@@ -177,7 +201,7 @@ const convertParagraphs = (text) => {
       </v-col>
       <v-col cols="9" class="mt-2">
         <v-card
-          v-if="powers_full.length > 2"
+          v-if="title_above"
           variant="outlined"
           color="warning"
         >
@@ -193,17 +217,17 @@ const convertParagraphs = (text) => {
             <v-col
               v-for="power in powers_full"
               :key="power.key_name"
-              cols="4"
+              :cols="powers_count === 3 ? 4 : 6"
               class="d-flex align-center pt-2 pb-5"
             >
               <v-icon
                 :color="power.color || 'warning'"
                 class="mr-1 ml-1"
-                size="36"
+                :size="xs ? 30 : 36"
               >
                 {{power.icon || 'question_mark'}}
               </v-icon>
-              <div class="power-text text-subtitle-1">
+              <div class="power-text text-body-2 text-sm-subtitle-1">
                 {{power.name}}
               </div>
             </v-col>
@@ -216,12 +240,12 @@ const convertParagraphs = (text) => {
         >
           <v-row>
             <v-col
-              cols="3"
+              :cols="powers_full.length === 1 && xs ? 5 :3"
               class="pr-0 pb-0"
             >
               <v-sheet
                 color="warning"
-                class="text-primary text-subtitle-2 font-weight-bold mb-3 py-1 px-2"
+                class="text-primary text-body-2 text-md-subtitle-2 font-weight-bold mb-3 py-1 px-2"
                 style="line-height: 1.2rem;"
               >
                 {{ powers_title }}
@@ -232,14 +256,14 @@ const convertParagraphs = (text) => {
               v-for="power in powers_full"
               :key="power.key_name"
               cols="4"
-              :offset="powers_full.length === 1 ? 2 : 0"
+              :offset="powers_full.length === 1 && !xs ? 2 : 0"
               class="d-flex align-center"
             >
 
               <v-icon
                 :color="power.color || 'warning'"
                 class="mr-1"
-                size="36"
+                :size="xs ? 30 : 36"
               >
                 {{power.icon || 'gavel'}}
               </v-icon>
@@ -253,59 +277,31 @@ const convertParagraphs = (text) => {
           </v-row>
 
         </v-card>
-        <div
-          class="text-secondary text-subtitle-1 font-weight-bold mb-1 mt-3"
-        >
-          FORMACIÓN ACADÉMICA:
-        </div>
-        <v-row>
-          <v-col
-            v-for="title in candidate.licenses"
-            :key="title.id"
-            cols="6"
-            class="d-flex align-center pt-1 pb-1 px-2"
-          >
-            <v-icon
-              color="green-lighten-2"
-              class="mr-1"
-              size="32"
-            >
-              task_alt
-            </v-icon>
-            <div>
-              <div>
-                <span class="power-text">
-                  {{title.level}}
-                </span>
-                <span class="font-weight-light text-year">
-                  ({{title.year}})
-                </span>
-              </div>
-              <div class="text-secondary text-caption">
-
-                {{ title.career }}
-              </div>
-            </div>
-          </v-col>
-        </v-row>
+        <AcademicTitles
+          v-if="!xs"
+          :candidate="candidate"
+        />
       </v-col>
     </v-row>
-    <v-card-text v-if="candidate.professional_summary">
+    <v-card-text>
+      <AcademicTitles
+        v-if="xs"
+        :candidate="candidate"
+      />
       <template
         v-for="section in extra_sections"
         :key="section.key"
       >
-
         <div
-          v-if="section.init_display || show_details"
+          v-if="(section.init_display || show_details) && candidate.professional_summary"
         >
           <div
-            class="text-secondary text-subtitle-1 font-weight-bold mb-1 mt-3"
+            class="text-secondary text-subtitle-2 text-md-subtitle-1 font-weight-bold mb-1 mt-3"
           >
             {{section.title}}
             <span
               v-if="section.subtitle"
-              class="text-subtitle-2"
+              class="text-caption text-md-subtitle-2"
               style="color: #9e9e9e;"
             >
               ({{section.subtitle}})
@@ -317,9 +313,6 @@ const convertParagraphs = (text) => {
           >
           </div>
         </div>
-
-
-
       </template>
     </v-card-text>
     <v-card-actions class="mx-3" v-if="candidate.professional_summary">
@@ -334,6 +327,7 @@ const convertParagraphs = (text) => {
         variant="outlined"
         :append-icon="show_details ? 'expand_less' : 'expand_more'"
         @click="show_details = !show_details"
+        :size="xs ? 'small' : 'default'"
       >
         {{ show_details ? 'Ocultar detalles' : 'Ver ficha completa' }}
       </v-btn>
@@ -356,16 +350,19 @@ const convertParagraphs = (text) => {
 </template>
 
 <style scoped lang="scss">
-.num_lista{
-  border-bottom-right-radius: 80px;
-  border-top-right-radius: 80px;
-  float: left;
+.num-lista{
   margin-top: 20px;
   position: relative;
   width: 100px;
 }
 
-.inverse_circle{
+.right-circle{
+  border-bottom-right-radius: 80px;
+  border-top-right-radius: 80px;
+  float: left;
+}
+
+.inverse-circle{
   border-bottom-left-radius: 80px;
   border-top-left-radius: 80px;
   float: right;
@@ -377,16 +374,17 @@ const convertParagraphs = (text) => {
   :deep(p) {
     margin-bottom: 0.5rem;
   }
+  @media (max-width: 600px) {
+    font-size: 0.74rem;
+  }
 }
 .power-text{
   color: white;
   font-weight: 600;
   line-height: 1rem;
-}
-
-.text-year{
-  font-size: 0.9rem;
-  color: #9e9e9e;
+  //@media (max-width: 600px) {
+  //  line-height: 0.8rem;
+  //}
 }
 
 .rounded-circle{
