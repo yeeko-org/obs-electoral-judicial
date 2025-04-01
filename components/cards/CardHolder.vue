@@ -122,7 +122,7 @@ const convertParagraphs = (text) => {
         class="num_lista text-h4 d-flex align-center justify-center
           font-weight-bold text-black"
       >
-        {{candidate.id}}
+        {{candidate.num_list || candidate.id}}
       </v-sheet>
       <div class="text-h6 ml-6 text-primary font-weight-bold mt-1">
         {{candidate.full_name}}
@@ -197,7 +197,7 @@ const convertParagraphs = (text) => {
               class="d-flex align-center pt-2 pb-5"
             >
               <v-icon
-                :color="power.color || 'hospital'"
+                :color="power.color || 'warning'"
                 class="mr-1 ml-1"
                 size="36"
               >
