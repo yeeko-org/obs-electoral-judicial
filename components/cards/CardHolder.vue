@@ -17,17 +17,20 @@ const extra_fields = {
   "academic_text": "Complemento de experiencia académica",
 }
 
+import default_profile from '~/assets/profile.png';
+
 const extra_fields_full = [
+  {
+    "key": "more_info_text",
+    "title": "HALLAZGOS",
+    "subtitle": "Conflictos de interés y otros detalles",
+    "init_display": true,
+  },
   {
     "key": "professional_summary",
     "title": "TRAYECTORIA PROFESIONAL",
     "subtitle": "Resumen",
     "init_display": true,
-  },
-  {
-    "key": "more_info_text",
-    "title": "HALLAZGOS",
-    "subtitle": "Conflictos de interés y otros detalles",
   },
   {
     "key": "professional_text",
@@ -146,7 +149,7 @@ const convertParagraphs = (text) => {
       <v-col cols="3" class="d-flex flex-column align-center">
         <v-img
           old_src="~/assets/profile.png"
-          :src="candidate.photo_small || '/assets/profile.png'"
+          :src="candidate.photo_small || default_profile"
           :width="'100%'"
           class="rounded-circle mt-n6"
           max-height="240"
@@ -159,7 +162,7 @@ const convertParagraphs = (text) => {
 
             <v-icon
               color="primary"
-              size="38"
+              size="36"
             >
               {{candidate.sex === 'Hombre' ? 'male' : 'female'}}
             </v-icon>
@@ -198,7 +201,7 @@ const convertParagraphs = (text) => {
                 class="mr-1 ml-1"
                 size="36"
               >
-                {{power.icon || 'gavel'}}
+                {{power.icon || 'question_mark'}}
               </v-icon>
               <div class="power-text text-subtitle-1">
                 {{power.name}}
@@ -234,15 +237,15 @@ const convertParagraphs = (text) => {
             >
 
               <v-icon
-                :color="power.color || 'hospital'"
+                :color="power.color || 'warning'"
                 class="mr-1"
                 size="36"
               >
                 {{power.icon || 'gavel'}}
               </v-icon>
               <div
-                class="power-text text-subtitle-1"
-                style="color: #52A198;"
+                class="power-text text-subtitle-1 "
+                _style="color: #52A198;"
               >
                 {{power.name}}
               </div>
@@ -288,20 +291,6 @@ const convertParagraphs = (text) => {
       </v-col>
     </v-row>
     <v-card-text v-if="candidate.professional_summary">
-<!--      <div-->
-<!--        class="text-secondary text-subtitle-1 font-weight-bold mb-1 mt-2"-->
-<!--      >-->
-<!--        TRAYECTORIA PROFESIONAL-->
-<!--        <span class="text-subtitle-2" style="color: #9e9e9e;">-->
-<!--          (RESUMEN)-->
-<!--        </span>-->
-<!--      </div>-->
-<!--      <div-->
-<!--        class="text-white paragraph"-->
-<!--        v-html="professional_summary"-->
-<!--      >-->
-
-<!--      </div>-->
       <template
         v-for="section in extra_sections"
         :key="section.key"

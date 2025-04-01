@@ -89,7 +89,7 @@ const openPosition = (position) => {
               </div>
             </v-avatar>
             <div class="mt-2">
-              {{position.total_candidates}} Candidatos
+              {{position.total_candidates}} Candidaturas
             </div>
           </v-col>
           <v-col cols="8">
