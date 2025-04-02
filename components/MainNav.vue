@@ -19,10 +19,13 @@ const props = defineProps({
   <v-app-bar
     color="primary"
     height="90"
+    class=""
   >
     <div
-      class="app-width2 d-flex align-center px-3"
+      class="app-width2 mx-auto d-flex align-center px-3 _justify-space-around"
     >
+      <div>
+
       <router-link to="/" class="d-flex align-center">
         <v-img
           src="~/assets/nuevo_logo.png"
@@ -37,6 +40,12 @@ const props = defineProps({
         />
       </router-link>
       </div>
+<!--      <v-spacer></v-spacer>-->
+      <div>
+        gola
+      </div>
+    </div>
+
   </v-app-bar>
 </template>
 

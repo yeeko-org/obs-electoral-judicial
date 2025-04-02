@@ -56,8 +56,9 @@ const explanation = computed(() => {
   if (!rich_text)
     return '-'
   rich_text = rich_text
-      .replace(/<p>/g, '<p class="_mt-2 _mt-sm-4 lato">')
-      .replace(/<ul>/g, '<ul class="ml-5 _mt-0 _mt-sm-1 lato">')
+      .replace(/<p>/g, '<p class="_mt-2 _mt-sm-4 text-body-1 lato">')
+      .replace(/<ul>/g, '<ul class="ml-6 _mt-0 text-body-1 _mt-sm-1 lato">')
+      .replace(/<ol>/g, '<ol class="ml-4 mt-2 mt-sm-4 text-h6 lato">')
   return rich_text
   // return renderRichText(props.blok.text)
 })
