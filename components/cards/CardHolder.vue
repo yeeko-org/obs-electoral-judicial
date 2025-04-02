@@ -3,11 +3,12 @@ import {useMainStore} from "~/store/index.js";
 import {useDisplay} from "vuetify";
 import default_profile from '~/assets/profile.png';
 import AcademicTitles from "./AcademicTitles.vue";
+import SexChip from "./SexChip.vue";
 
 const mainStore = useMainStore()
 const { seats, cats } = storeToRefs(mainStore)
 
-const { xs } = useDisplay()
+const { xs, sm } = useDisplay()
 const props = defineProps({
   candidate: {
     type: Object,
@@ -97,6 +98,13 @@ const title_above = computed(() => {
   return false
 })
 
+const name_height = computed(() => {
+  const is_large = props.candidate.full_name.length > 34 && !sm.value
+  if (xs.value)
+    return is_large ? 48 : 36
+  return is_large ? 64 : 40
+})
+
 const convertParagraphs = (text) => {
   if (!text) return ''
   text = text.replace(/\\n/g, '\n')
@@ -117,18 +125,20 @@ const convertParagraphs = (text) => {
 
     <v-sheet
       color="secondary"
-      :height="xs ? 36 : 40"
+      :height="name_height"
       class="d-flex align-center"
     >
       <v-sheet
         :color="position_full.color"
         :height="xs ? 40 : 46"
-        class="num-lista right-circle text-h5 text-md-h4 d-flex align-center justify-center
+        class="num-lista right-circle text-h5 text-sm-h4 d-flex align-center justify-center
           font-weight-bold text-black"
       >
         {{candidate.num_list || candidate.id}}
       </v-sheet>
-      <div class="text-subtitle-1 text-md-h6 ml-2 ml-md-4 text-primary font-weight-bold mt-1">
+      <div
+        class="text-subtitle-1 text-sm-h6 ml-2 ml-sm-4 text-primary font-weight-bold mt-1"
+      >
         {{candidate.full_name}}
       </div>
     </v-sheet>
@@ -159,7 +169,7 @@ const convertParagraphs = (text) => {
         <v-sheet
           :color="position_full.color"
           :height="xs ? 26 : 30"
-          class="d-flex align-center inverse-circle px-5 text-subtitle-2 text-md-subtitle-1 text-black"
+          class="d-flex align-center inverse-circle px-5 text-subtitle-2 text-sm-subtitle-1 text-black"
           text-white
         >
           <b class="mr-2">
@@ -170,34 +180,17 @@ const convertParagraphs = (text) => {
       </v-col>
     </v-row>
     <v-row class="mt-2 px-4">
-      <v-col cols="3" class="d-flex flex-column align-center px-1 px-md-3">
+      <v-col cols="3" class="d-flex flex-column align-center px-1 px-sm-3">
         <v-img
           :src="candidate.photo_small || default_profile"
           :width="'100%'"
-          class="rounded-circle mt-n3 mt-md-n6"
+          class="rounded-circle mt-n3 mt-sm-n6"
           max-height="240"
         />
-        <div class="d-flex align-center mt-2 mt-md-0">
-          <v-avatar
-            color="white"
-            :size="xs ? 30 : 36"
-          >
-
-            <v-icon
-              color="primary"
-              :size="xs ? 30 : 36"
-            >
-              {{candidate.sex === 'Hombre' ? 'male' : 'female'}}
-            </v-icon>
-          </v-avatar>
-          <span class="ml-2 text-subtitle-1">
-            {{candidate.sex}}
-          </span>
-        </div>
-
+        <SexChip v-if="!xs" :sex="candidate.sex"/>
 
       </v-col>
-      <v-col cols="9" class="mt-0 mt-md-2 d-flex flex-column pt-1 pt-md-3">
+      <v-col cols="9" class="mt-0 mt-sm-2 d-flex flex-column pt-1 pt-sm-3">
         <v-sheet
           v-if="position_full && position_full.by_circunscription && xs"
           color="transparent"
@@ -251,27 +244,23 @@ const convertParagraphs = (text) => {
           v-else
           variant="outlined"
           color="warning"
+          class="d-flex justify-space-between"
+          height="50"
         >
-          <v-row>
-            <v-col
-              :cols="powers_full.length === 1 && xs ? 5 : 3"
-              class="pr-0 pb-0"
-            >
-              <v-sheet
-                color="warning"
-                class="text-primary text-body-2 text-md-subtitle-2 font-weight-bold mb-3 py-1 px-2"
-                style="line-height: 1.2rem;"
-              >
-                {{ powers_title }}
-              </v-sheet>
-
-            </v-col>
-            <v-col
+          <v-sheet
+            color="warning"
+            class="text-primary text-body-2 text-sm-subtitle-2 font-weight-bold py-1 px-2"
+            width="94"
+            style="line-height: 1.2rem;"
+          >
+            {{ powers_title }}
+          </v-sheet>
+          <div class="d-flex justify-space-around align-center flex-grow-1 py-0">
+            <div
               v-for="power in powers_full"
               :key="power.key_name"
-              cols="4"
-              :offset="powers_full.length === 1 && !xs ? 2 : 0"
               class="d-flex align-center"
+              style="width: 110px;"
             >
 
               <v-icon
@@ -283,14 +272,13 @@ const convertParagraphs = (text) => {
               </v-icon>
               <div
                 class="power-text text-subtitle-1 "
-                _style="color: #52A198;"
               >
                 {{power.name}}
               </div>
-            </v-col>
-          </v-row>
-
+            </div>
+          </div>
         </v-card>
+        <SexChip v-if="xs" :sex="candidate.sex"/>
         <AcademicTitles
           v-if="!xs"
           :candidate="candidate"
@@ -310,12 +298,12 @@ const convertParagraphs = (text) => {
           v-if="(section.init_display || show_details) && candidate.professional_summary"
         >
           <div
-            class="text-secondary text-subtitle-2 text-md-subtitle-1 font-weight-bold mb-1 mt-3"
+            class="text-secondary text-subtitle-2 text-sm-subtitle-1 font-weight-bold mb-1 mt-3"
           >
             {{section.title}}
             <span
               v-if="section.subtitle"
-              class="text-caption text-md-subtitle-2"
+              class="text-caption text-sm-subtitle-2"
               style="color: #9e9e9e;"
             >
               ({{section.subtitle}})

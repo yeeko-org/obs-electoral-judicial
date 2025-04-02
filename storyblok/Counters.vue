@@ -125,7 +125,7 @@ const explanation = computed(() => {
                   elevation="5"
                   @click="openPosition(position)"
                 >
-                  Ver perfiles
+                  Explorar perfiles
                 </v-btn>
                 <v-spacer></v-spacer>
               </template>
@@ -212,7 +212,7 @@ const explanation = computed(() => {
     </v-dialog>
     <v-dialog
       v-model="dialog_cards"
-      :max-width="'100%'"
+      max-width="1320"
       :fullscreen="xs"
     >
       <v-card-title class="pa-0">
