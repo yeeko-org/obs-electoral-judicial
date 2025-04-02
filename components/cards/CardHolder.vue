@@ -20,17 +20,17 @@ const show_details = ref(false)
 
 const extra_fields_full = [
   {
-    "key": "more_info_text",
-    "title": "HALLAZGOS",
-    "subtitle": "Conflictos de interés y otros detalles",
-    "init_display": true,
-  },
-  {
     "key": "professional_summary",
     "title": "TRAYECTORIA PROFESIONAL",
     "subtitle": "Resumen",
     "init_display": true,
-    "init_in_md": true,
+  },
+  {
+    "key": "more_info_text",
+    "title": "HALLAZGOS",
+    "subtitle": "Conflictos de interés y otros detalles",
+    "init_display": true,
+    "cut_text": true,
   },
   {
     "key": "professional_text",
@@ -311,13 +311,29 @@ const convertParagraphs = (text) => {
           </div>
           <div
             class="text-white paragraph"
+            :class="{'fade-out': !show_details && section.cut_text}"
             v-html="section.text"
+            :style="!show_details && section.cut_text ? 'max-height: 80px; overflow: hidden;' : ''"
           >
+          </div>
+          <div class="d-flex justify-center">
+
+            <v-btn
+              v-if="section.cut_text && !show_details"
+              color="accent"
+              variant="elevated"
+              class="mt-n8"
+              :append-icon="show_details ? 'expand_less' : 'expand_more'"
+              @click="show_details = !show_details"
+              :size="xs ? 'small' : 'default'"
+            >
+              Ver ficha completa
+            </v-btn>
           </div>
         </div>
       </template>
     </v-card-text>
-    <v-card-actions class="mx-3" v-if="candidate.professional_summary">
+    <v-card-actions class="mx-3" v-if="candidate.professional_summary && show_details">
 <!--      <v-btn-->
 <!--        icon-->
 <!--      >-->
@@ -335,7 +351,7 @@ const convertParagraphs = (text) => {
       </v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
-    <v-card-text v-else>
+    <v-card-text v-if="!candidate.professional_summary">
       <v-alert
         color="secondary"
         type="info"
@@ -390,6 +406,20 @@ const convertParagraphs = (text) => {
   //@media (max-width: 600px) {
   //  line-height: 0.8rem;
   //}
+}
+
+.fade-out {
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(to bottom, rgba(43, 72, 101, 0) 0%, rgb(0, 18, 73) 100%);
+    pointer-events: none;
+  }
 }
 
 .rounded-circle{

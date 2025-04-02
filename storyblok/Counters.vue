@@ -91,17 +91,21 @@ const explanation = computed(() => {
             >
               <div class="text-black">
                 <div
-                  class="text-h6 text-sm-h5 font-weight-bold _mt-n2"
+                  class="text-h5 font-weight-bold _mt-n2"
                 >
 
                   {{position.total_seats}}
                 </div>
-                <div class="text-body-2 mt-n1">
+                <div class="text-body-2 mt-n1 font-weight-bold">
                   cargos
                 </div>
               </div>
             </v-avatar>
-            <v-sheet class="mt-3 ml-n3 right-circle" :color="position.color_light">
+            <v-sheet
+              class="mt-4 ml-n3 px-1 py-1 px-sm-2 right-circle text-subtitle-1"
+              :color="position.color_light"
+              style="line-height: 1.3;"
+            >
               {{position.total_candidates}} Candidaturas
             </v-sheet>
           </v-col>
