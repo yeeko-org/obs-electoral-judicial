@@ -41,9 +41,6 @@ const props = defineProps({
       </router-link>
       </div>
 <!--      <v-spacer></v-spacer>-->
-      <div>
-        gola
-      </div>
     </div>
 
   </v-app-bar>
