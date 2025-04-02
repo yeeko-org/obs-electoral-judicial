@@ -11,7 +11,7 @@ const schema = {
   "app_label": "oej",
   "snake_name": "candidate",
   "model_name": "Candidate",
-  "pk": 1,
+  "pk": 'id',
   "status_groups": [
     "status_register",
     "status_validation",

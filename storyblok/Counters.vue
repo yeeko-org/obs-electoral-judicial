@@ -22,7 +22,7 @@ const dialog_cards = ref(false)
 const init_candidates = ref([])
 
 onMounted(() => {
-  avatar_size.value = xs.value ? '50' : '65'
+  avatar_size.value = xs.value ? '50' : '70'
   const params = {
     size: 300,
   }
@@ -39,7 +39,7 @@ const positions = computed(() => {
 
 const ready_positions = computed(() => {
   return positions.value.filter((position) => {
-    return !position.by_circuit
+    return position.is_public
   })
 })
 
@@ -61,22 +61,22 @@ const openPosition = (position) => {
       class="text-center px-2 pb-2"
     >
       <v-card
-        color="secondary"
-        variant="tonal"
+        color="info"
+        variant="elevated"
         class="py-3 px-2"
       >
         <v-row>
           <v-col
             cols="4"
-            class="d-flex flex-column align-center justify-center"
+            class="d-flex flex-column justify-center"
           >
             <v-avatar
               :size="avatar_size"
               class="mx-auto"
-              color="primary"
-              style="background-color: #fc0a41;"
+              :color="position.color"
+              _style="background-color: #fc0a41;"
             >
-              <div class="text-secondary">
+              <div class="text-black">
                 <div
                   class="text-h6 text-sm-h5 font-weight-bold _mt-n2"
                 >
@@ -88,13 +88,14 @@ const openPosition = (position) => {
                 </div>
               </div>
             </v-avatar>
-            <div class="mt-2">
+            <v-sheet class="mt-3 ml-n3 right-circle" :color="position.color_light">
               {{position.total_candidates}} Candidaturas
-            </div>
+            </v-sheet>
           </v-col>
           <v-col cols="8">
             <div
-              class="text-h6 font-weight-bold text-primary"
+              class="text-h6 font-weight-bold"
+              :style="`color: ${position.color_light}`"
             >
               {{ position.full_name }}
             </div>
@@ -102,11 +103,12 @@ const openPosition = (position) => {
             <v-card-actions
               class="text-body-2 mt-3"
             >
-              <template v-if="!position.by_circuit">
+              <template v-if="position.is_public">
                 <v-spacer></v-spacer>
                 <v-btn
                   color="accent"
-                  variant="outlined"
+                  variant="elevated"
+                  class="my-1"
                   @click="openPosition(position)"
                 >
                   Ver perfiles
@@ -117,6 +119,8 @@ const openPosition = (position) => {
                 v-else
                 type="info"
                 variant="outlined"
+                color="secondary"
+                density="compact"
               >
                 Próximamente...
               </v-alert>
@@ -159,6 +163,7 @@ const openPosition = (position) => {
           >
             {{ position.short_name }}
           </v-tab>
+          <v-spacer v-if="!xs"></v-spacer>
           <v-btn
             icon
             color="accent"
@@ -191,3 +196,20 @@ const openPosition = (position) => {
 
 
 </template>
+
+<style scoped lang="scss">
+.num-lista{
+  margin-top: 20px;
+  position: relative;
+  width: 100px;
+  @media (max-width: 600px) {
+    width: 80px;
+  }
+}
+
+.right-circle{
+  border-bottom-right-radius: 80px;
+  border-top-right-radius: 80px;
+  float: left;
+}
+</style>

@@ -134,13 +134,11 @@ const convertParagraphs = (text) => {
     </v-sheet>
     <v-row no-gutters class="mt-4">
       <v-col
-        v-if="position_full && position_full.by_circunscription"
+        v-if="position_full && position_full.by_circunscription && !xs"
         cols="auto"
 
       >
         <v-sheet
-
-          _color="position_full.color"
           color="transparent"
           height="30"
           class="d-flex align-center right-circle px-5 text-subtitle-1"
@@ -176,7 +174,7 @@ const convertParagraphs = (text) => {
         <v-img
           :src="candidate.photo_small || default_profile"
           :width="'100%'"
-          class="rounded-circle mt-n6"
+          class="rounded-circle mt-n3 mt-md-n6"
           max-height="240"
         />
         <div class="d-flex align-center mt-2 mt-md-0">
@@ -199,7 +197,23 @@ const convertParagraphs = (text) => {
 
 
       </v-col>
-      <v-col cols="9" class="mt-2">
+      <v-col cols="9" class="mt-0 mt-md-2 d-flex flex-column pt-1 pt-md-3">
+        <v-sheet
+          v-if="position_full && position_full.by_circunscription && xs"
+          color="transparent"
+          height="30"
+          class="d-flex align-center text-subtitle-1 justify-end pb-4"
+
+        >
+          <span class="mr-2" :style="`color: ${position_full.color}`">
+            Circunscripción
+            <b>
+              {{ seat_full.circunscription }}
+            </b>
+          </span>
+
+        </v-sheet>
+
         <v-card
           v-if="title_above"
           variant="outlined"
@@ -240,7 +254,7 @@ const convertParagraphs = (text) => {
         >
           <v-row>
             <v-col
-              :cols="powers_full.length === 1 && xs ? 5 :3"
+              :cols="powers_full.length === 1 && xs ? 5 : 3"
               class="pr-0 pb-0"
             >
               <v-sheet
@@ -354,6 +368,9 @@ const convertParagraphs = (text) => {
   margin-top: 20px;
   position: relative;
   width: 100px;
+  @media (max-width: 600px) {
+    width: 80px;
+  }
 }
 
 .right-circle{
