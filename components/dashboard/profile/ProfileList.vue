@@ -1,6 +1,12 @@
 <script setup>
 import CardHolder from "../../cards/CardHolder.vue";
+import {useMainStore} from "~/store/index.js";
+import {storeToRefs} from "pinia";
+import {useDisplay} from "vuetify";
+const mainStore = useMainStore()
+const { cats } = storeToRefs(mainStore)
 
+const { xs } = useDisplay()
 const props = defineProps({
   position: Object,
   init_candidates: Array,
@@ -21,6 +27,7 @@ const sexes = [
 
 const q_value = ref('')
 const selected_sex = ref('')
+const selected_powers = ref([])
 
 const filtered_candidates = computed(() => {
   let candidates = props.init_candidates.filter((candidate, idx) => {
@@ -37,10 +44,19 @@ const filtered_candidates = computed(() => {
       return name.includes(q)
     })
   }
+  console.log("selected_powers.value", selected_powers.value)
+  const powers_count = selected_powers.value.length
+  if (powers_count > 0 && powers_count < 4) {
+    candidates = candidates.filter(candidate => {
+      return selected_powers.value.some(power => {
+        return candidate.powers.some(candidate_power => {
+          return candidate_power === power
+        })
+      })
+    })
+  }
   return candidates
 })
-
-
 
 const candidates_by_sex = computed(()=>{
   return sexes.map(sex=>{
@@ -73,7 +89,8 @@ const candidates_by_sex = computed(()=>{
     >
       <v-col
         cols="12"
-        md="6"
+        sm="12"
+        md="3"
         class="d-flex align-center justify-center py-1 py-md-3"
       >
         <v-text-field
@@ -95,15 +112,23 @@ const candidates_by_sex = computed(()=>{
       </v-col>
       <v-col
         cols="12"
-        md="6"
-        class="py-1 py-md-3"
-        _class="d-flex align-center"
+        sm="12"
+        md="9"
+        class="py-1 py-md-3 d-flex justify-space-around flex-column flex-md-row"
       >
-
-        <div class="d-flex align-center ml-3">
+        <div class="d-flex align-center ml-3 justify-center">
           <span
             class="mr-2 text-subtitle-1 text-md-h6 text-primary"
-          >Filtrar por sexo:</span>
+          >
+            <v-icon
+              v-if="!xs"
+              class="mr-1"
+              color="info"
+            >
+              filter_list
+            </v-icon>
+            Sexo:
+          </span>
           <v-chip-group v-model="selected_sex">
             <v-chip
               v-for="sex in sexes"
@@ -111,10 +136,52 @@ const candidates_by_sex = computed(()=>{
               :value="sex.key"
               class="mx-1"
               filter
-              variant="outlined"
+              variant="elevated"
               color="primary"
             >
+              <v-icon
+                size="16"
+                class="mr-1"
+                color="white"
+              >
+                {{ sex.icon }}
+              </v-icon>
               {{ sex.plural }}
+            </v-chip>
+          </v-chip-group>
+        </div>
+
+        <div class="d-flex align-center ml-3 justify-center">
+          <span
+            class="mr-2 text-subtitle-1 text-md-h6 text-primary"
+          >
+            <v-icon
+              v-if="!xs"
+              class="mr-1"
+              color="info"
+            >
+              filter_list
+            </v-icon>
+            Postulante:
+          </span>
+          <v-chip-group v-model="selected_powers" multiple>
+            <v-chip
+              v-for="power in cats.power"
+              :key="power.key_name"
+              :value="power.key_name"
+              class="mx-1"
+              filter
+              variant="elevated"
+              color="info"
+            >
+              <v-icon
+                size="16"
+                class="mr-1"
+                color="warning"
+                >
+                {{ power.icon }}
+              </v-icon>
+              {{ power.key_name }}
             </v-chip>
           </v-chip-group>
         </div>
@@ -156,10 +223,15 @@ const candidates_by_sex = computed(()=>{
             </v-avatar>
             <span class="text-primary ml-2 text-h5">
               <span class="font-weight-bold">
+                <span v-if="selected_powers.length === 0">
 
-                {{sex.candidates.length}} {{ sex.plural }}
+                  {{sex.candidates.length}}
+                </span>
+                {{ sex.plural }}
               </span>
-              ({{sex.total_seats}} Cargos a elegir)
+              <span v-if="selected_powers.length === 0">
+                ({{sex.total_seats}} Cargos a elegir)
+              </span>
             </span>
           </v-card-title>
           <CardHolder

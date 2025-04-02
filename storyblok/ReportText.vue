@@ -84,7 +84,7 @@ const title_color = computed(() => {
 
         <div
           v-html="explanation"
-          class="text-text-1 text-sm-subtitle-1 _mt-2 _mt-sm-4 lato special-img"
+          class="text-text-1 text-sm-subtitle-1 _mt-2 _mt-sm-4 lato special-paragraph"
           :class="{'text-justify' : blok.justify}"
           _class="{'text-justify' : blok.justify}"
         ></div>
@@ -108,7 +108,7 @@ const title_color = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-.special-img {
+.special-paragraph {
   //background-color: red;
   p {
     color: blue;
