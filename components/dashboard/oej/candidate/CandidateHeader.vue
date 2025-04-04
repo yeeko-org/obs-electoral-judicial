@@ -3,7 +3,10 @@
 import HeaderCommon from "~/components/dashboard/generic/HeaderCommon.vue";
 
 import {useMainStore} from '~/store/index.js'
+import {storeToRefs} from "pinia";
 const mainStore = useMainStore()
+
+const { users_dict } = storeToRefs(mainStore)
 
 const props = defineProps({
   main: Object,
@@ -16,6 +19,35 @@ const props = defineProps({
   parent: String,
 })
 
+const default_user = {
+  color: 'grey',
+  initials: '??',
+  organization: 'Sin definir'
+}
+
+const stages = [
+  {
+    name: 'Registro',
+    field: 'user_register',
+  },
+  {
+    name: 'Validación',
+    field: 'user_validation',
+  },
+]
+
+const users_by_stages = computed(() => {
+  return stages.reduce((arr, stage) => {
+    const user = users_dict.value[props.main[stage.field]]
+    if (user) {
+      arr.push({
+        ...user,
+        stage: stage.name,
+      })
+    }
+    return arr
+  }, [])
+})
 // const emits = defineEmits(['open-panel'])
 
 
@@ -35,11 +67,50 @@ const props = defineProps({
       </span>
     </template>
     <template v-slot:icon>
+<!--      <v-avatar-->
+<!--        v-if="user_validation"-->
+<!--        :color="user_validation.color"-->
+<!--        size="32"-->
+<!--      >-->
+<!--        {{ user_validation.initials }}-->
+<!--        <v-tooltip-->
+<!--          bottom-->
+<!--          :open-on-hover="true"-->
+<!--          :location="'end'"-->
+<!--          :activator="'parent'"-->
+<!--        >-->
+<!--          <div>-->
+<!--            Validación:-->
+<!--          </div>-->
+<!--          <div>-->
+
+<!--            {{ user_validation.full_name }}-->
+<!--          </div>-->
+<!--          ({{ user_validation.organization }})-->
+<!--        </v-tooltip>-->
+<!--      </v-avatar>-->
       <v-avatar
-        :color="main.id % 2 === 0 ? 'light-blue' : 'purple-lighten-1'"
+        v-for="user in users_by_stages"
+        :key="user.id"
+        :color="user.color"
         size="32"
+        class="ml-1"
       >
-        {{ main.id % 2 === 0 ? 'AU' : 'AP' }}
+        {{ user.initials }}
+        <v-tooltip
+          bottom
+          :open-on-hover="true"
+          :location="'end'"
+          :activator="'parent'"
+        >
+          <div>
+            {{ user.stage }}:
+          </div>
+          <div>
+            {{ user.full_name }} ({{ user.organization }})
+          </div>
+
+        </v-tooltip>
       </v-avatar>
     </template>
     <template v-slot:details>

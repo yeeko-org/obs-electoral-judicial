@@ -90,6 +90,16 @@ const schema = {
       {
           "title": "Puesto", "field": "position",
           "component": "PositionFilter", "hidden": false,
+          "order": 10, "is_custom": true
+      },
+      {
+          "title": "Registrador", "field": "user_register",
+          "component": "UserSelect", "hidden": false,
+          "order": 11, "is_custom": true
+      },
+      {
+          "title": "Validador", "field": "user_validation",
+          "component": "UserSelect", "hidden": false,
           "order": 12, "is_custom": true
       },
   ],
@@ -343,6 +353,19 @@ export const useMainStore = defineStore('main', {
       return state.cats.position.reduce((acc, pos) => {
         pos.body_full = state.cats.body.find((b) => b.id === pos.body)
         acc[pos.id] = pos
+        return acc
+      }, {})
+    },
+    all_users(state) {
+      if (!state.cats)
+        return []
+      return state.cats.user
+    },
+    users_dict(state) {
+      if (!state.cats.user)
+        return {}
+      return state.cats.user.reduce((acc, user) => {
+        acc[user.id] = user
         return acc
       }, {})
     }
