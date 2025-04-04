@@ -1,7 +1,8 @@
 <script setup>
 import {useMainStore} from "~/store/index.js";
 const mainStore = useMainStore()
-const { all_users } = mainStore
+
+const { all_users } = storeToRefs(mainStore)
 const props = defineProps({
   final_filters: Object,
   field: String,
@@ -14,8 +15,8 @@ const props = defineProps({
 })
 
 const final_users = computed(() => {
-  // if (props.editors)
-  //   return full_editors.value
+  if (!all_users.value)
+    return []
   return all_users.value
 })
 
@@ -24,7 +25,7 @@ const final_users = computed(() => {
 <template>
   <v-select
     v-model="final_filters[field]"
-    :items="all_users"
+    :items="final_users"
     item-title="full_name"
     item-value="id"
     :label="label"
