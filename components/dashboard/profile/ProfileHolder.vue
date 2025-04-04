@@ -1,11 +1,12 @@
 <script setup>
 import {useMainStore} from "~/store/index.js";
+import LicensesList from "./LicensesList.vue";
+import CardHolder from "../../cards/CardHolder.vue";
+import Sources from "./Sources.vue";
+
 const mainStore = useMainStore()
 const { seats } = storeToRefs(mainStore)
 const { getSummary } = mainStore
-
-import LicensesList from "./LicensesList.vue";
-import CardHolder from "../../cards/CardHolder.vue";
 
 const props = defineProps({
   full_main: {
@@ -28,26 +29,34 @@ const seat_full = computed(() => {
 const cards = [
   {
     title: 'Texto obtenido de la IA',
-    icon: 'contacts',
+    icon: 'summarize',
     field: 'gemini_text',
     text_error: 'Aún no se ha generado su información desde la IA',
-    cols: 5,
-    btn_text: 'Desplegar',
-  },
-  {
-    title: 'Biografía del CJF',
-    icon: 'contacts',
-    field: 'biography_full',
-    text_error: 'No se encontró su biografía en el sitio del CJF',
     cols: 4,
     btn_text: 'Desplegar',
   },
   {
-    title: 'Ficha (previsualización)',
+    title: 'Biografía del CJF',
+    icon: 'gavel',
+    field: 'biography_full',
+    text_error: 'No se encontró su biografía en el sitio del CJF',
+    cols: 3,
+    btn_text: 'Desplegar',
+  },
+  {
+    title: 'Conóceles',
+    icon: 'widgets',
+    field: 'conoceles',
+    text_error: 'No tiene data',
+    cols: 3,
+    btn_text: 'Desplegar',
+  },
+  {
+    title: 'Ficha',
     icon: 'contacts',
     field: 'id',
     text_error: 'No se encontró su biografía en el sitio del CJF',
-    cols: 3,
+    cols: 2,
     btn_text: 'Ver',
     is_preview: true,
   },
@@ -75,6 +84,49 @@ const generateSummary = () => {
   })
 }
 
+const summary_label = computed(() => {
+  return props.full_main.professional_summary
+    ? 'Intenta separarlo en 2 párrafos'
+    : 'Generar automáticamente con el botón de arriba'
+})
+
+const sources_dict = computed(() => {
+  if (!props.full_main.sources)
+    return {}
+  return props.full_main.sources.reduce((acc, source, idx) => {
+    acc[idx + 1] =  {
+      number: idx + 1,
+      href: source,
+      text: source.replace(/^(https?:\/\/)?(www\.)?/, '').substring(0, 30),
+    }
+    return acc
+  }, {})
+})
+
+const more_info_ia = computed(() => {
+  if (!props.full_main.more_info_ia)
+    return 'No generada aún'
+  // Replace the [number] with the corresponding source text
+  let final_text = props.full_main.more_info_ia
+  const attrs = `target="_blank" class="ml-1"`
+  let final_sources = {}
+  final_text = final_text.replace(/\[(\d+)\]/g, (match, number) => {
+    const source = sources_dict.value[number]
+    if (source){
+      final_sources[source.number] = source
+      const url = source.href
+      const num = source.number
+      return `<a href="${url}" v-tooltip:bottom="${url}" ${attrs}>[${num}]</a>`
+    }
+    return match
+  })
+  return {
+    html: final_text,
+    sources: final_sources
+  }
+
+})
+
 </script>
 
 <template>
@@ -95,14 +147,14 @@ const generateSummary = () => {
         class="mb-4 py-3"
         variant="tonal"
       >
-        <v-card-title
-          class="py-1 d-flex align-center"
+        <v-card-text
+          class="py-1 d-flex align-center justify-space-around"
         >
           <v-icon
             size="40"
             color="blue"
           >{{ card.icon }}</v-icon>
-          <div>
+          <div class="flex-grow-1 d-flex flex-column align-center">
             <div class="ml-4 font-weight-bold text-subtitle-1">
               {{ card.title }}
             </div>
@@ -119,48 +171,27 @@ const generateSummary = () => {
               {{ card.text_error }}
             </div>
           </div>
-        </v-card-title>
+        </v-card-text>
       </v-card>
     </v-col>
-    <v-col
-      cols="12"
-      v-if="full_main.sources && full_main.sources.length"
-      class="d-flex flex-wrap"
-    >
-      <div class="text-info text-subtitle-1 font-weight-bold mr-2">
-        Fuentes consultadas:
-      </div>
-      <v-chip
-        v-for="(source, idx) in full_main.sources"
-        :key="source"
-        class="mr-2 mb-2"
-        color="indigo-lighten-2"
-        variant="tonal"
-        size="small"
-        :href="source"
-        target="_blank"
-      >
-        <template v-slot:prepend>
-          <v-avatar
-            size="x-small"
-            color="indigo-lighten-3"
-            class="mr-1"
-          >
-            {{idx + 1}}
-          </v-avatar>
-        </template>
-        <template v-slot:append>
-          <v-icon
-            class="ml-1"
-            color="indigo"
-          >
-            open_in_new
-          </v-icon>
-        </template>
-<!--        Remove https:// and http://-->
-        {{ source.replace(/^(https?:\/\/)?(www\.)?/, '').substring(0, 30) }}...
-      </v-chip>
-    </v-col>
+    <Sources
+      :sources="sources_dict"
+      v-if="full_main.sources"
+      :has_other_sources="Boolean(full_main.other_sources)"
+      show_other_sources
+      @add-source="full_main.other_sources = ' '"
+    />
+    <v-textarea
+      v-if="full_main.other_sources"
+      v-model="full_main.other_sources"
+      label="Otras fuentes (sepáralas con una coma)"
+      variant="outlined"
+      rows="1"
+      auto-grow
+      clearable
+    ></v-textarea>
+
+
     <v-divider
       thickness="3"
       opacity="0.7"
@@ -189,21 +220,6 @@ const generateSummary = () => {
 
       </v-card>
 
-    </v-col>
-    <v-col cols="12" class="d-flex">
-      <div class="text-secondary text-h6 font-weight-bold mt-4">
-        Año de inicio
-      </div>
-      <v-text-field
-        v-model="full_main.first_year"
-        label="Año de inicio"
-        class="ml-4"
-        variant="outlined"
-        type="number"
-        min="1900"
-        max="2100"
-        max-width="200px"
-      ></v-text-field>
     </v-col>
     <v-col cols="12">
       <div class="text-secondary text-h6 font-weight-bold mb-4">
@@ -245,8 +261,29 @@ const generateSummary = () => {
     </v-col>
     <v-col cols="12">
       <div class="text-secondary text-h6 font-weight-bold mb-4">
-        Otros detalles como conflictos de interés y otros hallazgos
+        HALLAZGOS - Conflictos de interés y otros detalles.
       </div>
+      <v-card
+        v-if="full_main.more_info_ia"
+        class="pa-3 text-body-1 mb-4"
+        variant="tonal"
+        color="blue"
+        style="min-height: 30px;"
+      >
+        <div class="text-blue-accent-2 text-subtitle-1 font-weight-bold mb-3">
+          Texto original de hallazgos (solo para referencias)
+        </div>
+        <span
+          style="white-space: pre-line;"
+          v-html="more_info_ia.html"
+        ></span>
+        <Sources
+          title="Fuentes:"
+          :sources="more_info_ia.sources"
+          class="pb-0 px-0"
+        />
+
+      </v-card>
       <v-textarea
         v-model="full_main.more_info_text"
         label="Revisa todos los detalles y elimina interpretaciones"
@@ -275,7 +312,7 @@ const generateSummary = () => {
       </div>
       <v-textarea
         v-model="full_main.professional_summary"
-        label="Generar automáticamente con el botón de arriba"
+        :label="summary_label"
         variant="outlined"
         max-rows="20"
         rows="4"
@@ -284,7 +321,7 @@ const generateSummary = () => {
       </v-textarea>
     </v-col>
     <v-col cols="12" v-if="full_main.attention_notes_ia">
-      <div class="text-primary text-subtitle-1 font-weight-bold mb-4">
+      <div class="text-error-accent-2 text-subtitle-1 font-weight-bold mb-4">
         Posibles errores identificados
       </div>
       <v-card
@@ -300,7 +337,7 @@ const generateSummary = () => {
       </v-card>
     </v-col>
     <v-col cols="12">
-      <div class="text-primary text-subtitle-1 font-weight-bold mb-4">
+      <div class="text-blue-accent-2 text-subtitle-1 font-weight-bold mb-4">
         Interpretaciones de la IA (no público)
       </div>
       <v-card
@@ -324,27 +361,51 @@ const generateSummary = () => {
         class="py-6"
         :color="card_selected?.is_preview ? seat_full.position_full.color_light : null"
       >
-        <v-card-title>
-          {{card_selected.title}}
+        <v-card-title class="d-flex pl-6 pt-0 align-center">
+          <div class="text-h5 font-weight-bold">
+
+            {{card_selected.title}}
+          </div>
+          <v-spacer></v-spacer>
+          <v-btn
+            icon
+            color="accent"
+            variant="text"
+            @click="dialog_text = false"
+          >
+            <v-icon>close</v-icon>
+          </v-btn>
         </v-card-title>
         <v-card-text
           v-if="full_text"
           class="text-black text-body-1"
-          style="white-space: pre-line;"
-          v-html="full_text"
         >
+          <div
+            v-html="full_text"
+            style="white-space: pre-line;"
+          >
+
+          </div>
+          <v-divider
+            class="my-4"
+            color="blue-grey darken-1"
+            thickness="2"
+            opacity="0.6"
+          ></v-divider>
+          <Sources
+            :sources="sources_dict"
+          />
+
         </v-card-text>
         <v-row
           v-else
           class="mx-0"
         >
           <v-col cols="12" md="6">
-
             <CardHolder
               :candidate="full_main"
             />
           </v-col>
-
         </v-row>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -357,7 +418,7 @@ const generateSummary = () => {
             v-else
             @click="dialog_text = false"
             color="accent"
-            outlined
+            variant="outlined"
           >Cerrar</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
@@ -367,5 +428,7 @@ const generateSummary = () => {
 </template>
 
 <style scoped lang="scss">
-
+.source-ref{
+  margin-left: 4px;
+}
 </style>
