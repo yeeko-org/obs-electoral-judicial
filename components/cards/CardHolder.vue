@@ -2,6 +2,8 @@
 import {useMainStore} from "~/store/index.js";
 import {useDisplay} from "vuetify";
 import default_profile from '~/assets/profile.png';
+import woman from '~/assets/Mujer.png';
+import man from '~/assets/Hombre.png';
 import AcademicTitles from "./AcademicTitles.vue";
 import SexChip from "./SexChip.vue";
 
@@ -24,14 +26,15 @@ const extra_fields_full = [
     "title": "TRAYECTORIA PROFESIONAL",
     "subtitle": "Resumen",
     "init_display": true,
-  },
-  {
-    "key": "more_info_text",
-    "title": "HALLAZGOS",
-    "subtitle": "Conflictos de interés y otros detalles",
-    "init_display": true,
     "cut_text": true,
   },
+  // {
+  //   "key": "more_info_text",
+  //   "title": "HALLAZGOS",
+  //   "subtitle": "Conflictos de interés y otros detalles",
+  //   "init_display": true,
+  //   "cut_text": true,
+  // },
   {
     "key": "professional_text",
     "title": "TRAYECTORIA PROFESIONAL COMPLETA",
@@ -182,7 +185,7 @@ const convertParagraphs = (text) => {
     <v-row class="mt-2 px-4">
       <v-col cols="3" class="d-flex flex-column align-center px-1 px-sm-3">
         <v-img
-          :src="candidate.photo_small || default_profile"
+          :src="candidate.photo_small || (candidate.sex === 'Hombre' ? man : woman)"
           :width="'100%'"
           class="rounded-circle mt-n3 mt-sm-n6"
           max-height="240"
@@ -311,29 +314,30 @@ const convertParagraphs = (text) => {
           </div>
           <div
             class="text-white paragraph"
-            :class="{'fade-out': !show_details && section.cut_text}"
+            _class="{'fade-out': !show_details && section.cut_text}"
             v-html="section.text"
-            :style="!show_details && section.cut_text ? 'max-height: 80px; overflow: hidden;' : ''"
+            _style="!show_details && section.cut_text ? 'max-height: 80px; overflow: hidden;' : ''"
           >
           </div>
-          <div class="d-flex justify-center">
+<!--          <div class="d-flex justify-center">-->
 
-            <v-btn
-              v-if="section.cut_text && !show_details"
-              color="accent"
-              variant="elevated"
-              class="mt-n8"
-              :append-icon="show_details ? 'expand_less' : 'expand_more'"
-              @click="show_details = !show_details"
-              :size="xs ? 'small' : 'default'"
-            >
-              Ver ficha completa
-            </v-btn>
-          </div>
+<!--            <v-btn-->
+<!--              v-if="section.cut_text && !show_details"-->
+<!--              color="accent"-->
+<!--              variant="elevated"-->
+<!--              class="mt-n8"-->
+<!--              :append-icon="show_details ? 'expand_less' : 'expand_more'"-->
+<!--              @click="show_details = !show_details"-->
+<!--              :size="xs ? 'small' : 'default'"-->
+<!--            >-->
+<!--              Ver ficha completa-->
+<!--            </v-btn>-->
+<!--          </div>-->
         </div>
       </template>
     </v-card-text>
-    <v-card-actions class="mx-3" v-if="candidate.professional_summary && show_details">
+<!--    <v-card-actions class="mx-3" v-if="candidate.professional_summary && show_details">-->
+    <v-card-actions class="mx-3" v-if="candidate.professional_summary">
 <!--      <v-btn-->
 <!--        icon-->
 <!--      >-->
@@ -341,6 +345,18 @@ const convertParagraphs = (text) => {
 <!--      </v-btn>-->
       <v-spacer></v-spacer>
       <v-btn
+        v-if="!show_details"
+        color="accent"
+        variant="elevated"
+        class="mt-n8"
+        :append-icon="show_details ? 'expand_less' : 'expand_more'"
+        @click="show_details = !show_details"
+        :size="xs ? 'small' : 'default'"
+      >
+        Ver ficha completa
+      </v-btn>
+      <v-btn
+        v-else
         color="accent"
         variant="outlined"
         :append-icon="show_details ? 'expand_less' : 'expand_more'"
