@@ -93,12 +93,12 @@ const schema = {
           "order": 10, "is_custom": true
       },
       {
-          "title": "Registrador", "field": "user_register",
+          "title": "Registra", "field": "user_register",
           "component": "UserSelect", "hidden": false,
           "order": 11, "is_custom": true
       },
       {
-          "title": "Validador", "field": "user_validation",
+          "title": "Validad", "field": "user_validation",
           "component": "UserSelect", "hidden": false,
           "order": 12, "is_custom": true
       },

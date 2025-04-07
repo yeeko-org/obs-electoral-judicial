@@ -26,15 +26,15 @@ const extra_fields_full = [
     "title": "TRAYECTORIA PROFESIONAL",
     "subtitle": "Resumen",
     "init_display": true,
+    "cut_text": false,
+  },
+  {
+    "key": "more_info_text",
+    "title": "HALLAZGOS",
+    "subtitle": "Conflictos de interés y otros detalles",
+    "init_display": true,
     "cut_text": true,
   },
-  // {
-  //   "key": "more_info_text",
-  //   "title": "HALLAZGOS",
-  //   "subtitle": "Conflictos de interés y otros detalles",
-  //   "init_display": true,
-  //   "cut_text": true,
-  // },
   {
     "key": "professional_text",
     "title": "TRAYECTORIA PROFESIONAL COMPLETA",
