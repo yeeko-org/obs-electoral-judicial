@@ -3,6 +3,7 @@ import {useMainStore} from "~/store/index.js";
 import LicensesList from "./LicensesList.vue";
 import CardHolder from "../../cards/CardHolder.vue";
 import Sources from "./Sources.vue";
+import PdfViewer from "./PdfViewer.vue";
 
 const mainStore = useMainStore()
 const { seats } = storeToRefs(mainStore)
@@ -46,7 +47,7 @@ const cards = [
   {
     title: 'Conóceles',
     icon: 'widgets',
-    field: 'conoceles',
+    field: 'id_ine',
     text_error: 'No tiene data',
     cols: 3,
     btn_text: 'Desplegar',
@@ -69,6 +70,8 @@ const openDialog = (card) => {
     full_text.value = props.full_main.biography_full.curriculum
   } else if (card.field === 'gemini_text') {
     full_text.value = props.full_main.gemini_text
+  } else if (card.field === 'id_ine') {
+    full_text.value = props.full_main.ine_cv_text
   }
   else if (card.field === 'id') {
     full_text.value = null
@@ -125,6 +128,16 @@ const more_info_ia = computed(() => {
     sources: final_sources
   }
 
+})
+
+const ine_url = computed(() => {
+  if (!props.full_main.id_ine)
+    return null
+  const candidature_type = props.full_main.ine_data?.idTipoCandidatura
+  if (!candidature_type)
+    return null
+  const base = 'https://candidaturaspoderjudicial.ine.mx/detalleCandidato'
+  return `${base}/${props.full_main.id_ine}/${candidature_type}`
 })
 
 </script>
@@ -354,7 +367,7 @@ const more_info_ia = computed(() => {
     </v-col>
     <v-dialog
       v-model="dialog_text"
-      :max-width="card_selected?.is_preview ? '100%' : '900px'"
+      :max-width="card_selected?.is_preview ? '100%' : '1000px'"
     >
       <v-card
         v-if="field_selected"
@@ -380,6 +393,20 @@ const more_info_ia = computed(() => {
           v-if="full_text"
           class="text-black text-body-1"
         >
+          <v-btn
+            v-if="card_selected.field === 'id_ine' && ine_url"
+            :href="ine_url"
+            target="_blank"
+            variant="outlined"
+            color="accent"
+            append-icon="open_in_new"
+          >
+            Ir a su perfil en el INE
+          </v-btn>
+          <PdfViewer
+            v-if="card_selected.field === 'id_ine'"
+            :item_url="full_main.ine_cv"
+          />
           <div
             v-html="full_text"
             style="white-space: pre-line;"
@@ -393,9 +420,9 @@ const more_info_ia = computed(() => {
             opacity="0.6"
           ></v-divider>
           <Sources
+            v-if="card_selected.field === 'gemini_text'"
             :sources="sources_dict"
           />
-
         </v-card-text>
         <v-row
           v-else
