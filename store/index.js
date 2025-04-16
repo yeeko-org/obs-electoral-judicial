@@ -98,7 +98,7 @@ const schema = {
           "order": 11, "is_custom": true
       },
       {
-          "title": "Validad", "field": "user_validation",
+          "title": "Valida", "field": "user_validation",
           "component": "UserSelect", "hidden": false,
           "order": 12, "is_custom": true
       },
@@ -368,7 +368,23 @@ export const useMainStore = defineStore('main', {
         acc[user.id] = user
         return acc
       }, {})
-    }
+    },
+    circunscriptions(state) {
+      if (!state.cats.circunscription)
+        return []
+      return state.cats.circunscription.map((c) => {
+        c.states = state.cats.state.filter((s) => s.circunscription === c.id)
+        let code_names = c.states.map((s) => {
+          let name = s.code_name
+          name = name.toUpperCase()
+          name = name.replace(/\./g, '')
+          return name
+        })
+        console.log('code_names', code_names)
+        c.states_text = code_names.join(', ')
+        return c
+      })
+    },
   }
 })
 

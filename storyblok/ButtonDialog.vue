@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import MaterialList from "./MaterialList"
 import DocumentList from "./DocumentList"
+import FormGossip from "./FormGossip.vue";
 
 const { xs } = useDisplay()
 

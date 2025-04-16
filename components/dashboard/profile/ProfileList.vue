@@ -4,7 +4,7 @@ import {useMainStore} from "~/store/index.js";
 import {storeToRefs} from "pinia";
 import {useDisplay} from "vuetify";
 const mainStore = useMainStore()
-const { cats } = storeToRefs(mainStore)
+const { cats, circunscriptions } = storeToRefs(mainStore)
 
 const { xs } = useDisplay()
 const props = defineProps({
@@ -28,6 +28,8 @@ const sexes = [
 const q_value = ref('')
 const selected_sex = ref('')
 const selected_powers = ref([])
+const selected_circunscription = ref(null)
+const selected_state = ref(null)
 
 const filtered_candidates = computed(() => {
   let candidates = props.init_candidates.filter((candidate, idx) => {
@@ -44,7 +46,7 @@ const filtered_candidates = computed(() => {
       return name.includes(q)
     })
   }
-  console.log("selected_powers.value", selected_powers.value)
+  // console.log("selected_powers.value", selected_powers.value)
   const powers_count = selected_powers.value.length
   if (powers_count > 0 && powers_count < 4) {
     candidates = candidates.filter(candidate => {
@@ -55,6 +57,21 @@ const filtered_candidates = computed(() => {
       })
     })
   }
+  let current_seat = null
+  if (selected_state.value) {
+    current_seat = cats.value.seat.find(seat => {
+      return seat.circunscription === selected_state.value.circunscription && !seat.state
+    })
+  }
+  else if (selected_circunscription.value) {
+    current_seat = cats.value.seat.find(seat => {
+      return seat.circunscription === selected_circunscription.value && !seat.state
+    })
+  }
+  if (current_seat)
+    candidates = candidates.filter(candidate => {
+      return candidate.seat === current_seat.id
+    })
   return candidates
 })
 
@@ -99,10 +116,10 @@ const candidates_by_sex = computed(()=>{
           outlined
           density="compact"
           clearable
-          base-color="primary"
-          color="indigo"
+          base-color="secondary"
+          color="white"
           variant="filled"
-          bg-color="secondary"
+          bg-color="primary"
           hide-details
           max-width="300"
           min-width="200"
@@ -114,7 +131,7 @@ const candidates_by_sex = computed(()=>{
         cols="12"
         sm="12"
         md="9"
-        class="py-1 py-md-3 d-flex justify-space-around flex-column flex-md-row"
+        class="py-1 py-md-3 d-flex justify-space-around flex-column flex-md-row flex-wrap"
       >
         <div class="d-flex align-center ml-3 justify-center">
           <span
@@ -185,6 +202,79 @@ const candidates_by_sex = computed(()=>{
             </v-chip>
           </v-chip-group>
         </div>
+        <div
+          v-if="position.by_circunscription"
+          class="d-flex align-center ml-3 justify-center"
+        >
+          <span
+            class="mr-2 text-subtitle-1 text-md-h6 text-primary"
+          >
+            <v-icon
+              v-if="!xs"
+              class="mr-1"
+              color="info"
+            >
+              filter_list
+            </v-icon>
+            Circunscripción:
+          </span>
+          <v-chip-group
+            v-model="selected_circunscription"
+          >
+            <v-chip
+              v-for="circ in circunscriptions"
+              :key="circ.id"
+              :value="circ.id"
+              class="mx-1 text-h6"
+              variant="elevated"
+              filter
+              color="info"
+              v-tooltip:bottom="circ.states_text"
+            >
+              {{ circ.number }}
+            </v-chip>
+          </v-chip-group>
+        </div>
+        <div
+          v-if="position.by_circunscription"
+          class="d-flex align-center ml-3 justify-center"
+        >
+          <span
+            class="mr-2 text-subtitle-1 text-md-h6 text-primary"
+          >
+            <v-icon
+              v-if="!xs"
+              class="mr-1"
+              color="info"
+            >
+              filter_list
+            </v-icon>
+            Estado:
+          </span>
+          <v-autocomplete
+            v-model="selected_state"
+            :items="cats.state"
+            item-title="short_name"
+            return-object
+            class="mx-1"
+            filter
+            variant="solo-filled"
+            density="compact"
+            clearable
+            color="secondary"
+            hide-details
+            style="min-width: 200px"
+          >
+              <template v-slot:item="{ props, item }">
+                <v-list-item
+                  v-bind="props"
+                  :title="item.title"
+                  :subtitle="`Circunscripción ${item.raw.circunscription}`"
+                ></v-list-item>
+              </template>
+          </v-autocomplete>
+
+        </div>
       </v-col>
       <v-divider
         thickness="4"
@@ -229,7 +319,8 @@ const candidates_by_sex = computed(()=>{
                 </span>
                 {{ sex.plural }}
               </span>
-              <span v-if="selected_powers.length === 0">
+              <span v-if="selected_powers.length === 0 &&
+                !selected_circunscription && !selected_state">
                 ({{sex.total_seats}} Cargos a elegir)
               </span>
             </span>

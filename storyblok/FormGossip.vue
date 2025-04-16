@@ -2,8 +2,11 @@
 
 import { useGoTo } from 'vuetify'
 import { useMainStore } from '~/store/index'
+import { storeToRefs } from 'pinia'
 const mainStore = useMainStore()
 const { sendResponse, saveFile } = mainStore
+
+const { cats } = storeToRefs(mainStore)
 
 const props = defineProps({
   blok: Object,
@@ -270,7 +273,6 @@ function finish() {
       <v-row>
         <v-col cols="12" class="pb-1 text-subtitle-1">
           <span  class="text-secondary">
-
             Comencemos con el nombre completo de la persona postulante o candidata
           </span>
           <br>
@@ -278,7 +280,7 @@ function finish() {
             (Llena un formulario por cada persona de la que tengas información)
           </span>
         </v-col>
-        <v-col cols="12" md="5">
+        <v-col cols="12" md="5" class="pb-0 pb-sm-3">
           <v-text-field
             v-model="form_data.first_name"
             label="Nombre(s)*"
@@ -300,11 +302,11 @@ function finish() {
         <v-col cols="12" md="6">
           <v-select
             v-model="form_data.appointment_obj"
-            :items="appointment"
+            :items="cats.position"
             label="Cargo*"
             return-object
-            item-value="value"
-            item-title="text"
+            item-value="id"
+            item-title="full_name"
             variant="outlined"
             :rules="[rules.required]"
           ></v-select>
@@ -320,7 +322,7 @@ function finish() {
         <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">
           Amplía la información que nos compartes
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="4" class="pb-0 pb-sm-3">
           <v-select
             v-model="form_data.source_type_obj"
             :items="source_types"
@@ -332,7 +334,12 @@ function finish() {
             :rules="[rules.required]"
           ></v-select>
         </v-col>
-        <v-col cols="12" md="8" v-if="form_data.source_type_obj?.need_link">
+        <v-col
+          v-if="form_data.source_type_obj?.need_link"
+          cols="12"
+          md="8"
+          class="pb-0 pb-sm-3"
+        >
           <v-text-field
             v-model="form_data.source_link"
             label="Link web de la fuente"
@@ -367,7 +374,7 @@ function finish() {
           déjanos tus datos de contacto para buscarte
           posteriormente para más información (opcional)
         </v-col>
-        <v-col cols="12" md="6">
+        <v-col cols="12" md="6" class="pb-0 pb-sm-3">
           <v-text-field
             v-model="form_data.email"
             label="Correo electrónico"

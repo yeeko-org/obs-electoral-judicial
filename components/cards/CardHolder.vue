@@ -8,7 +8,7 @@ import AcademicTitles from "./AcademicTitles.vue";
 import SexChip from "./SexChip.vue";
 
 const mainStore = useMainStore()
-const { seats, cats } = storeToRefs(mainStore)
+const { seats, cats, circunscriptions } = storeToRefs(mainStore)
 
 const { xs, sm } = useDisplay()
 const props = defineProps({
@@ -108,6 +108,14 @@ const name_height = computed(() => {
   return is_large ? 64 : 40
 })
 
+const circunscription_full = computed(() => {
+  if (!seat_full.value.circunscription)
+    return null
+  return circunscriptions.value.find(circ => {
+    return circ.id === seat_full.value.circunscription
+  })
+})
+
 const convertParagraphs = (text) => {
   if (!text) return ''
   text = text.replace(/\\n/g, '\n')
@@ -146,29 +154,9 @@ const convertParagraphs = (text) => {
       </div>
     </v-sheet>
     <v-row no-gutters class="mt-4">
-      <v-col
-        v-if="position_full && position_full.by_circunscription && !xs"
-        cols="auto"
 
-      >
-        <v-sheet
-          color="transparent"
-          height="30"
-          class="d-flex align-center right-circle px-5 text-subtitle-1"
-
-        >
-          <span class="mr-2" :style="`color: ${position_full.color}`">
-            Circunscripción
-            <b>
-              {{ seat_full.circunscription }}
-            </b>
-          </span>
-
-        </v-sheet>
-      </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="auto">
-
+      <v-col cols="auto" class="d-flex flex-column">
         <v-sheet
           :color="position_full.color"
           :height="xs ? 26 : 30"
@@ -180,6 +168,26 @@ const convertParagraphs = (text) => {
           </b>
           {{position}}
         </v-sheet>
+        <div
+          :style="`color: ${position_full.color}`"
+          class="d-flex align-center px-5 text-subtitle-1 mr-2 flex-column flex-sm-row"
+        >
+          <div class="d-flex">
+
+            Circunscripción
+            <b class="ml-1">
+              {{ seat_full.circunscription }}
+            </b>
+          </div>
+          <div
+            v-if="circunscription_full"
+            :style="`color: ${position_full.color}`"
+            class="ml-2 text-caption text-sm-subtitle-2"
+          >
+
+            ({{circunscription_full.states_text}})
+          </div>
+        </div>
       </v-col>
     </v-row>
     <v-row class="mt-2 px-4">
@@ -194,21 +202,21 @@ const convertParagraphs = (text) => {
 
       </v-col>
       <v-col cols="9" class="mt-0 mt-sm-2 d-flex flex-column pt-1 pt-sm-3">
-        <v-sheet
-          v-if="position_full && position_full.by_circunscription && xs"
-          color="transparent"
-          height="30"
-          class="d-flex align-center text-subtitle-1 justify-end pb-4"
+<!--        <v-sheet-->
+<!--          v-if="position_full && position_full.by_circunscription && xs"-->
+<!--          color="transparent"-->
+<!--          height="30"-->
+<!--          class="d-flex align-center text-subtitle-1 justify-end pb-4"-->
 
-        >
-          <span class="mr-2" :style="`color: ${position_full.color}`">
-            Circunscripción
-            <b>
-              {{ seat_full.circunscription }}
-            </b>
-          </span>
+<!--        >-->
+<!--          <span class="mr-2" :style="`color: ${position_full.color}`">-->
+<!--            Circunscripción-->
+<!--            <b>-->
+<!--              {{ seat_full.circunscription }}-->
+<!--            </b>-->
+<!--          </span>-->
 
-        </v-sheet>
+<!--        </v-sheet>-->
 
         <v-card
           v-if="title_above"
