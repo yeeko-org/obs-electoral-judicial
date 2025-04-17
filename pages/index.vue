@@ -7,7 +7,10 @@ const version = $preview ? 'draft' : 'published'
 const story = await useAsyncStoryblok(
     'home',
     { version: version },
-{ customParent: 'https://app.storyblok.com' }
+  {
+    customParent: 'https://app.storyblok.com',
+    cache: 'no-cache',
+  }
 )
 const mainStore = useMainStore()
 const { setDocuments, setGlobalConfig, fetchCatalogs, cats_ready } = mainStore
