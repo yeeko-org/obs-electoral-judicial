@@ -169,6 +169,7 @@ const convertParagraphs = (text) => {
           {{position}}
         </v-sheet>
         <div
+          v-if="circunscription_full"
           :style="`color: ${position_full.color}`"
           class="d-flex align-center px-5 text-subtitle-1 mr-2 flex-column flex-sm-row"
         >
@@ -180,11 +181,9 @@ const convertParagraphs = (text) => {
             </b>
           </div>
           <div
-            v-if="circunscription_full"
             :style="`color: ${position_full.color}`"
             class="ml-2 text-caption text-sm-subtitle-2"
           >
-
             ({{circunscription_full.states_text}})
           </div>
         </div>
