@@ -102,6 +102,11 @@ const schema = {
           "component": "UserSelect", "hidden": false,
           "order": 12, "is_custom": true
       },
+      {
+          "title": "Solo mis perfiles", "field": "own_profiles",
+          "component": "SimpleSwitch", "hidden": false,
+          "order": 12, "is_custom": true
+      },
   ],
   "available_sorts": [
     {

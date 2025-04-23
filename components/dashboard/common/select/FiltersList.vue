@@ -6,6 +6,7 @@ import PositionFilter from "../../custom_filters/PositionFilter.vue";
 // import TripleBooleanFilter from "~/components/dashboard/custom_filters/TripleBooleanFilter.vue";
 // import RangeDates from "~/components/dashboard/custom_filters/RangeDates.vue";
 import UserSelect from "~/components/dashboard/custom_filters/UserSelect.vue";
+import SimpleSwitch from "../../custom_filters/SimpleSwitch.vue";
 // import OnlyByFilter from "~/components/dashboard/custom_filters/OnlyByFilter.vue";
 // import LocationType from "~/components/dashboard/custom_filters/LocationType.vue";
 
@@ -90,6 +91,13 @@ const applyFilters = () => {
         :label="filter_box.title"
         class="pr-3 pl-0 py-1"
         is_filter
+      />
+      <SimpleSwitch
+        v-else-if="filter_box.component === 'SimpleSwitch'"
+        :final_filters="final_filters"
+        :field="filter_box.field"
+        :label="filter_box.title"
+        class="pr-3 pl-0 py-1"
       />
 <!--      <OnlyByFilter-->
 <!--        v-else-if="filter_box.component === 'OnlyByFilter'"-->

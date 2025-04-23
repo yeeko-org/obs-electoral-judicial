@@ -14,29 +14,21 @@ const props = defineProps({
   editors: Boolean,
 })
 
-const final_users = computed(() => {
-  if (!all_users.value)
-    return []
-  return all_users.value
-})
 
 </script>
 
 <template>
-  <v-select
+  <v-switch
     v-model="final_filters[field]"
-    :items="final_users"
-    item-title="full_name"
-    item-value="id"
     :label="label"
     :variant="is_filter ? 'underlined' : 'outlined'"
     :clearable="is_filter"
-    :hide-details="is_filter"
+    hide-details
     :density="is_filter ? 'compact' : 'default'"
-    style="max-width: 240px; min-width: 180px;"
+    color="accent"
     class="ml-2"
   >
-  </v-select>
+  </v-switch>
 </template>
 
 <style scoped>

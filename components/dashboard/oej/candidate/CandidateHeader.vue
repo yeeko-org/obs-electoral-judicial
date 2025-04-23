@@ -4,6 +4,7 @@ import HeaderCommon from "~/components/dashboard/generic/HeaderCommon.vue";
 
 import {useMainStore} from '~/store/index.js'
 import {storeToRefs} from "pinia";
+import CardHolder from "../../../cards/CardHolder.vue";
 const mainStore = useMainStore()
 
 const { users_dict } = storeToRefs(mainStore)
@@ -114,6 +115,41 @@ const users_by_stages = computed(() => {
       </v-avatar>
     </template>
     <template v-slot:details>
+      <v-btn
+        variant="tonal"
+        prepend-icon="contacts"
+        color="info"
+      >
+
+<!--        <v-icon-->
+<!--          color="info"-->
+<!--          class="ml-3"-->
+<!--          size="x-large"-->
+<!--          left-->
+<!--        >-->
+<!--          contacts-->
+
+<!--        </v-icon>-->
+          <v-tooltip
+            bottom
+            location="bottom"
+            activator="parent"
+
+          >
+
+            <CardHolder
+              :candidate="main"
+              style="max-width: 700px"
+              init_show_details
+            />
+          </v-tooltip>
+        Ver Ficha
+      </v-btn>
+      <span
+        class="text-info text-subtitle-1 font-weight-bold ml-1"
+      >
+
+      </span>
       <template
         v-if="main.biography"
       >

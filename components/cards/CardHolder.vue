@@ -16,6 +16,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  init_show_details: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const show_details = ref(false)
@@ -44,6 +48,10 @@ const extra_fields_full = [
     "title": "Complemento de experiencia académica",
   }
 ]
+
+const opened_details = computed(() => {
+  return show_details.value || props.init_show_details
+})
 
 const seat_full = computed(() => {
   return seats.value[props.candidate.seat] || {}
@@ -305,7 +313,7 @@ const convertParagraphs = (text) => {
         :key="section.key"
       >
         <div
-          v-if="(section.init_display || show_details) && candidate.professional_summary"
+          v-if="(section.init_display || opened_details) && candidate.professional_summary"
         >
           <div
             class="text-secondary text-subtitle-2 text-sm-subtitle-1 font-weight-bold mb-1 mt-3"
@@ -321,19 +329,19 @@ const convertParagraphs = (text) => {
           </div>
           <div
             class="text-white paragraph"
-            :class="{'fade-out': !show_details && section.cut_text}"
+            :class="{'fade-out': !opened_details && section.cut_text}"
             v-html="section.text"
-            :style="!show_details && section.cut_text ? 'max-height: 80px; overflow: hidden;' : ''"
+            :style="!opened_details && section.cut_text ? 'max-height: 80px; overflow: hidden;' : ''"
           >
           </div>
           <div class="d-flex justify-center">
 
             <v-btn
-              v-if="section.cut_text && !show_details"
+              v-if="section.cut_text && !opened_details"
               color="accent"
               variant="elevated"
               class="mt-n8"
-              :append-icon="show_details ? 'expand_less' : 'expand_more'"
+              :append-icon="opened_details ? 'expand_less' : 'expand_more'"
               @click="show_details = !show_details"
               :size="xs ? 'small' : 'default'"
             >
@@ -343,7 +351,7 @@ const convertParagraphs = (text) => {
         </div>
       </template>
     </v-card-text>
-    <v-card-actions class="mx-3" v-if="candidate.professional_summary && show_details">
+    <v-card-actions class="mx-3" v-if="candidate.professional_summary && opened_details">
 <!--    <v-card-actions class="mx-3" v-if="candidate.professional_summary">-->
 <!--      <v-btn-->
 <!--        icon-->
@@ -352,11 +360,11 @@ const convertParagraphs = (text) => {
 <!--      </v-btn>-->
       <v-spacer></v-spacer>
       <v-btn
-        v-if="!show_details"
+        v-if="!opened_details"
         color="accent"
         variant="elevated"
         class="mt-n8"
-        :append-icon="show_details ? 'expand_less' : 'expand_more'"
+        :append-icon="opened_details ? 'expand_less' : 'expand_more'"
         @click="show_details = !show_details"
         :size="xs ? 'small' : 'default'"
       >
@@ -366,11 +374,11 @@ const convertParagraphs = (text) => {
         v-else
         color="accent"
         variant="outlined"
-        :append-icon="show_details ? 'expand_less' : 'expand_more'"
+        :append-icon="opened_details ? 'expand_less' : 'expand_more'"
         @click="show_details = !show_details"
         :size="xs ? 'small' : 'default'"
       >
-        {{ show_details ? 'Ocultar detalles' : 'Ver ficha completa' }}
+        {{ opened_details ? 'Ocultar detalles' : 'Ver ficha completa' }}
       </v-btn>
       <v-spacer></v-spacer>
     </v-card-actions>
