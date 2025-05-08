@@ -81,7 +81,7 @@ const explanation = computed(() => {
       >
         <v-row>
           <v-col
-            cols="4"
+            cols="5"
             class="d-flex flex-column justify-center"
           >
             <v-avatar
@@ -109,18 +109,19 @@ const explanation = computed(() => {
               {{position.total_candidates}} Candidaturas
             </v-sheet>
           </v-col>
-          <v-col cols="8">
+          <v-col cols="7">
             <div
               class="text-h6 font-weight-bold"
+              :class="position.is_public ? '' : 'px-10 pt-4'"
               :style="`color: ${position.color_light}`"
             >
               {{ position.full_name }}
             </div>
 
             <v-card-actions
+              v-if="position.is_public"
               class="text-body-2 mt-3"
             >
-              <template v-if="position.is_public">
                 <v-spacer></v-spacer>
                 <v-btn
                   color="accent"
@@ -133,16 +134,15 @@ const explanation = computed(() => {
                   Explorar perfiles
                 </v-btn>
                 <v-spacer></v-spacer>
-              </template>
-              <v-alert
-                v-else
-                type="info"
-                variant="outlined"
-                color="grey"
-                density="compact"
-              >
-                Próximamente...
-              </v-alert>
+<!--              <v-alert-->
+<!--                v-else-->
+<!--                type="info"-->
+<!--                variant="outlined"-->
+<!--                color="grey"-->
+<!--                density="compact"-->
+<!--              >-->
+<!--                Próximamente...-->
+<!--              </v-alert>-->
             </v-card-actions>
           </v-col>
         </v-row>
@@ -152,24 +152,37 @@ const explanation = computed(() => {
       cols="12"
       class="d-flex flex-column justify-center align-center"
     >
+<!--      <v-btn-->
+<!--        color="accent"-->
+<!--        variant="elevated"-->
+<!--        class="my-4 px-2 px-md-4"-->
+<!--        :size="xs ? 'default' : 'large'"-->
+<!--        elevation="5"-->
+<!--        @click="dialog_cards = true"-->
+<!--      >-->
+<!--        Ver todos los perfiles-->
+<!--      </v-btn>-->
       <v-btn
-        color="accent"
+        color="secondary"
         variant="elevated"
-        class="my-4 px-2 px-md-4"
-        :size="xs ? 'default' : 'large'"
-        elevation="5"
-        @click="dialog_cards = true"
-      >
-        Ver todos los perfiles
-      </v-btn>
-      <v-btn
-        color="accent"
-        variant="outlined"
         class="my-4 px-2 px-md-4"
         @click="dialog_methodology = true"
       >
         Nota metodológica
       </v-btn>
+      <v-btn
+        color="accent"
+        variant="outlined"
+        class="my-4 px-2 px-md-4"
+        href="http://ojoenlajusticia.com"
+        target="_blank"
+        prepend-icon="open_in_new"
+      >
+        Ir a Ojo en la Justicia*
+      </v-btn>
+      <span class="text-accent">
+        *Disentir por medio de Ojos en la Justicia profundiza en los perfiles de magistraturas de circuito y jueces de distrito
+      </span>
     </v-col>
 
     <v-dialog
