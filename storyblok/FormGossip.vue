@@ -258,8 +258,8 @@ function finish() {
     </v-card-title>
     <v-alert type="info" variant="tonal" class="mx-3">
       Comparte toda la información y/o evidencia que tengas sobre
-      situaciones que puedan poner en riesgo la independencia, imparcialidad o
-      profesionalismo de las personas que aspiran a un cargo judicial.
+      situaciones que puedan poner en riesgo la participación ciudadana
+      libre y la jornada electoral en su conjunto.
     </v-alert>
     <v-alert
       type="error"
