@@ -254,7 +254,7 @@ function finish() {
       class="text-h5 text-center text-primary font-weight-bold pt-3 mb-3 title-no-wrap"
       id="gossip"
     >
-      Reporta a personas juzgadoras candidatas con conflictos de interés
+      Reporta conductas sospechosas
     </v-card-title>
     <v-alert type="info" variant="tonal" class="mx-3">
       Comparte toda la información y/o evidencia que tengas sobre
