@@ -273,44 +273,45 @@ function finish() {
       <v-row>
         <v-col cols="12" class="pb-1 text-subtitle-1">
           <span  class="text-secondary">
-            Comencemos con el nombre completo de la persona postulante o candidata
+            Cuál es la conducta denunciada
           </span>
           <br>
-          <span class="text-grey-darken-1 text-body-2">
-            (Llena un formulario por cada persona de la que tengas información)
-          </span>
+<!--          <span class="text-grey-darken-1 text-body-2">-->
+<!--            (Llena un formulario por cada persona de la que tengas información)-->
+<!--          </span>-->
         </v-col>
-        <v-col cols="12" md="5" class="pb-0 pb-sm-3">
+        <v-col cols="12" md="12" class="pb-0 pb-sm-3">
           <v-text-field
             v-model="form_data.first_name"
-            label="Nombre(s)*"
+            label="Escribe la conducta denunciada*"
+            counter="250"
             variant="outlined"
             :rules="[rules.required]"
           ></v-text-field>
         </v-col>
-        <v-col cols="12" md="7">
-          <v-text-field
-            v-model="form_data.last_name"
-            label="Apellidos*"
-            variant="outlined"
-            :rules="[rules.required]"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">
-          ¿A qué cargo postula la persona de la que nos compartes información?
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-select
-            v-model="form_data.appointment_obj"
-            :items="cats.position"
-            label="Cargo*"
-            return-object
-            item-value="id"
-            item-title="full_name"
-            variant="outlined"
-            :rules="[rules.required]"
-          ></v-select>
-        </v-col>
+<!--        <v-col cols="12" md="7">-->
+<!--          <v-text-field-->
+<!--            v-model="form_data.last_name"-->
+<!--            label="Apellidos*"-->
+<!--            variant="outlined"-->
+<!--            :rules="[rules.required]"-->
+<!--          ></v-text-field>-->
+<!--        </v-col>-->
+<!--        <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">-->
+<!--          ¿A qué cargo postula la persona de la que nos compartes información?-->
+<!--        </v-col>-->
+<!--        <v-col cols="12" md="6">-->
+<!--          <v-select-->
+<!--            v-model="form_data.appointment_obj"-->
+<!--            :items="cats.position"-->
+<!--            label="Cargo*"-->
+<!--            return-object-->
+<!--            item-value="id"-->
+<!--            item-title="full_name"-->
+<!--            variant="outlined"-->
+<!--            :rules="[rules.required]"-->
+<!--          ></v-select>-->
+<!--        </v-col>-->
         <v-col cols="12" md="6" v-if="form_data.appointment_obj?.need_state">
           <v-autocomplete
             v-model="form_data.state"
