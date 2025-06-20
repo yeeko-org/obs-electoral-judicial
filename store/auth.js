@@ -6,46 +6,46 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     is_authenticated: false,
     is_logged: false,
-    auth_oej: null,
-    user_details_oej: null,
+    auth_dfi: null,
+    user_details_dfi: null,
     is_logging_in: true,
     dialog_login: false
   }),
   actions: {
     setToken(token) {
-      this.auth_oej = token
+      this.auth_dfi = token
       //ApiService.defaults.headers.common['Authorization'] = `Token ${token}`;
       //ApiService.defaults.headers.common['Authorization
     },
     setAuth(user, from_mid=true) {
       console.log("setAuth")
       this.is_authenticated = true
-      this.user_details_oej = user
+      this.user_details_dfi = user
       this.is_logged = Date.now()
       this.is_logging_in = false
-      // Cookie.set('auth_oej', user.token)
+      // Cookie.set('auth_dfi', user.token)
       // console.log("Cookie", Cookie)
-      // console.log("auth_oej", Cookie.get('auth_oej'))
+      // console.log("auth_dfi", Cookie.get('auth_dfi'))
       if (!from_mid){
-        const token = useCookie('auth_oej')
+        const token = useCookie('auth_dfi')
         token.value = user.token
       }
-      this.auth_oej = user.token
+      this.auth_dfi = user.token
     },
     setHeader() {
-      if (this.auth_oej) {
-        let token = this.auth_oej
+      if (this.auth_dfi) {
+        let token = this.auth_dfi
         ApiService.defaults.headers.common['Authorization'] = `Token ${token}`
       }
     },
     checkAuthSimple() {
-      // const cookie_auth = Cookie.get('auth_oej')
-      const cookie_auth = useCookie('auth_oej')
+      // const cookie_auth = Cookie.get('auth_dfi')
+      const cookie_auth = useCookie('auth_dfi')
 
       // console.log("checkAuthSimple")
       return new Promise((resolve) => {
         if (this.is_logged) {
-          // console.log("hay auth", this.auth_oej)
+          // console.log("hay auth", this.auth_dfi)
           let last_login = this.is_logged
           if (!!last_login && last_login + (3600*24*1000) > Date.now()){
             // console.log("NO hay datos recientes")
@@ -57,8 +57,8 @@ export const useAuthStore = defineStore("auth", {
           }
         }
         else if (cookie_auth.value) {
-          // console.log("hay cookie", this.auth_oej)
-          this.auth_oej = cookie_auth.value
+          // console.log("hay cookie", this.auth_dfi)
+          this.auth_dfi = cookie_auth.value
           this.setHeader()
           this.getLogin()
         }
@@ -70,8 +70,8 @@ export const useAuthStore = defineStore("auth", {
       })
     },
     getCurrentUser() {
-      if (this.user_details_oej){
-        return this.user_details_oej
+      if (this.user_details_dfi){
+        return this.user_details_dfi
       }
       else{
         // console.log("en el nuxt no hay datos del usuario")
@@ -132,11 +132,11 @@ export const useAuthStore = defineStore("auth", {
     purgeAuth(from_mid=true) {
       // console.log("purgeAuth")
       this.is_authenticated = false
-      this.user_details_oej = null
-      this.auth_oej = null
-      // Cookie.remove('auth_oej')
+      this.user_details_dfi = null
+      this.auth_dfi = null
+      // Cookie.remove('auth_dfi')
       if (!from_mid){
-        const token = useCookie('auth_oej')
+        const token = useCookie('auth_dfi')
         token.value = null
       }
     },
@@ -150,8 +150,8 @@ export const useAuthStore = defineStore("auth", {
   getters: {
     authCookie() {
       // console.log("Cookie", Cookie)
-      // console.log("authCookie", Cookie.get('auth_oej'))
-      const token = useCookie('auth_oej')
+      // console.log("authCookie", Cookie.get('auth_dfi'))
+      const token = useCookie('auth_dfi')
       return token.value
       // return true
     }

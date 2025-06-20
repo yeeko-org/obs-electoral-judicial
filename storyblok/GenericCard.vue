@@ -1,6 +1,7 @@
 <script setup>
 // import { computed, ref, onMounted } from 'vue'
-import CommonTitle from "../components/CommonTitle.vue";
+import CommonTitle from "../components/web/CommonTitle.vue";
+import {computed} from "vue";
 
 // defineProps({ blok: Object });
 const props = defineProps({
@@ -16,29 +17,20 @@ const space_class = computed(() => {
   return final_class
 })
 
+const description3 = computed(() => {
+  return renderRichText(props.blok.description2)
+})
+
 const description2 = computed(() => {
   let rich_text = renderRichText(props.blok.description2)
-  if (props.blok.is_list) {
-    console.log('rich_text', rich_text)
-    if (!rich_text.includes('<ul>')){
-      rich_text = `<ul>${rich_text}</ul>`
-      rich_text = rich_text.replace(/<(h[1-6])>/g, "<li><$1>");
-      rich_text = rich_text.replace(/<\/(h[1-6])>/g, "</$1></li>");
-    }
-
-    // const splitted_by_line = rich_text.split('</li>')
-    // let final_content = ''
-    // splitted_by_line.forEach((line, index) => {
-    // })
-    // console.log('splitted_by_line', splitted_by_line)
-    let new_content = rich_text.replace(
-        /<sup>/g, '<b class="text-h6 font-weight-bold merri-weather">')
-    new_content = new_content.replace(/<\/sup>/g, '</b>')
-    return new_content
-  }
-
+  if (!rich_text)
+    return null
+  rich_text = rich_text.replace(
+      /<p>/g, '<p class="mt-2 mt-sm-4 montse">')
   return rich_text
+  // return renderRichText(props.blok.text)
 })
+
 const color_description = computed(() =>
     props.blok.color_description || 'black')
 
@@ -66,7 +58,6 @@ const blok_header = computed(() => {
   return {
     subheader: props.blok.title,
     color_title: props.blok.color_title,
-    color_pleca: props.blok.color_pleca,
     align_text: props.blok.align_text,
     align_md: props.blok.align_md,
     is_indirect: true,
@@ -80,33 +71,29 @@ const blok_header = computed(() => {
   <v-col
     v-editable="blok"
     :cols="blok.cols"
+    :sm="blok.sm || blok.md"
     :md="blok.md"
-    class="py-0 py-sm-3"
+    class="py-0 _py-sm-3"
     :class="space_class"
     :order="blok.order || 1"
     :order-md="blok.order_md || 1"
+    :order-sm="blok.order_sm || 1"
   >
     <v-card
-      :variant="variant_card"
-      :color="blok.background_color2 || 'transparent'"
+      variant="text"
       :class="`${blok.free_class} text-${blok.align_text} text-sm-${blok.align_md}`"
-      class="rounded-0 d-flex flex-column justify-center fill-height py-0 py-sm-4"
+      class="rounded-0 d-flex flex-column justify-center fill-height py-0 _py-sm-4"
       elevation="0"
     >
 
       <div>
-        <div
-          v-if="false"
-          class="float-left my-6 plequita"
-        >
-        </div>
         <CommonTitle
           v-if="blok.title"
           :blok="blok_header"
         />
-        <v-card-text v-if="blok.description2" class="py-2 py-sm-4">
+        <v-card-text v-if="description2" class="py-2 py-sm-4">
           <div
-            class="text-text-1 text-sm-subtitle-1 _mt-2 _mt-sm-4 lato"
+            class="text-text-1 text-sm-subtitle-1 _mt-2 _mt-sm-4 montse"
             v-html="description2"
           ></div>
         </v-card-text>
@@ -119,6 +106,13 @@ const blok_header = computed(() => {
           ></StoryblokComponent>
           <v-spacer></v-spacer>
         </v-card-actions>
+        <v-card-text v-if="blok.contents?.length" class="py-2 py-sm-4">
+          <StoryblokComponent
+            v-for="blok in blok.contents"
+            :key="blok._uid"
+            :blok="blok"
+          ></StoryblokComponent>
+        </v-card-text>
       </div>
     </v-card>
   </v-col>
@@ -132,12 +126,5 @@ const blok_header = computed(() => {
 }
 .title-no-wrap{
   white-space: normal !important;
-}
-.plequita{
-  background-color: orange;
-  width: 8px;
-  height: 80%;
-  border-radius: 0 10px 10px 0;
-
 }
 </style>

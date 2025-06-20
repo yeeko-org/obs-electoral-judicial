@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import {useMainStore} from '~/store/index'
+import {useWebStore} from '~/store/web.js'
 import { resizeImg, transformImage } from '~/composables/storyblok_images.js'
 import dayjs from 'dayjs'
 import 'dayjs/locale/es'
@@ -9,8 +9,8 @@ import * as d3 from 'd3'
 
 dayjs.locale('es')
 
-const mainStore = useMainStore()
-const { materials } = storeToRefs(mainStore)
+const webStore = useWebStore()
+const { materials } = storeToRefs(webStore)
 
 const props = defineProps({
   blok: Object
@@ -106,10 +106,10 @@ const filteredMats = computed(() => {
             </span> |
             <span class="text-grey-darken-1">{{ item.year }}</span>
           </v-card-subtitle>
-          <v-card-title class="text-h5 text-no-wrap py-2 font-weight-bold merri-weather">
+          <v-card-title class="text-h5 text-no-wrap py-2 font-weight-bold oswald">
             {{ item.name }}
           </v-card-title>
-          <v-card-text v-if="item.description" class="text-black text-body-1 pb-2 lato">
+          <v-card-text v-if="item.description" class="text-black text-body-1 pb-2 montse">
             {{ item.description }}
           </v-card-text>
         </v-col>

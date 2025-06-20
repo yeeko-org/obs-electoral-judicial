@@ -1,12 +1,9 @@
 <script setup>
 
 import { useGoTo } from 'vuetify'
-import { useMainStore } from '~/store/index'
-import { storeToRefs } from 'pinia'
-const mainStore = useMainStore()
-const { sendResponse, saveFile } = mainStore
-
-const { cats } = storeToRefs(mainStore)
+import { useWebStore } from '~/store/web.js'
+const webStore = useWebStore()
+const { sendResponse, saveFile } = webStore
 
 const props = defineProps({
   blok: Object,
@@ -254,12 +251,12 @@ function finish() {
       class="text-h5 text-center text-primary font-weight-bold pt-3 mb-3 title-no-wrap"
       id="gossip"
     >
-      Reporta conductas sospechosas
+      Reporta a personas juzgadoras candidatas con conflictos de interés
     </v-card-title>
     <v-alert type="info" variant="tonal" class="mx-3">
       Comparte toda la información y/o evidencia que tengas sobre
-      situaciones que puedan poner en riesgo la participación ciudadana
-      libre y la jornada electoral en su conjunto.
+      situaciones que puedan poner en riesgo la independencia, imparcialidad o
+      profesionalismo de las personas que aspiran a un cargo judicial.
     </v-alert>
     <v-alert
       type="error"
@@ -273,45 +270,45 @@ function finish() {
       <v-row>
         <v-col cols="12" class="pb-1 text-subtitle-1">
           <span  class="text-secondary">
-            Cuál es la conducta denunciada
+
+            Comencemos con el nombre completo de la persona postulante o candidata
           </span>
           <br>
-<!--          <span class="text-grey-darken-1 text-body-2">-->
-<!--            (Llena un formulario por cada persona de la que tengas información)-->
-<!--          </span>-->
+          <span class="text-grey-darken-1 text-body-2">
+            (Llena un formulario por cada persona de la que tengas información)
+          </span>
         </v-col>
-        <v-col cols="12" md="12" class="pb-0 pb-sm-3">
+        <v-col cols="12" md="5">
           <v-text-field
             v-model="form_data.first_name"
-            label="Escribe la conducta denunciada*"
-            counter="250"
+            label="Nombre(s)*"
             variant="outlined"
             :rules="[rules.required]"
           ></v-text-field>
         </v-col>
-<!--        <v-col cols="12" md="7">-->
-<!--          <v-text-field-->
-<!--            v-model="form_data.last_name"-->
-<!--            label="Apellidos*"-->
-<!--            variant="outlined"-->
-<!--            :rules="[rules.required]"-->
-<!--          ></v-text-field>-->
-<!--        </v-col>-->
-<!--        <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">-->
-<!--          ¿A qué cargo postula la persona de la que nos compartes información?-->
-<!--        </v-col>-->
-<!--        <v-col cols="12" md="6">-->
-<!--          <v-select-->
-<!--            v-model="form_data.appointment_obj"-->
-<!--            :items="cats.position"-->
-<!--            label="Cargo*"-->
-<!--            return-object-->
-<!--            item-value="id"-->
-<!--            item-title="full_name"-->
-<!--            variant="outlined"-->
-<!--            :rules="[rules.required]"-->
-<!--          ></v-select>-->
-<!--        </v-col>-->
+        <v-col cols="12" md="7">
+          <v-text-field
+            v-model="form_data.last_name"
+            label="Apellidos*"
+            variant="outlined"
+            :rules="[rules.required]"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">
+          ¿A qué cargo postula la persona de la que nos compartes información?
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-select
+            v-model="form_data.appointment_obj"
+            :items="appointment"
+            label="Cargo*"
+            return-object
+            item-value="value"
+            item-title="text"
+            variant="outlined"
+            :rules="[rules.required]"
+          ></v-select>
+        </v-col>
         <v-col cols="12" md="6" v-if="form_data.appointment_obj?.need_state">
           <v-autocomplete
             v-model="form_data.state"
@@ -323,7 +320,7 @@ function finish() {
         <v-col cols="12" class="pt-0 py-1 text-subtitle-1 text-secondary">
           Amplía la información que nos compartes
         </v-col>
-        <v-col cols="12" md="4" class="pb-0 pb-sm-3">
+        <v-col cols="12" md="4">
           <v-select
             v-model="form_data.source_type_obj"
             :items="source_types"
@@ -335,12 +332,7 @@ function finish() {
             :rules="[rules.required]"
           ></v-select>
         </v-col>
-        <v-col
-          v-if="form_data.source_type_obj?.need_link"
-          cols="12"
-          md="8"
-          class="pb-0 pb-sm-3"
-        >
+        <v-col cols="12" md="8" v-if="form_data.source_type_obj?.need_link">
           <v-text-field
             v-model="form_data.source_link"
             label="Link web de la fuente"
@@ -375,7 +367,7 @@ function finish() {
           déjanos tus datos de contacto para buscarte
           posteriormente para más información (opcional)
         </v-col>
-        <v-col cols="12" md="6" class="pb-0 pb-sm-3">
+        <v-col cols="12" md="6">
           <v-text-field
             v-model="form_data.email"
             label="Correo electrónico"

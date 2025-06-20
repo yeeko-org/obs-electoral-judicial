@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import componentMixin from '~/mixins/componentMixin'
 import { resizeImg, transformImage } from '~/composables/storyblok_images.js'
 import {useDisplay} from "vuetify";
-import CommonTitle from "../components/CommonTitle.vue";
+import CommonTitle from "../components/web/CommonTitle.vue";
 const { xs, smAndUp, mdAndUp, smAndDown } = useDisplay()
 
 const props = defineProps({
@@ -39,6 +39,7 @@ onMounted(() => {
         color="transparent"
         elevation="0"
       >
+
         <CommonTitle
           :blok="blok"
         />

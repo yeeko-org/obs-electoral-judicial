@@ -15,7 +15,7 @@ useSeoMeta({
 <template>
   <NuxtLayout>
     <v-app>
-      <RouterView />
+      <NuxtPage />
     </v-app>
   </NuxtLayout>
 </template>

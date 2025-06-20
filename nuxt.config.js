@@ -1,13 +1,13 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+// https://nuxt.com/docs/api/configuration/nuxt-config
 import dotenv from 'dotenv'
-
 dotenv.config()
-// console.log("env NUXT_SECRET_API_KEY", process.env.NUXT_SECRET_API_KEY)
-// console.log("env", process.env)
 export default defineNuxtConfig({
+  compatibilityDate: '2024-11-01',
   build: {
-    transpile: ['vuetify']
+    transpile: ['vuetify'],
   },
+  ssr: true,
   modules: [
     '@pinia/nuxt',
     (_options, nuxt) => {
@@ -23,6 +23,10 @@ export default defineNuxtConfig({
         accessToken: process.env.NUXT_SECRET_STORYBLOK_TOKEN,
         bridge: true,
         devtools: true,
+        cache: {
+          clear: "auto",
+          type: "memory",
+        },
         // enableSudoMode: true,
         apiOptions: {
           region: '' // Set 'US" if your space is created in US region (EU default)
@@ -35,45 +39,40 @@ export default defineNuxtConfig({
       // key: fs.readFileSync(path.resolve(__dirname, 'localhost-key.pem')),
       // cert: fs.readFileSync(path.resolve(__dirname, 'localhost.pem')),
       key: 'localhost-key.pem',
-      cert: 'localhost.pem'
+      cert: 'localhost.pem',
     },
-    port: 3005
+    port: 3001,
   },
   googleFonts: {
     families: {
-      Lato: [400, 500, 700, 900],
-      Merriweather: [400, 500, 700]
-    }
-  },
-  app: {
-    head: {
-      titleTemplate: 'Observatorio Electoral Judicial (OEJ)',
-      title: 'OEJ (Observatorio Electoral Judicial)',
-      charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
-      meta: [
-        {charset: 'utf-8'},
-        {name: 'viewport', content: 'width=device-width, initial-scale=1'},
-        {
-          hid: 'description',
-          name: 'description',
-          content: 'Documentamos, analizamos y difundimos las decisiones, ' +
-            'los problemas y toda la información relevante del proceso electoral ' +
-            'del Poder Judicial 2024-2025'
-        }
-      ],
-      link: [
-        {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
-      ]
-
-    }
+      Montserrat: [400, 700, 900],
+      Oswald: [700],
+      "PT+Serif": [700],
+    },
+    display: 'swap',
+    preload: true,
+    prefetch: true,
+    preconnect: true
   },
   vite: {
+    ssr: {
+      noExternal: ['vuetify'],
+    },
     vue: {
       template: {
-        transformAssetUrls
-      }
-    }
+        transformAssetUrls,
+      },
+    },
   },
-  compatibilityDate: '2024-10-30'
+  // alias: {
+  //   vue: 'vue/dist/vue.esm-bundler.js'
+  // },
+  // vuetify: {
+  //   autoImport: true,
+  //
+  //   styles: {
+  //     configFile: 'assets/settings.scss',
+  //   },
+  // },
+  // devtools: { enabled: true }
 })

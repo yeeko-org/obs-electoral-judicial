@@ -8,11 +8,11 @@ const props = defineProps({
 </script>
 
 <template>
-  <SectionHeader
-    v-for="blok in blok?.header"
-    :key="blok._uid"
-    :blok="blok"
-  />
+<!--  <SectionHeader-->
+<!--    v-for="blok in blok?.header"-->
+<!--    :key="blok._uid"-->
+<!--    :blok="blok"-->
+<!--  />-->
   <v-row
     justify="space-around"
     align="center"
@@ -29,13 +29,22 @@ const props = defineProps({
       md="4"
       class="pa-4 align-center justify-space-between text-center"
     >
-      <a :href="institution.web_page?.url || ''" target="_blank">
+      <a :href="institution.web_page?.url || ''" target="_blank" class="text-decoration-none">
         <v-img
+          v-if="institution.logo?.filename"
           :src="resizeImg(institution.logo, 350)"
           :alt="`Institución ${institution}`"
           :max-height="blok.max_height || 120"
           :max-width="blok.max_width || 350"
         ></v-img>
+        <span
+          v-else
+          class="text-decoration-none text-black"
+          style="text-underline-offset: 4em;"
+        >
+          {{ institution.name }}
+
+        </span>
       </a>
       <v-tooltip
         activator="parent"

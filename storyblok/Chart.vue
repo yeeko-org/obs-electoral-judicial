@@ -66,7 +66,6 @@ const final_height = computed(() => {
           _contain
           dark
           :src="resizeImg(blok.main_image, 0, final_height)"
-          _style="object-fit: contain;"
         ></v-img>
       </v-col>
       <v-col

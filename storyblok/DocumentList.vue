@@ -3,18 +3,15 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/es'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import {useMainStore} from '~/store/index'
+import {useWebStore} from '~/store/web.js'
+import {getDocumentType} from "~/composables/documents.js";
 
-import { useDisplay } from 'vuetify'
-const { xs, smAndUp } = useDisplay()
-import { resizeImg, transformImage } from '~/composables/storyblok_images.js'
-import * as d3 from 'd3'
 import Document from "~/storyblok/Document.vue"
 
 dayjs.locale('es')
-const mainStore = useMainStore()
+const webStore = useWebStore()
 // Store setup and state
-const { all_documents } = storeToRefs(mainStore)
+const { all_documents } = storeToRefs(webStore)
 
 // Props
 const props = defineProps({
@@ -26,12 +23,6 @@ const props = defineProps({
 const selected_months = ref([])
 const selectedDocs = ref([])
 const show_all = ref(false)
-const typeDocuments = {
-  "Informe quincenal": ['#dabdff', '#c192ff', 'secondary'],
-  "Informe final": ['#feaabc', '#fd7291', 'pink'],
-  "Informe": ['#dabdff', '#c192ff', 'purple'],
-  "Comunicado": ['#516fce', '#001249', 'info'],
-}
 
 const final_display = computed(()=>{
   return props.blok
@@ -45,18 +36,21 @@ const final_docs = computed(() => {
   // return []
   const initialDocs = props.init_documents ||
     props.blok?.body || all_documents.value
+  console.log("initialDocs", initialDocs)
   if (!initialDocs)
     return []
   return initialDocs
     .map(doc => {
-      doc.colors = typeDocuments[doc.type_doc]
+      // console.log("doc", doc)
+      doc.document_type = getDocumentType(doc.type_doc)
+      doc.colors = doc.document_type.colors
       const date_start = dayjs(doc.start_date.substr(0, 10))
       doc.date_start = date_start
       doc.year = date_start.year()
       doc.month = date_start.month()
       doc.month_year = date_start.format('MMMM YYYY')
       let date_text = ''
-      if (doc.type_doc.includes('quincenal')) {
+      if (doc.document_type.has_range) {
         date_text = date_start.format('[Del] D [al] ')
         const date_end = dayjs(doc.end_date.substr(0, 10))
         date_text += `${date_end.format('D [de] MMMM [de] YYYY')}`
@@ -83,10 +77,14 @@ const all_types = computed(() =>
     !arr.includes(doc.type_doc)
       ? [...arr, doc.type_doc]
       : arr), []
-  ).map((type) => ({
-    name: type,
-    colors: typeDocuments[type]
-  }))
+  ).map((type) => {
+    const document_type = getDocumentType(type)
+    return {
+      ...document_type,
+      key: type,
+    }
+    // colors: typeDocuments[type]
+  })
 )
 
 const filteredDocs = computed(() => {
@@ -98,9 +96,10 @@ const filteredDocs = computed(() => {
     : all_types.value
   let filtered_docs = final_docs.value.filter(
     doc =>
-      selectedDocList.some(selDoc => selDoc.name === doc.type_doc) &&
+      selectedDocList.some(selDoc => selDoc.key === doc.type_doc) &&
       selected_month_list.includes(doc.month_year)
   )
+  console.log('filtered_docs', filtered_docs)
   if (!show_all.value)
     return filtered_docs.slice(0, final_display.value)
   return filtered_docs
@@ -122,47 +121,47 @@ const filteredDocs = computed(() => {
     variant="flat"
     color="transparent"
   >
-    <div
-      class="d-flex justify-center align-center flex-column flex-md-row"
-    >
+<!--    <div-->
+<!--      class="d-flex justify-center align-center flex-column flex-md-row"-->
+<!--    >-->
 
-      <div
-        class="mr-2 text-sm-subtitle-1 text-body-1 text-grey-darken-2"
-        v-if="smAndUp"
-      >
-        Filtrar meses:
-      </div>
-      <v-chip-group
-        v-if="smAndUp"
-        multiple
-        v-model="selected_months"
-      >
-        <v-chip
-          v-for="month in all_months"
-          :key="month"
-          class="mx-1"
-          filter
-          variant="outlined"
-          color="accent"
-        >
-          {{ month }}
-        </v-chip>
-      </v-chip-group>
+<!--      <div-->
+<!--        class="mr-2 text-sm-subtitle-1 text-body-1 text-grey-darken-2"-->
+<!--        v-if="smAndUp"-->
+<!--      >-->
+<!--        Filtrar meses:-->
+<!--      </div>-->
+<!--      <v-chip-group-->
+<!--        v-if="smAndUp"-->
+<!--        multiple-->
+<!--        v-model="selected_months"-->
+<!--      >-->
+<!--        <v-chip-->
+<!--          v-for="month in all_months"-->
+<!--          :key="month"-->
+<!--          class="mx-1"-->
+<!--          filter-->
+<!--          variant="outlined"-->
+<!--          color="accent"-->
+<!--        >-->
+<!--          {{ month }}-->
+<!--        </v-chip>-->
+<!--      </v-chip-group>-->
 
-      <span class="mr-2 text-subtitle-1 ml-4">Filtrar documentos:</span>
-      <v-chip-group multiple v-model="selectedDocs">
-        <v-chip
-          v-for="typeDoc in all_types"
-          :key="typeDoc.name"
-          class="mx-1"
-          filter
-          variant="outlined"
-          :color="typeDoc.colors[2]"
-        >
-          {{ typeDoc.name }}
-        </v-chip>
-      </v-chip-group>
-    </div>
+<!--      <span class="mr-2 text-subtitle-1 ml-4">Filtrar documentos:</span>-->
+<!--      <v-chip-group multiple v-model="selectedDocs">-->
+<!--        <v-chip-->
+<!--          v-for="typeDoc in all_types"-->
+<!--          :key="typeDoc.name"-->
+<!--          class="mx-1"-->
+<!--          filter-->
+<!--          variant="outlined"-->
+<!--          :color="typeDoc.colors[2]"-->
+<!--        >-->
+<!--          {{ typeDoc.name }}-->
+<!--        </v-chip>-->
+<!--      </v-chip-group>-->
+<!--    </div>-->
     <v-row class="my-3">
       <v-col
         v-for="(item, idx) in filteredDocs"
@@ -183,14 +182,14 @@ const filteredDocs = computed(() => {
         v-if="!show_all && (final_display < final_docs.length)"
       >
         <v-spacer></v-spacer>
-        <v-btn
+        <v-btn-primary
           color="accent"
           variant="outlined"
           append-icon="expand_more"
           @click="show_all = true"
         >
           Mostrar más
-        </v-btn>
+        </v-btn-primary>
         <v-spacer></v-spacer>
       </v-card-actions>
 <!--    </template>-->

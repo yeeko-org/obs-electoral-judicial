@@ -13,8 +13,6 @@ const props = defineProps({
     default: false,
   },
   parent: String,
-  is_simple: Boolean,
-  main_action: String,
 })
 
 const open_panels = ref([])
@@ -22,8 +20,6 @@ const main_show_details = ref(false)
 
 const header_component = shallowRef('')
 const sheet_component = shallowRef('')
-
-const emits = defineEmits(['select-item'])
 
 const route_key = computed(() => props.collection_data.app_label)
 const snake_name = computed(() => props.collection_data.snake_name)
@@ -61,14 +57,6 @@ function addItem({res, is_new}) {
   }
 }
 
-function deleteItem(elem_id) {
-  // console.log("deleteItem", res)
-  open_panels.value = []
-  const index = props.results.findIndex(
-      result => result[props.collection_data.pk] === elem_id)
-  props.results.splice(index, 1)
-}
-
 function changeShowDetails() {
   nextTick(() => {
     setTimeout(() => {
@@ -76,8 +64,6 @@ function changeShowDetails() {
     }, 10)
   })
 }
-
-const elem_id = computed(() => props.collection_data.pk)
 
 // function saveItem() {
 //   emits('save-item')
@@ -92,15 +78,12 @@ const elem_id = computed(() => props.collection_data.pk)
   >
     <PanelCommon
       v-for="elem in results"
-      :key="elem[elem_id]"
+      :key="elem.id"
       :collection_data="collection_data"
       :main="elem"
       :sel="sel"
-      :main_action="main_action"
       @finish-open="changeShowDetails"
       @item-saved="addItem"
-      @item-deleted="deleteItem"
-      @select-item="emits('select-item', $event)"
     >
       <template
         #header="{openMain}"
@@ -113,7 +96,6 @@ const elem_id = computed(() => props.collection_data.pk)
           :show_details="show_details"
           @open-panel="openMain"
           :parent="parent"
-          :is_simple="is_simple"
         />
       </template>
       <template

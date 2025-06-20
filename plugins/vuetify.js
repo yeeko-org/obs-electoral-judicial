@@ -3,26 +3,36 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import { aliases, md } from 'vuetify/iconsets/md'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
+import { VDateInput } from "vuetify/labs/VDateInput"
+import { VBtn } from 'vuetify/components/VBtn'
+// import colors from 'vuetify/lib/util/colors'
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
+    components: {
+      VDateInput
+    },
     theme: {
       themes: {
         light: {
           dark: false,
           colors: {
-            // primary: colors.indigo.darken1,
-            // secondary: '#424242',
-            // accent: colors.teal.accent4,
-            primary: "#3a3a3a",
-            secondary: "#EE8B44",
-            accent: "#5F9398",
-            info: "#001249",
-            warning: "#e0be79",
-            hospital: "#52A198",
+            primary: "#C41D7F",
+            primaryDark: "#9B055D",
+            secondary: "#1E1E1E",
+            ibero: "#E00034",
+            accent: "#CF0622",
+            pinky: "#c72d67",
+            pinked: "#f6b6bd",
+            choco: "#3A0811",
           }
         }
       }
+    },
+    aliases: {
+      VBtnPrimary: VBtn,
+      VBtnText: VBtn,
+      VBtnMenu: VBtn,
     },
     icons: {
       defaultSet: 'md',
@@ -30,6 +40,34 @@ export default defineNuxtPlugin((app) => {
       sets: {
         md,
       }
+    },
+    defaults: {
+      VBtnPrimary: {
+        class: ['v-btn--primary', 'text-none', 'rounded-xl', 'px-6'],
+        // prependIcon: 'arrow_back',
+        appendIcon: 'arrow_forward',
+      },
+      VBtnText: {
+        class: ['v-btn--text', 'rounded-xl', 'px-6'],
+        // prependIcon: 'arrow_back',
+        appendIcon: 'arrow_forward',
+      },
+      VBtnMenu: {
+        class: ['v-btn--menu', 'text-none'],
+      },
+    },
+    date: {
+      locale: {
+        'es-MX': {
+          firstDayOfWeek: 0,
+          masks: {
+              input: 'DD/MM/YYYY',
+              date: 'DD/MM/YYYY',
+              time: 'HH:mm',
+              datetime: 'DD/MM/YYYY HH:mm',
+          },
+        },
+      },
     }
   })
   app.vueApp.use(vuetify)

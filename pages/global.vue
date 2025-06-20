@@ -1,6 +1,8 @@
 <script setup>
-const { $preview } = useNuxtApp()
+import MainNav from "~/components/web/MainNav.vue";
+import Footer from "~/components/web/Footer.vue";
 
+const { $preview } = useNuxtApp()
 const version = $preview ? 'draft' : 'published'
 const story = await useAsyncStoryblok(
     'global',
@@ -11,16 +13,20 @@ definePageMeta({
   layout: 'global',
 })
 
-
 </script>
 
 <template>
 <!--  <v-layout align-center justify-center>-->
-    <MainNav is_editable/>
+    <MainNav
+      v-for="blok in story.content.header"
+      :key="blok._uid"
+      :blok="blok"
+      is_editable
+    />
     <v-main>
       <v-container pa-0 fluid>
         <v-layout align-center justify-center >
-        EDITA AQUÍ EL CONTENIDO DEL FOOTER
+        EDITA AQUÍ EL CONTENIDO DEL HEADER Y DEL FOOTER
         </v-layout>
       </v-container>
     </v-main>

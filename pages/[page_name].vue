@@ -8,7 +8,7 @@ definePageMeta({
 
 // const version_sb = process.env.NUXT_PUBLIC_STORYBLOK_VERSION
 const version = $preview ? 'draft' : 'published'
-console.log('page_name', page_name)
+console.log('version', version)
 const story = await useAsyncStoryblok(
     `${page_name}`,
     { version: version },
@@ -18,7 +18,7 @@ const story = await useAsyncStoryblok(
 }
 )
 
-console.log('story', story)
+// console.log('story', story)
 
 // useSeoMeta({
 //

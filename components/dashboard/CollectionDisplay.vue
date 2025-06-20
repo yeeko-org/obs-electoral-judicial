@@ -1,36 +1,32 @@
 <script setup>
 import {computed, onMounted, ref, onBeforeMount, watch, nextTick } from "vue";
 import {useMainStore} from '~/store/index'
-import FiltersList from "~/components/dashboard/common/select/FiltersList.vue";
-import PanelsResult from "~/components/dashboard/common/PanelsResult.vue";
-// import { status_filters } from "~/composables/filters.js";
+import SelectFilters from "~/components/dashboard/common/SelectFilters.vue";
+import PanelResult from "~/components/dashboard/common/PanelsResult.vue";
+import {final_sorts, status_filters} from "~/composables/filters.js";
 
 import {storeToRefs} from "pinia";
+import ExportButton from "~/components/dashboard/generic/ExportButton.vue";
 import _debounce from "lodash/debounce.js";
 
 const mainStore = useMainStore()
 
-// const {
-//   current_collection_data,
-// } = storeToRefs(mainStore)
-const { fetchElements, cancelFetch } = mainStore
-const { schemas } = storeToRefs(mainStore)
+const {
+  schemas,
+  current_collection_data,
+} = storeToRefs(mainStore)
+const { fetchElements } = mainStore
 
 const props = defineProps({
   parent_collection: Object,
   level_name: String,
   filter_group: Object,
   is_mini: Boolean,
-  in_sheet: Boolean,
-  init_total_count: Number,
-  direct_sheet: Boolean,
-  main_action: String,
-  init_in_edition: Array,
-  init_filters: {
-    type: Object,
-    default: () => ({}),
-  },
 })
+
+const init_filters = {
+  status_register: null,
+}
 
 const results = ref([])
 const q_value = ref("")
@@ -38,10 +34,11 @@ const loading_fetch = ref(false)
 const show_details = ref(false)
 const total_count = ref(0)
 const final_filters = ref({
-  ordering: null,  // '-id',
+  ordering: null,
+  q: "",
   page_size: 40,
+  ...init_filters,
 })
-const reverse_fetch = ref(false)
 
 const temp_reset = ref(false)
 const visible_filters = ref([])
@@ -49,9 +46,9 @@ const current_filters = ref([])
 // const panel_result = useTemplateRef('panel-result')
 const childRef = ref(null)
 const emits = defineEmits(['select-item'])
-defineExpose({ setInitResults, changeInitFilters })
 
 onBeforeMount(() => {
+  // console.log("beforeMount")
   resetFilters()
 })
 
@@ -60,27 +57,15 @@ onMounted(() => {
 })
 
 const collection_data = computed(() => {
-  // return props.parent_collection || current_collection_data.value
-  return schemas.value.collections_dict.candidate
+  return props.parent_collection || current_collection_data.value
 })
 const simplified_filters = computed(() =>{
-  if (props.is_mini)
-    return false
   return current_filters.value.length <= 3
-})
-
-const sorted_results = computed(() => {
-  if (!props.init_in_edition)
-    return results.value
-  const in_edition = results.value.filter(
-    res => props.init_in_edition.includes(res.id))
-  const not_in_edition = results.value.filter(
-    res => !props.init_in_edition.includes(res.id))
-  return [...in_edition, ...not_in_edition]
 })
 
 watch(
   final_filters, (val) => {
+    // console.log("final_filters", val)
     if (!temp_reset.value)
       applyFilters()
     else
@@ -92,24 +77,18 @@ watch(
 watch(
   q_value, (val) => {
     debounceApplyFilters()
-    //   applyFilters()
   }
+
 )
-// const is_category = computed(() =>
-//   collection_data.value.level.includes('category'))
+
+const is_category = computed(() =>
+  collection_data.value.level.includes('category'))
 
 const debounceApplyFilters = _debounce(() => {
   applyFilters()
 }, 800)
 
 function applyFilters(page=null) {
-  if (loading_fetch.value)
-    cancelFetch()
-  else
-    realApplyFilters(page)
-}
-
-function realApplyFilters(page=null) {
   if (page === null){
     page = 1
     if (childRef.value)
@@ -117,19 +96,12 @@ function realApplyFilters(page=null) {
   }
   loading_fetch.value = true
   show_details.value = false
+  let collection_name = collection_data.value.snake_name
+  if (is_category.value)
+    collection_name = `catalogs/${collection_name}`
   results.value = []
-  const params = {
-    ...final_filters.value,
-    q: q_value.value,
-    page: page,
-    ...props.init_filters
-  }
-  fetchElements(['candidate', params]).then(res => {
-    if (res.cancelled) {
-      reverse_fetch.value = !reverse_fetch.value
-      realApplyFilters(page)
-      return
-    }
+  const params = {...final_filters.value, q: q_value.value, page: page}
+  fetchElements([collection_name, params]).then(res => {
     loading_fetch.value = false
     if (!res.results){
       total_count.value = res.length
@@ -152,10 +124,11 @@ function changeShowDetails() {
 }
 
 function resetFilters() {
-  if (props.direct_sheet)
+  if (!is_category.value && !collection_data.value.cat_params?.init_display)
     temp_reset.value = true
   final_filters.value = {
     ordering: null,
+    q: "",
     page_size: 40,
   }
   results.value = []
@@ -166,24 +139,71 @@ function resetFilters() {
 }
 
 function initFilters() {
-  console.log("changeFilters", collection_data.value)
-  current_filters.value = collection_data.value.collection_filters
-  visible_filters.value = current_filters.value
-}
-
-function setInitResults(init_results){
-  results.value = init_results
-  total_count.value = init_results.length
-}
-
-function changeInitFilters(){
-  if (!props.init_filters)
+  // console.log("changeFilters", collection_data.value)
+  if (!collection_data.value)
     return
-  // final_filters.value
-  Object.entries(props.init_filters).forEach(([key, value]) => {
-    temp_reset.value = true
-    final_filters.value[key] = value
+  const all_filters = collection_data.value.all_filters || []
+  // console.log("all_filters", all_filters)
+  // console.log("collection_data", collection_data.value)
+  // console.log("level_name", props.level_name)
+  // console.log("filter_group", props.filter_group)
+  let collection_filters = all_filters.reduce((arr, f) => {
+    // console.log("filter_name", f.filter_name)
+    // console.log("f", f)
+    if (!f.filter_name){
+      console.log("custom_filter", f)
+      let custom_filter = {
+        is_custom: true,
+        order: 12,
+      }
+      arr.push({...f, ...custom_filter})
+      return arr
+    }
+    const filter_data = schemas.value.filters_dict[f.filter_name]
+
+    const new_filter = {...filter_data, ...f}
+    if (filter_data.category_group){
+      // console.log("filter_data", filter_data)
+      // console.log("new_filter", new_filter)
+      filter_data.category_groups.forEach(cg => {
+        const short_name = `${new_filter.short_prev} ${cg.name}`
+        const name = `${new_filter.prev} ${cg.name}`
+        let current_filter = {
+          name, short_name, category_group_value: cg.id}
+        // console.log("result", {...new_filter, ...cg, ...current_filter})
+        arr.push({...new_filter, ...cg, ...current_filter})
+      })
+      return arr
+    }
+    arr.push(new_filter)
+    return arr
+  }, [])
+  // console.log("collection_filters", collection_filters)
+  if (props.filter_group){
+    // console.log("filter_group", props.filter_group)
+    const fg = props.filter_group
+    const new_filter_group = {
+      ...props.filter_group,
+      short_name: `${fg.short_prev} ${fg.name}`,
+      name: `${fg.prev} ${fg.name}`,
+      forced_level: props.level_name,
+    }
+    collection_filters.push(new_filter_group)
+  }
+  const status_groups = collection_data.value.status_groups || []
+  status_groups.forEach(sg => {
+    collection_filters.push(status_filters[sg])
   })
+
+  current_filters.value = collection_filters
+
+  // console.log("group in changeFilters", group)
+  if (collection_filters.length <= 3)
+    visible_filters.value = current_filters.value
+  else
+    visible_filters.value = current_filters.value.filter(f => !f.hidden)
+  // console.log("visible_filters", visible_filters.value)
+  // console.log("collection_data", collection_data.value)
 }
 
 function addItem() {
@@ -220,7 +240,7 @@ function selectItem(item) {
       </v-card-subtitle>
     </template>
     <v-row class="mx-0" v-if="collection_data">
-      <v-col cols="12" class="px-0" v-if="!simplified_filters">
+      <v-col cols="12" _class="py-0" v-if="!simplified_filters">
         <v-chip-group
           v-model="visible_filters"
           multiple
@@ -237,11 +257,12 @@ function selectItem(item) {
             filter
             variant="tonal"
           >
-            {{filter.short_name || filter.name || filter.title}}
+            {{filter.short_name || filter.name}}
           </v-chip>
         </v-chip-group>
       </v-col>
-      <FiltersList
+      <SelectFilters
+        v-if="!simplified_filters"
         :final_filters="final_filters"
         :visible_filters="visible_filters"
       />
@@ -249,17 +270,19 @@ function selectItem(item) {
     <v-row>
       <v-col
         cols="12"
-        class="d-flex mb-2 mt-0 flex-wrap"
+        class="d-flex mb-2 mt-0"
         :order="simplified_filters ? 1 : 'last'"
       >
+<!--          v-model="final_filters.q"-->
         <v-text-field
           v-model="q_value"
           :label="`Buscar ${collection_data.plural_name || 'elementos'}`"
           outlined
-          density="compact"
+          density="comfortable"
           clearable
           base-color="blue"
           color="indigo"
+          _bg-color="grey lighten-2"
           variant="underlined"
           hide-details
           max-width="300"
@@ -268,44 +291,62 @@ function selectItem(item) {
           @click:append-inner="applyFilters()"
         ></v-text-field>
         <v-select
-          v-if="collection_data.available_sorts.length"
+          v-if="final_sorts.length"
           v-model="final_filters.ordering"
-          :items="collection_data.available_sorts"
+          :items="final_sorts"
           item-title="title"
           item-value="value"
           label="Ordenar por"
-          density="compact"
+          density="comfortable"
           variant="underlined"
           hide-details
-          class="mx-3"
-          style="max-width: 220px; min-width: 130px;"
+          class="ml-3"
+          style="max-width: 220px;"
         ></v-select>
+        <SelectFilters
+          v-if="simplified_filters"
+          :final_filters="final_filters"
+          :visible_filters="visible_filters"
+        />
         <v-spacer></v-spacer>
-<!--        <FiltersList-->
-<!--          v-if="simplified_filters"-->
-<!--          :final_filters="final_filters"-->
-<!--          :visible_filters="visible_filters"-->
-<!--        />-->
+<!--        <v-btn-->
+<!--          color="accent"-->
+<!--          variant="outlined"-->
+<!--          text="Mostrar acciones"-->
+<!--          class="mr-3"-->
+<!--          @click="changeGroupActions"-->
+<!--        ></v-btn>-->
+        <v-col cols="auto" order="12">
+          <ExportButton
+            v-if="collection_data.level === 'primary' && !is_mini"
+          />
+          <v-btn
+            v-else-if="is_mini"
+            color="accent"
+            @click="addItem"
+            class="mr-3"
+          >
+            <v-icon>add</v-icon>
+            Agregar {{ collection_data.name }}
+          </v-btn>
+        </v-col>
       </v-col>
     </v-row>
     <v-progress-linear
       v-if="loading_fetch"
-      :reverse="reverse_fetch"
       indeterminate
       height="10"
       color="accent"
     ></v-progress-linear>
-    <PanelsResult
-      ref="childRef"
-      :results="sorted_results"
+    <PanelResult
+      :results="results"
       :collection_data="collection_data"
       :show_details="show_details"
       :final_filters="final_filters"
-      :total_count="total_count || init_total_count"
-      :is_mini="is_mini"
-      :in_sheet="in_sheet"
-      :main_action="main_action"
       @update-page-number="applyFilters($event)"
+      :total_count="total_count"
+      :is_mini="is_mini"
+      ref="childRef"
       @select-item="selectItem"
     />
   </v-card>

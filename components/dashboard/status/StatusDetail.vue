@@ -40,30 +40,21 @@ const props = defineProps({
 })
 
 const { status, cats } = storeToRefs(mainStore)
-
-const simple_name = computed(() => {
-  return props.collection.replace('status_', '');
-})
 const items_built = computed(() => {
   // const status_collection = props.collection.split('_')[1]
   return props.collection_group === "status"
-      ? status.value[simple_name.value]
-      : cats.value[simple_name.value]
+      ? status.value[props.collection]
+      : cats.value[props.collection]
 })
-
 const label = computed(() => {
-  const txt = simple_name.value === 'register'
+  const txt = props.collection === 'register'
     ? "registro"
-    : simple_name.value === 'validation'
+    : props.collection === 'validation'
       ? "validación"
       : "ubicación"
   return "Status de " + txt
 })
-const field = computed(() => {
-  if (props.collection.includes('status_'))
-    return props.collection
-  return `status_${props.collection}`
-})
+const field = computed(() => `status_${props.collection}`);
 
 </script>
 
@@ -76,8 +67,7 @@ const field = computed(() => {
     :variant="is_filter ? 'underlined' : 'outlined'"
     :clearable="is_filter"
     :label="label"
-    max-width="320"
-    min-width="260"
+    width="320"
     :hide-details="hide_details"
     density="compact"
   >

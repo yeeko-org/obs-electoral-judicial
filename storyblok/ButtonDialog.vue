@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import MaterialList from "./MaterialList"
 import DocumentList from "./DocumentList"
-import FormGossip from "./FormGossip.vue";
 
 const { xs } = useDisplay()
 
@@ -14,7 +13,7 @@ const props = defineProps({
 const dialog = ref(false)
 
 function openDialog() {
-  console.log('openDialog')
+  // console.log('openDialog')
   dialog.value = true
 }
 

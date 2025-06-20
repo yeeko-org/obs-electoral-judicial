@@ -1,13 +1,13 @@
 <script setup>
-import CommonTitle from "../components/CommonTitle.vue";
+import CommonTitle from "../components/web/CommonTitle.vue";
 import {storeToRefs} from "pinia";
-import {useMainStore} from '~/store/index'
+import {useWebStore} from '~/store/web.js'
 import dayjs from 'dayjs'
 import 'dayjs/locale/es'
 dayjs.locale('es')
-const mainStore = useMainStore()
+const webStore = useWebStore()
 // Store setup and state
-const { all_documents } = storeToRefs(mainStore)
+const { all_documents } = storeToRefs(webStore)
 
 const props = defineProps({
   blok: Object,
@@ -41,15 +41,14 @@ const header_blok = computed(() => {
     header: dayjs(report_blok.value.start_date).format('DD [de] MMMM [de] YYYY'),
     subheader: report_blok.value.name,
     explanation: report_blok.value.subtitle,
+    cover: report_blok.value.cover,
     // color_title: 'primary',
-    // color_pleca: 'accent',
   }
 })
 
 const artificial_blok = {
   subheader: 'Otros informes',
-  color_title: 'secondary',
-  color_pleca: 'primary',
+  color_title: 'primary',
   init_display: 4,
 }
 
@@ -65,12 +64,17 @@ function openDoc(item) {
 <template>
   <v-row class="page ma-0">
     <v-col cols="12">
-      <SectionHeader
-        v-if="report_blok"
-        :blok="header_blok"
-        :report_blok="report_blok"
-        v-editable="report_blok"
-      />
+      <v-sheet
+        :style="{backgroundImage: `url(https://a.storyblok.com/f/327491/2550x3300/3994476a6e/fondo.png)`}"
+
+      >
+        <SectionHeader
+          v-if="report_blok"
+          :blok="header_blok"
+          :report_blok="report_blok"
+          v-editable="report_blok"
+        />
+      </v-sheet>
       <StoryblokComponent
         v-for="blok in blok.body"
         :key="blok._uid"
@@ -81,17 +85,29 @@ function openDoc(item) {
         v-for="blok in blok.document"
         class="pb-2 pb-md-4 mt-3 pt-3"
         elevation="6"
+        color="pinked"
       >
         <v-card-actions>
           <v-spacer></v-spacer>
+<!--          <v-btn-->
+<!--            color="accent"-->
+<!--            variant="elevated"-->
+<!--            class="mr-2"-->
+<!--            @click="openDoc(blok)"-->
+<!--            append-icon="file_download"-->
+<!--          >-->
+<!--            Descargar Informe-->
+<!--          </v-btn>-->
           <v-btn
-            color="accent"
             variant="elevated"
-            class="mr-2"
-            @click="openDoc(blok)"
+            color="accent"
+            size="large"
+            class="white-outlined mr-2"
+            rounded="lg"
             append-icon="file_download"
+            @click="openDoc(blok)"
           >
-            Descargar Reporte
+            Descargar Informe
           </v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
@@ -99,7 +115,8 @@ function openDoc(item) {
       <v-card
         v-if="report_blok"
         class="pb-2 pb-md-4 mt-3 pt-3"
-        elevation="6"
+        elevation="0"
+        variant="flat"
       >
 
         <CommonTitle
