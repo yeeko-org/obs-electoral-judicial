@@ -1,10 +1,10 @@
 <script setup>
 const { $preview } = useNuxtApp()
 const { page_name } = useRoute().params
-definePageMeta({
-  // middleware: 'dashboard',
-  layout: 'banner',
-})
+// definePageMeta({
+//   // middleware: 'dashboard',
+//   layout: 'banner',
+// })
 
 // const version_sb = process.env.NUXT_PUBLIC_STORYBLOK_VERSION
 const version = $preview ? 'draft' : 'published'

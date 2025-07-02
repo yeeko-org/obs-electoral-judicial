@@ -12,16 +12,11 @@ const story = await useAsyncStoryblok(
 // console.log('story', story)
 
 useSeoMeta({
-  title: 'Observatorio Electoral Judicial',
-  ogTitle: 'Observatorio Electoral Judicial',
-  description: 'Documentación, análisis y difusión las decisiones, ' +
-          'los problemas y toda la información relevante del proceso electoral ' +
-          'del Poder Judicial 2024-2025',
-  ogDescription: 'Documentación, análisis y difusión las decisiones, ' +
-          'los problemas y toda la información relevante del proceso electoral ' +
-          'del Poder Judicial 2024-2025',
-  ogType: 'website',
-  ogImage: 'https://oej.yeeko.org/_nuxt/nuevo_logo.ChaL5KSF.png',
+  title: 'Desplazamiento Interno en México',
+  ogTitle: 'Desplazamiento Interno en México',
+  description: 'Documentamos y divulgamos sobre eventos de desplazamiento interno en México.',
+  ogDescription: 'Documentamos y divulgamos sobre eventos de desplazamiento interno en México.',
+  // ogImage: 'https://oej.yeeko.org/_nuxt/nuevo_logo.ChaL5KSF.png',
 })
 
 

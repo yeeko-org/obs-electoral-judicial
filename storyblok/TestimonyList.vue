@@ -29,6 +29,9 @@ const props = defineProps({
 
 // Swiper instance reference
 const swiperRef = ref(null)
+const full_dialog = ref(false)
+const last_testimony = ref(null)
+const full_testimony = ref(null)
 
 // Navigation methods
 const slidePrev = () => {
@@ -60,6 +63,13 @@ const testimonies = computed(() => {
     }
   })
 })
+
+const openTestimony = (testimony) => {
+  const rich_text = testimony.full_testimony || testimony.testimony
+  full_testimony.value = renderRichText(rich_text)
+  last_testimony.value = testimony
+  full_dialog.value = true
+}
 
 </script>
 <template>
@@ -117,11 +127,12 @@ const testimonies = computed(() => {
           </v-card-text>
           <v-card-actions class="px-0">
             <v-btn-text
-              _to="`/${item.full_slug}`"
+
               variant="text"
               color="accent"
               _prepend-icon="visibility"
               _block="!mdAndUp"
+              @click="openTestimony(testimony)"
               class="pl-3 pr-3"
             >
               Testimonio completo
@@ -171,7 +182,44 @@ const testimonies = computed(() => {
       </SwiperSlide>
     </Swiper>
   </div>
+  <v-dialog
+    v-model="full_dialog"
+    max-width="800px"
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-card-title class="text-h5">
+        Testimonio completo
+      </v-card-title>
+      <v-card-text>
+        <div >
+          <v-card-text class="text-h6" v-html="full_testimony">
+          </v-card-text>
+          <v-card-text>
+            <div class="text-subtitle-1 text-choco oswald font-weight-bold">
+              {{ last_testimony.title }}
+            </div>
+            <div
+              v-if="last_testimony.subtitle"
+              class="text-subtitle-1 text-grey-lighten-2"
+            >
+              {{ last_testimony.subtitle }}
+            </div>
+          </v-card-text>
 
+        </div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="primary"
+          @click="full_dialog = false"
+        >
+          Cerrar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+
+  </v-dialog>
 </template>
 
 

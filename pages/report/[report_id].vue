@@ -38,16 +38,12 @@ const story = await useAsyncStoryblok(
 //   // script: [ { innerHTML: 'console.log(\'Hello world\')' } ]
 // })
 useSeoMeta({
-  title: `${story.value.content?.document[0].name} - Observatorio Electoral Judicial`,
-  ogTitle: `${story.value.content?.document[0].name} (Observatorio Electoral Judicial)`,
-  description: 'Documentar y analizar las decisiones, ' +
-          'los problemas y toda la información relevante del proceso electoral ' +
-          'del Poder Judicial 2024-2025 .',
+  title: `${story.value.content?.document[0].name} - Desplazamiento Interno en México`,
+  ogTitle: `${story.value.content?.document[0].name} (Desplazamiento Interno en México)`,
+  description: 'Documentamos y divulgamos sobre eventos de desplazamiento interno en México.',
   type: 'article',
-  ogDescription: 'Documentar y analizar las decisiones, ' +
-          'los problemas y toda la información relevante del proceso electoral ' +
-          'del Poder Judicial 2024-2025',
-  ogImage: 'https://oej.yeeko.org/_nuxt/nuevo_logo.ChaL5KSF.png',
+  ogDescription: 'Documentamos y divulgamos sobre eventos de desplazamiento interno en México.',
+  // ogImage: 'https://oej.yeeko.org/_nuxt/nuevo_logo.ChaL5KSF.png',
 })
 
 </script>

@@ -1,7 +1,7 @@
 <script setup>
 // import StatusDetail from "~/components/dashboard/status/StatusDetail.vue";
 
-import SelectGroup from "~/components/dashboard/common/select/SelectGroup.vue";
+import SelectGroup from "~/components/dashboard/common/SelectGroup.vue";
 import PositionFilter from "../../custom_filters/PositionFilter.vue";
 // import TripleBooleanFilter from "~/components/dashboard/custom_filters/TripleBooleanFilter.vue";
 // import RangeDates from "~/components/dashboard/custom_filters/RangeDates.vue";
