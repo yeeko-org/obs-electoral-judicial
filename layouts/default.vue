@@ -1,5 +1,6 @@
 <script setup>
-
+// import 'vuetify/src/styles/settings/_variables';
+// import colors from 'vuetify/lib/util/colors';
 import MainNav from "~/components/web/MainNav.vue";
 import Footer from "~/components/web/Footer.vue";
 
@@ -56,23 +57,39 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-layout>
-<!--  <v-app>-->
+  <v-app>
+    <v-layout>
+      <v-container class="_px-1 _px-sm-3 px-0 pt-0" fluid>
+      <v-responsive
+        max-width="1440"
+        class="mx-auto _dfi-app-width"
+      >
+        <MainNav/>
+        <v-main class="" id="app-width">
+            <NuxtPage />
+        </v-main>
+      </v-responsive>
 
-    <v-responsive max-width="1024" class="mx-auto">
-      <MainNav/>
-      <v-main class="" id="app-width">
-        <v-container class="_px-1 _px-sm-3 px-0 pt-0" fluid>
-          <NuxtPage />
-        </v-container>
-      </v-main>
-    </v-responsive>
-
-  </v-layout>
-  <Footer />
-<!--  </v-app>-->
+      </v-container>
+    </v-layout>
+    <Footer />
+  </v-app>
 </template>
 
 <style lang="scss">
+@use 'sass:map';
 @use '../assets/css/utils.scss' as *;
+@use 'vuetify/settings' as *;
+
+.dfi-app-width {
+  //max-width: 1440px;
+  //margin-left: auto;
+  //margin-right: auto;
+}
+
+//@media #{map.get($display-breakpoints, 'sm-and-down')} {
+//    .custom-class {
+//        display: block;
+//    }
+//}
 </style>

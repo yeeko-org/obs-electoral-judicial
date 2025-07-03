@@ -56,6 +56,16 @@ export default defineNuxtPlugin((app) => {
         class: ['v-btn--menu', 'text-none'],
       },
     },
+    display: {
+      // mobileBreakpoint: 'sm',
+      thresholds: {
+        xs: 0,
+        sm: 340,
+        md: 600,
+        lg: 1024,
+        xl: 1440,
+      },
+    },
     date: {
       locale: {
         'es-MX': {

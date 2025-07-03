@@ -5,7 +5,7 @@ import { storeToRefs } from 'pinia'
 import {useWebStore} from '~/store/web.js'
 
 import { useDisplay } from 'vuetify'
-const { sm, smAndUp, lgAndUp, mobile } = useDisplay()
+const { sm, smAndUp, lgAndUp, mobile, width } = useDisplay()
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
@@ -53,6 +53,7 @@ const onSwiper = (swiper) => {
 
 onMounted(() => {
   console.log("mobile", mobile.value)
+  console.log("width", width.value)
 })
 
 const testimonies = computed(() => {
@@ -95,7 +96,7 @@ const openTestimony = (testimony) => {
     <Swiper
       @swiper="onSwiper"
       :modules="modules"
-      :slides-per-view="smAndUp ? 1.8 : (lgAndUp ? 1.8 : 1.2)"
+      :slides-per-view="width >= 600 ? 1.8 : 1.2"
       :space-between="10"
       :loop="false"
       :navigation="false"
@@ -112,10 +113,10 @@ const openTestimony = (testimony) => {
           class="my-2 mx-2"
           variant="text"
         >
-          <v-card-text class="text-h6" v-html="testimony.testimony">
+          <v-card-text class="text-body-1 text-sm-h6" v-html="testimony.testimony">
           </v-card-text>
           <v-card-text>
-            <div class="text-subtitle-1 text-choco oswald font-weight-bold">
+            <div class="text-subtitle-2 text-sm-subtitle-1 text-choco oswald font-weight-bold">
               {{ testimony.title }}
             </div>
             <div

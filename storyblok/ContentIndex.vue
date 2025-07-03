@@ -50,7 +50,7 @@ const nestedContent = computed(() =>
         elevation="0"
       >
         <v-expansion-panel-title
-          class="text-h6 text-accent font-weight-bold px-2 montse"
+          class="text-subtitle-2 text-sm-h6 text-accent font-weight-bold px-2 montse"
         >
           {{ item.title }}
         </v-expansion-panel-title>
