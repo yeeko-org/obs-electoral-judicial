@@ -8,6 +8,16 @@ const props = defineProps({
   blok: Object
 })
 
+const show_all = ref(false)
+
+const notes = computed(() => {
+  if (show_all.value) {
+    return props.blok.notes
+  } else {
+    return props.blok.notes.slice(0, 6)
+  }
+})
+
 </script>
 
 <template>
@@ -20,7 +30,7 @@ const props = defineProps({
   >
 
     <v-col
-      v-for="note in blok.notes"
+      v-for="note in notes"
       :key="note._uid"
       v-editable="note"
       cols="10"
@@ -68,6 +78,20 @@ const props = defineProps({
 
       </v-card>
 
+    </v-col>
+    <v-col
+      v-if="!show_all && blok.notes.length > 6"
+      cols="12"
+      class="d-flex justify-center mb-4"
+    >
+      <v-btn
+        class="mt-3"
+        size="large"
+        color="accent"
+        @click="show_all = true"
+      >
+        Ver más notas
+      </v-btn>
     </v-col>
   </v-row>
 
