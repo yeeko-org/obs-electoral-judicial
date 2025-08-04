@@ -40,6 +40,16 @@ const variant = computed(() =>
     : 'elevated'
 )
 
+const dialog_text = computed(() => {
+  let rich_text = renderRichText(props.blok.dialog_text)
+  if (!rich_text)
+    return '-'
+  rich_text = rich_text.replace(
+      /<p>/g, '<p class="mt-2 mt-sm-4">')
+  return rich_text
+})
+
+
 </script>
 
 <template>
@@ -74,11 +84,28 @@ const variant = computed(() =>
             is_dialog
             @close-dialog="closeDialog"
           />
+          <span
+            v-else-if="blok.display_list === 'custom'"
+            v-html="dialog_text"
+            :class="`text-${blok.align_text}`"
+          >
+
+          </span>
+
           <span v-else>
-            Ninguno: {{ blok.display_list }}
+            Ninguno?? {{ blok.display_list }}
             {{size}} {{blok.size}}
           </span>
         </v-card-text>
+        <v-card-actions v-if="blok.display_list === 'custom'">
+          <v-spacer></v-spacer>
+          <v-btn
+            color="accent"
+            @click="closeDialog"
+          >
+            Cerrar
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-btn>
